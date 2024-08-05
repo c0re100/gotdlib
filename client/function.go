@@ -1471,6 +1471,35 @@ func (client *Client) GetMessages(req *GetMessagesRequest) (*Messages, error) {
     return UnmarshalMessages(result.Data)
 }
 
+type GetMessagePropertiesRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Returns properties of a message; this is an offline request
+func (client *Client) GetMessageProperties(req *GetMessagePropertiesRequest) (*MessageProperties, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getMessageProperties",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessageProperties(result.Data)
+}
+
 type GetMessageThreadRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
@@ -1478,7 +1507,7 @@ type GetMessageThreadRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a message thread. Can be used only if message.can_get_message_thread == true
+// Returns information about a message thread. Can be used only if messageProperties.can_get_message_thread == true
 func (client *Client) GetMessageThread(req *GetMessageThreadRequest) (*MessageThreadInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1507,7 +1536,7 @@ type GetMessageReadDateRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns read date of a recent outgoing message in a private chat. The method can be called if message.can_get_read_date == true and the message is read
+// Returns read date of a recent outgoing message in a private chat. The method can be called if messageProperties.can_get_read_date == true
 func (client *Client) GetMessageReadDate(req *GetMessageReadDateRequest) (MessageReadDate, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1554,7 +1583,7 @@ type GetMessageViewersRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns viewers of a recent outgoing message in a basic group or a supergroup chat. For video notes and voice notes only users, opened content of the message, are returned. The method can be called if message.can_get_viewers == true
+// Returns viewers of a recent outgoing message in a basic group or a supergroup chat. For video notes and voice notes only users, opened content of the message, are returned. The method can be called if messageProperties.can_get_viewers == true
 func (client *Client) GetMessageViewers(req *GetMessageViewersRequest) (*MessageViewers, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2308,7 +2337,7 @@ type GetSavedMessagesTopicHistoryRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns messages in a Saved Messages topic. The messages are returned in a reverse chronological order (i.e., in order of decreasing message_id)
+// Returns messages in a Saved Messages topic. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id)
 func (client *Client) GetSavedMessagesTopicHistory(req *GetSavedMessagesTopicHistoryRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2519,7 +2548,7 @@ type GetChatHistoryRequest struct {
     OnlyLocal bool `json:"only_local"`
 }
 
-// Returns messages in a chat. The messages are returned in a reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib. This is an offline request if only_local is true
+// Returns messages in a chat. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib. This is an offline request if only_local is true
 func (client *Client) GetChatHistory(req *GetChatHistoryRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2557,7 +2586,7 @@ type GetMessageThreadHistoryRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns messages in a message thread of a message. Can be used only if message.can_get_message_thread == true. Message thread of a channel message is in the channel's linked supergroup. The messages are returned in a reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib
+// Returns messages in a message thread of a message. Can be used only if messageProperties.can_get_message_thread == true. Message thread of a channel message is in the channel's linked supergroup. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib
 func (client *Client) GetMessageThreadHistory(req *GetMessageThreadHistoryRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3343,7 +3372,7 @@ type GetChatScheduledMessagesRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns all scheduled messages in a chat. The messages are returned in a reverse chronological order (i.e., in order of decreasing message_id)
+// Returns all scheduled messages in a chat. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id)
 func (client *Client) GetChatScheduledMessages(req *GetChatScheduledMessagesRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3532,7 +3561,7 @@ type GetMessageLinkRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // If not 0, timestamp from which the video/audio/video note/voice note/story playing must start, in seconds. The media can be in the message content or in its web page preview
+    // If not 0, timestamp from which the video/audio/video note/voice note/story playing must start, in seconds. The media can be in the message content or in its link preview
     MediaTimestamp int32 `json:"media_timestamp"`
     // Pass true to create a link for the whole media album
     ForAlbum bool `json:"for_album"`
@@ -3540,7 +3569,7 @@ type GetMessageLinkRequest struct {
     InMessageThread bool `json:"in_message_thread"`
 }
 
-// Returns an HTTPS link to a message in a chat. Available only for already sent messages in supergroups and channels, or if message.can_get_media_timestamp_links and a media timestamp link is generated. This is an offline request
+// Returns an HTTPS link to a message in a chat. Available only if messageProperties.can_get_link, or if messageProperties.can_get_media_timestamp_links and a media timestamp link is generated. This is an offline request
 func (client *Client) GetMessageLink(req *GetMessageLinkRequest) (*MessageLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3574,7 +3603,7 @@ type GetMessageEmbeddingCodeRequest struct {
     ForAlbum bool `json:"for_album"`
 }
 
-// Returns an HTML code for embedding the message. Available only for messages in supergroups and channels with a username
+// Returns an HTML code for embedding the message. Available only if messageProperties.can_get_embedding_code
 func (client *Client) GetMessageEmbeddingCode(req *GetMessageEmbeddingCodeRequest) (*Text, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3687,11 +3716,11 @@ func (client *Client) TranslateMessageText(req *TranslateMessageTextRequest) (*F
 type RecognizeSpeechRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_recognize_speech to check whether the message is suitable
     MessageId int64 `json:"message_id"`
 }
 
-// Recognizes speech in a video note or a voice note message. The message must be successfully sent, must not be scheduled, and must be from a non-secret chat
+// Recognizes speech in a video note or a voice note message
 func (client *Client) RecognizeSpeech(req *RecognizeSpeechRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3962,7 +3991,7 @@ type ForwardMessagesRequest struct {
     MessageThreadId int64 `json:"message_thread_id"`
     // Identifier of the chat from which to forward messages
     FromChatId int64 `json:"from_chat_id"`
-    // Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously. A message can be forwarded only if message.can_be_forwarded
+    // Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously. A message can be forwarded only if messageProperties.can_be_forwarded
     MessageIds []int64 `json:"message_ids"`
     // Options to be used to send the messages; pass null to use default options
     Options *MessageSendOptions `json:"options"`
@@ -4130,7 +4159,7 @@ func (client *Client) AddLocalMessage(req *AddLocalMessageRequest) (*Message, er
 type DeleteMessagesRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifiers of the messages to be deleted
+    // Identifiers of the messages to be deleted. Use messageProperties.can_be_deleted_only_for_self and messageProperties.can_be_deleted_for_all_users to get suitable messages
     MessageIds []int64 `json:"message_ids"`
     // Pass true to delete messages for all chat members. Always true for supergroups, channels and secret chats
     Revoke bool `json:"revoke"`
@@ -4226,7 +4255,7 @@ func (client *Client) DeleteChatMessagesByDate(req *DeleteChatMessagesByDateRequ
 type EditMessageTextRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
@@ -4234,7 +4263,7 @@ type EditMessageTextRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the text of a message (or a text of a game message). Returns the edited message after the edit is completed on the server side. Can be used only if message.can_be_edited == true
+// Edits the text of a message (or a text of a game message). Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageText(req *EditMessageTextRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4261,7 +4290,7 @@ func (client *Client) EditMessageText(req *EditMessageTextRequest) (*Message, er
 type EditMessageLiveLocationRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
@@ -4275,7 +4304,7 @@ type EditMessageLiveLocationRequest struct {
     ProximityAlertRadius int32 `json:"proximity_alert_radius"`
 }
 
-// Edits the message content of a live location. Messages can be edited for a limited period of time specified in the live location. Returns the edited message after the edit is completed on the server side. Can be used only if message.can_be_edited == true
+// Edits the message content of a live location. Messages can be edited for a limited period of time specified in the live location. Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageLiveLocation(req *EditMessageLiveLocationRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4305,7 +4334,7 @@ func (client *Client) EditMessageLiveLocation(req *EditMessageLiveLocationReques
 type EditMessageMediaRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
@@ -4313,7 +4342,7 @@ type EditMessageMediaRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the content of a message with an animation, an audio, a document, a photo or a video, including message caption. If only the caption needs to be edited, use editMessageCaption instead. The media can't be edited if the message was set to self-destruct or to a self-destructing media. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa. Returns the edited message after the edit is completed on the server side. Can be used only if message.can_be_edited == true
+// Edits the content of a message with an animation, an audio, a document, a photo or a video, including message caption. If only the caption needs to be edited, use editMessageCaption instead. The media can't be edited if the message was set to self-destruct or to a self-destructing media. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa. Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageMedia(req *EditMessageMediaRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4340,7 +4369,7 @@ func (client *Client) EditMessageMedia(req *EditMessageMediaRequest) (*Message, 
 type EditMessageCaptionRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
@@ -4350,7 +4379,7 @@ type EditMessageCaptionRequest struct {
     ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
 }
 
-// Edits the message content caption. Returns the edited message after the edit is completed on the server side. Can be used only if message.can_be_edited == true
+// Edits the message content caption. Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageCaption(req *EditMessageCaptionRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4378,13 +4407,13 @@ func (client *Client) EditMessageCaption(req *EditMessageCaptionRequest) (*Messa
 type EditMessageReplyMarkupRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
 }
 
-// Edits the message reply markup; for bots only. Returns the edited message after the edit is completed on the server side. Can be used only if message.can_be_edited == true
+// Edits the message reply markup; for bots only. Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageReplyMarkup(req *EditMessageReplyMarkupRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4579,7 +4608,7 @@ func (client *Client) EditInlineMessageReplyMarkup(req *EditInlineMessageReplyMa
 type EditMessageSchedulingStateRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_edit_scheduling_state to check whether the message is suitable
     MessageId int64 `json:"message_id"`
     // The new message scheduling state; pass null to send the message immediately
     SchedulingState MessageSchedulingState `json:"scheduling_state"`
@@ -4611,13 +4640,13 @@ func (client *Client) EditMessageSchedulingState(req *EditMessageSchedulingState
 type SetMessageFactCheckRequest struct { 
     // The channel chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message. The message must be one of the following types: messageAnimation, messageAudio, messageDocument, messagePhoto, messageText, messageVideo
+    // Identifier of the message
     MessageId int64 `json:"message_id"`
     // New text of the fact-check; 0-getOption("fact_check_length_max") characters; pass null to remove it. Only Bold, Italic, and TextUrl entities with https://t.me/ links are supported
     Text *FormattedText `json:"text"`
 }
 
-// Changes the fact-check of a message. Can be only used if getOption("can_edit_fact_check") == true
+// Changes the fact-check of a message. Can be only used if messageProperties.can_set_fact_check == true
 func (client *Client) SetMessageFactCheck(req *SetMessageFactCheckRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4963,6 +4992,41 @@ func (client *Client) StopBusinessPoll(req *StopBusinessPollRequest) (*BusinessM
     }
 
     return UnmarshalBusinessMessage(result.Data)
+}
+
+type SetBusinessMessageIsPinnedRequest struct { 
+    // Unique identifier of business connection on behalf of which the message was sent
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // Pass true to pin the message, pass false to unpin it
+    IsPinned bool `json:"is_pinned"`
+}
+
+// Pins or unpins a message sent on behalf of a business account; for bots only
+func (client *Client) SetBusinessMessageIsPinned(req *SetBusinessMessageIsPinnedRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessMessageIsPinned",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "is_pinned": req.IsPinned,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
 }
 
 type CheckQuickReplyShortcutNameRequest struct { 
@@ -5889,7 +5953,7 @@ func (client *Client) SetMessageReactions(req *SetMessageReactionsRequest) (*Ok,
 type GetMessageAddedReactionsRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message
+    // Identifier of the message. Use messageProperties.can_get_added_reactions to check whether added reactions can be received for the message
     MessageId int64 `json:"message_id"`
     // Type of the reactions to return; pass null to return all added reactions
     ReactionType ReactionType `json:"reaction_type"`
@@ -6558,13 +6622,13 @@ func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*MessageSenders,
 type StopPollRequest struct { 
     // Identifier of the chat to which the poll belongs
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message containing the poll
+    // Identifier of the message containing the poll. Use messageProperties.can_be_edited to check whether the poll can be stopped
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
 }
 
-// Stops a poll. A poll in a message can be stopped when the message has can_be_edited flag is set
+// Stops a poll
 func (client *Client) StopPoll(req *StopPollRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6661,7 +6725,7 @@ func (client *Client) GetBusinessConnection(req *GetBusinessConnectionRequest) (
 type GetLoginUrlInfoRequest struct { 
     // Chat identifier of the message with the button
     ChatId int64 `json:"chat_id"`
-    // Message identifier of the message with the button
+    // Message identifier of the message with the button. The message must not be scheduled
     MessageId int64 `json:"message_id"`
     // Button identifier
     ButtonId int64 `json:"button_id"`
@@ -6889,6 +6953,35 @@ func (client *Client) AnswerInlineQuery(req *AnswerInlineQueryRequest) (*Ok, err
     return UnmarshalOk(result.Data)
 }
 
+type GetPopularWebAppBotsRequest struct { 
+    // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of bots to be returned; up to 100
+    Limit int32 `json:"limit"`
+}
+
+// Returns popular Web App bots
+func (client *Client) GetPopularWebAppBots(req *GetPopularWebAppBotsRequest) (*FoundUsers, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPopularWebAppBots",
+        },
+        Data: map[string]interface{}{
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalFoundUsers(result.Data)
+}
+
 type SearchWebAppRequest struct { 
     // Identifier of the target bot
     BotUserId int64 `json:"bot_user_id"`
@@ -6929,7 +7022,7 @@ type GetWebAppLinkUrlRequest struct {
     StartParameter string `json:"start_parameter"`
     // Preferred Web App theme; pass null to use the default theme
     Theme *ThemeParameters `json:"theme"`
-    // Short name of the application; 0-64 English letters, digits, and underscores
+    // Short name of the current application; 0-64 English letters, digits, and underscores
     ApplicationName string `json:"application_name"`
     // Pass true if the current user allowed the bot to send them messages
     AllowWriteAccess bool `json:"allow_write_access"`
@@ -6962,18 +7055,56 @@ func (client *Client) GetWebAppLinkUrl(req *GetWebAppLinkUrlRequest) (*HttpUrl, 
     return UnmarshalHttpUrl(result.Data)
 }
 
-type GetWebAppUrlRequest struct { 
+type GetMainWebAppRequest struct { 
+    // Identifier of the chat in which the Web App is opened; pass 0 if none
+    ChatId int64 `json:"chat_id"`
     // Identifier of the target bot
     BotUserId int64 `json:"bot_user_id"`
-    // The URL from a keyboardButtonTypeWebApp button, inlineQueryResultsButtonTypeWebApp button, an internalLinkTypeSideMenuBot link, or an empty when the bot is opened from the side menu
-    Url string `json:"url"`
+    // Start parameter from internalLinkTypeMainWebApp
+    StartParameter string `json:"start_parameter"`
     // Preferred Web App theme; pass null to use the default theme
     Theme *ThemeParameters `json:"theme"`
-    // Short name of the application; 0-64 English letters, digits, and underscores
+    // Short name of the current application; 0-64 English letters, digits, and underscores
     ApplicationName string `json:"application_name"`
 }
 
-// Returns an HTTPS URL of a Web App to open from the side menu, a keyboardButtonTypeWebApp button, an inlineQueryResultsButtonTypeWebApp button, or an internalLinkTypeSideMenuBot link
+// Returns information needed to open the main Web App of a bot
+func (client *Client) GetMainWebApp(req *GetMainWebAppRequest) (*MainWebApp, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getMainWebApp",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "bot_user_id": req.BotUserId,
+            "start_parameter": req.StartParameter,
+            "theme": req.Theme,
+            "application_name": req.ApplicationName,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMainWebApp(result.Data)
+}
+
+type GetWebAppUrlRequest struct { 
+    // Identifier of the target bot
+    BotUserId int64 `json:"bot_user_id"`
+    // The URL from a keyboardButtonTypeWebApp button, inlineQueryResultsButtonTypeWebApp button, or an empty string when the bot is opened from the side menu
+    Url string `json:"url"`
+    // Preferred Web App theme; pass null to use the default theme
+    Theme *ThemeParameters `json:"theme"`
+    // Short name of the current application; 0-64 English letters, digits, and underscores
+    ApplicationName string `json:"application_name"`
+}
+
+// Returns an HTTPS URL of a Web App to open from the side menu, a keyboardButtonTypeWebApp button, or an inlineQueryResultsButtonTypeWebApp button
 func (client *Client) GetWebAppUrl(req *GetWebAppUrlRequest) (*HttpUrl, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7038,7 +7169,7 @@ type OpenWebAppRequest struct {
     Url string `json:"url"`
     // Preferred Web App theme; pass null to use the default theme
     Theme *ThemeParameters `json:"theme"`
-    // Short name of the application; 0-64 English letters, digits, and underscores
+    // Short name of the current application; 0-64 English letters, digits, and underscores
     ApplicationName string `json:"application_name"`
     // If not 0, the message thread identifier in which the message will be sent
     MessageThreadId int64 `json:"message_thread_id"`
@@ -7131,7 +7262,7 @@ func (client *Client) AnswerWebAppQuery(req *AnswerWebAppQueryRequest) (*SentWeb
 type GetCallbackQueryAnswerRequest struct { 
     // Identifier of the chat with the message
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message from which the query originated
+    // Identifier of the message from which the query originated. The message must not be scheduled
     MessageId int64 `json:"message_id"`
     // Query payload
     Payload CallbackQueryPayload `json:"payload"`
@@ -7721,6 +7852,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeLanguageSettings:
         return UnmarshalInternalLinkTypeLanguageSettings(result.Data)
 
+    case TypeInternalLinkTypeMainWebApp:
+        return UnmarshalInternalLinkTypeMainWebApp(result.Data)
+
     case TypeInternalLinkTypeMessage:
         return UnmarshalInternalLinkTypeMessage(result.Data)
 
@@ -7759,9 +7893,6 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeSettings:
         return UnmarshalInternalLinkTypeSettings(result.Data)
-
-    case TypeInternalLinkTypeSideMenuBot:
-        return UnmarshalInternalLinkTypeSideMenuBot(result.Data)
 
     case TypeInternalLinkTypeStickerSet:
         return UnmarshalInternalLinkTypeStickerSet(result.Data)
@@ -7803,7 +7934,7 @@ type GetExternalLinkInfoRequest struct {
     Link string `json:"link"`
 }
 
-// Returns information about an action to be done when the current user clicks an external link. Don't use this method for links from secret chats if web page preview is disabled in secret chats
+// Returns information about an action to be done when the current user clicks an external link. Don't use this method for links from secret chats if link preview is disabled in secret chats
 func (client *Client) GetExternalLinkInfo(req *GetExternalLinkInfoRequest) (LoginUrlInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -9534,7 +9665,7 @@ type PinChatMessageRequest struct {
     OnlyForSelf bool `json:"only_for_self"`
 }
 
-// Pins a message in a chat; requires can_pin_messages member right if the chat is a basic group or supergroup, or can_edit_messages administrator right if the chat is a channel
+// Pins a message in a chat. A message can be pinned only if messageProperties.can_be_pinned
 func (client *Client) PinChatMessage(req *PinChatMessageRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -10317,6 +10448,32 @@ func (client *Client) ReadChatList(req *ReadChatListRequest) (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+type GetCurrentWeatherRequest struct { 
+    // The location
+    Location *Location `json:"location"`
+}
+
+// Returns the current weather in the given location
+func (client *Client) GetCurrentWeather(req *GetCurrentWeatherRequest) (*CurrentWeather, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getCurrentWeather",
+        },
+        Data: map[string]interface{}{
+            "location": req.Location,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalCurrentWeather(result.Data)
+}
+
 type GetStoryRequest struct { 
     // Identifier of the chat that posted the story
     StorySenderChatId int64 `json:"story_sender_chat_id"`
@@ -10369,7 +10526,7 @@ func (client *Client) GetChatsToSendStories() (*Chats, error) {
 }
 
 type CanSendStoryRequest struct { 
-    // Chat identifier
+    // Chat identifier. Pass Saved Messages chat identifier when posting a story on behalf of the current user
     ChatId int64 `json:"chat_id"`
 }
 
@@ -10416,7 +10573,7 @@ func (client *Client) CanSendStory(req *CanSendStoryRequest) (CanSendStoryResult
 }
 
 type SendStoryRequest struct { 
-    // Identifier of the chat that will post the story
+    // Identifier of the chat that will post the story. Pass Saved Messages chat identifier when posting a story on behalf of the current user
     ChatId int64 `json:"chat_id"`
     // Content of the story
     Content InputStoryContent `json:"content"`
@@ -10428,7 +10585,7 @@ type SendStoryRequest struct {
     PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
     // Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400 for Telegram Premium users, and 86400 otherwise
     ActivePeriod int32 `json:"active_period"`
-    // Full identifier of the original story, which content was used to create the story
+    // Full identifier of the original story, which content was used to create the story; pass null if the story isn't repost of another story
     FromStoryFullId *StoryFullId `json:"from_story_full_id"`
     // Pass true to keep the story accessible after expiration
     IsPostedToChatPage bool `json:"is_posted_to_chat_page"`
@@ -10490,6 +10647,38 @@ func (client *Client) EditStory(req *EditStoryRequest) (*Ok, error) {
             "content": req.Content,
             "areas": req.Areas,
             "caption": req.Caption,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditStoryCoverRequest struct { 
+    // Identifier of the chat that posted the story
+    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    // Identifier of the story to edit
+    StoryId int32 `json:"story_id"`
+    // New timestamp of the frame, which will be used as video thumbnail
+    CoverFrameTimestamp float64 `json:"cover_frame_timestamp"`
+}
+
+// Changes cover of a video story. Can be called only if story.can_be_edited == true and the story isn't being edited now
+func (client *Client) EditStoryCover(req *EditStoryCoverRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editStoryCover",
+        },
+        Data: map[string]interface{}{
+            "story_sender_chat_id": req.StorySenderChatId,
+            "story_id": req.StoryId,
+            "cover_frame_timestamp": req.CoverFrameTimestamp,
         },
     })
     if err != nil {
@@ -10702,7 +10891,7 @@ type GetChatPostedToChatPageStoriesRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns the list of stories that posted by the given chat to its chat page. If from_story_id == 0, then pinned stories are returned first. Then, stories are returned in a reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
+// Returns the list of stories that posted by the given chat to its chat page. If from_story_id == 0, then pinned stories are returned first. Then, stories are returned in reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
 func (client *Client) GetChatPostedToChatPageStories(req *GetChatPostedToChatPageStoriesRequest) (*Stories, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -10734,7 +10923,7 @@ type GetChatArchivedStoriesRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns the list of all stories posted by the given chat; requires can_edit_stories right in the chat. The stories are returned in a reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
+// Returns the list of all stories posted by the given chat; requires can_edit_stories right in the chat. The stories are returned in reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
 func (client *Client) GetChatArchivedStories(req *GetChatArchivedStoriesRequest) (*Stories, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15262,7 +15451,7 @@ func (client *Client) RemoveRecentHashtag(req *RemoveRecentHashtagRequest) (*Ok,
     return UnmarshalOk(result.Data)
 }
 
-type GetWebPagePreviewRequest struct { 
+type GetLinkPreviewRequest struct { 
     // Message text with formatting
     Text *FormattedText `json:"text"`
     // Options to be used for generation of the link preview; pass null to use default link preview options
@@ -15270,10 +15459,10 @@ type GetWebPagePreviewRequest struct {
 }
 
 // Returns a link preview by the text of a message. Do not call this function too often. Returns a 404 error if the text has no link preview
-func (client *Client) GetWebPagePreview(req *GetWebPagePreviewRequest) (*WebPage, error) {
+func (client *Client) GetLinkPreview(req *GetLinkPreviewRequest) (*LinkPreview, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getWebPagePreview",
+            Type: "getLinkPreview",
         },
         Data: map[string]interface{}{
             "text": req.Text,
@@ -15288,7 +15477,7 @@ func (client *Client) GetWebPagePreview(req *GetWebPagePreviewRequest) (*WebPage
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalWebPage(result.Data)
+    return UnmarshalLinkPreview(result.Data)
 }
 
 type GetWebPageInstantViewRequest struct { 
@@ -16543,6 +16732,192 @@ func (client *Client) SendWebAppCustomRequest(req *SendWebAppCustomRequestReques
     return UnmarshalCustomRequestResult(result.Data)
 }
 
+type GetBotMediaPreviewsRequest struct { 
+    // Identifier of the target bot. The bot must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+}
+
+// Returns the list of media previews of a bot
+func (client *Client) GetBotMediaPreviews(req *GetBotMediaPreviewsRequest) (*BotMediaPreviews, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getBotMediaPreviews",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBotMediaPreviews(result.Data)
+}
+
+type GetBotMediaPreviewInfoRequest struct { 
+    // Identifier of the target bot. The bot must be owned and must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+    // A two-letter ISO 639-1 language code for which to get previews. If empty, then default previews are returned
+    LanguageCode string `json:"language_code"`
+}
+
+// Returns the list of media previews for the given language and the list of languages for which the bot has dedicated previews
+func (client *Client) GetBotMediaPreviewInfo(req *GetBotMediaPreviewInfoRequest) (*BotMediaPreviewInfo, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getBotMediaPreviewInfo",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "language_code": req.LanguageCode,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBotMediaPreviewInfo(result.Data)
+}
+
+type AddBotMediaPreviewRequest struct { 
+    // Identifier of the target bot. The bot must be owned and must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+    // A two-letter ISO 639-1 language code for which preview is added. If empty, then the preview will be shown to all users for whose languages there are no dedicated previews. If non-empty, then there must be an official language pack of the same name, which is returned by getLocalizationTargetInfo
+    LanguageCode string `json:"language_code"`
+    // Content of the added preview
+    Content InputStoryContent `json:"content"`
+}
+
+// Adds a new media preview to the beginning of the list of media previews of a bot. Returns the added preview after addition is completed server-side. The total number of previews must not exceed getOption("bot_media_preview_count_max") for the given language
+func (client *Client) AddBotMediaPreview(req *AddBotMediaPreviewRequest) (*BotMediaPreview, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addBotMediaPreview",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "language_code": req.LanguageCode,
+            "content": req.Content,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBotMediaPreview(result.Data)
+}
+
+type EditBotMediaPreviewRequest struct { 
+    // Identifier of the target bot. The bot must be owned and must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+    // Language code of the media preview to edit
+    LanguageCode string `json:"language_code"`
+    // File identifier of the media to replace
+    FileId int32 `json:"file_id"`
+    // Content of the new preview
+    Content InputStoryContent `json:"content"`
+}
+
+// Replaces media preview in the list of media previews of a bot. Returns the new preview after edit is completed server-side
+func (client *Client) EditBotMediaPreview(req *EditBotMediaPreviewRequest) (*BotMediaPreview, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editBotMediaPreview",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "language_code": req.LanguageCode,
+            "file_id": req.FileId,
+            "content": req.Content,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBotMediaPreview(result.Data)
+}
+
+type ReorderBotMediaPreviewsRequest struct { 
+    // Identifier of the target bot. The bot must be owned and must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+    // Language code of the media previews to reorder
+    LanguageCode string `json:"language_code"`
+    // File identifiers of the media in the new order
+    FileIds []int32 `json:"file_ids"`
+}
+
+// Changes order of media previews in the list of media previews of a bot
+func (client *Client) ReorderBotMediaPreviews(req *ReorderBotMediaPreviewsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "reorderBotMediaPreviews",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "language_code": req.LanguageCode,
+            "file_ids": req.FileIds,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteBotMediaPreviewsRequest struct { 
+    // Identifier of the target bot. The bot must be owned and must have the main Web App
+    BotUserId int64 `json:"bot_user_id"`
+    // Language code of the media previews to delete
+    LanguageCode string `json:"language_code"`
+    // File identifiers of the media to delete
+    FileIds []int32 `json:"file_ids"`
+}
+
+// Delete media previews from the list of media previews of a bot
+func (client *Client) DeleteBotMediaPreviews(req *DeleteBotMediaPreviewsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteBotMediaPreviews",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "language_code": req.LanguageCode,
+            "file_ids": req.FileIds,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type SetBotNameRequest struct { 
     // Identifier of the target bot
     BotUserId int64 `json:"bot_user_id"`
@@ -17518,7 +17893,7 @@ func (client *Client) ToggleSupergroupIsBroadcastGroup(req *ToggleSupergroupIsBr
 type ReportSupergroupSpamRequest struct { 
     // Supergroup identifier
     SupergroupId int64 `json:"supergroup_id"`
-    // Identifiers of messages to report
+    // Identifiers of messages to report. Use messageProperties.can_be_reported to check whether the message can be reported
     MessageIds []int64 `json:"message_ids"`
 }
 
@@ -17547,7 +17922,7 @@ func (client *Client) ReportSupergroupSpam(req *ReportSupergroupSpamRequest) (*O
 type ReportSupergroupAntiSpamFalsePositiveRequest struct { 
     // Supergroup identifier
     SupergroupId int64 `json:"supergroup_id"`
-    // Identifier of the erroneously deleted message
+    // Identifier of the erroneously deleted message from chatEventMessageDeleted
     MessageId int64 `json:"message_id"`
 }
 
@@ -17764,7 +18139,7 @@ type SendPaymentFormRequest struct {
     OrderInfoId string `json:"order_info_id"`
     // Identifier of a chosen shipping option, if applicable
     ShippingOptionId string `json:"shipping_option_id"`
-    // The credentials chosen by user for payment; pass null for a payment in Telegram stars
+    // The credentials chosen by user for payment; pass null for a payment in Telegram Stars
     Credentials InputCredentials `json:"credentials"`
     // Chosen by the user amount of tip in the smallest units of the currency
     TipAmount int64 `json:"tip_amount"`
@@ -18904,7 +19279,7 @@ func (client *Client) RemoveChatActionBar(req *RemoveChatActionBarRequest) (*Ok,
 type ReportChatRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifiers of reported messages; may be empty to report the whole chat
+    // Identifiers of reported messages; may be empty to report the whole chat. Use messageProperties.can_be_reported to check whether the message can be reported
     MessageIds []int64 `json:"message_ids"`
     // The reason for reporting the chat
     Reason ReportReason `json:"reason"`
@@ -18980,7 +19355,7 @@ type ReportMessageReactionsRequest struct {
     SenderId MessageSender `json:"sender_id"`
 }
 
-// Reports reactions set on a message to the Telegram moderators. Reactions on a message can be reported only if message.can_report_reactions
+// Reports reactions set on a message to the Telegram moderators. Reactions on a message can be reported only if messageProperties.can_report_reactions
 func (client *Client) ReportMessageReactions(req *ReportMessageReactionsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19094,13 +19469,13 @@ func (client *Client) GetChatRevenueTransactions(req *GetChatRevenueTransactions
 }
 
 type GetStarRevenueStatisticsRequest struct { 
-    // Identifier of the owner of the Telegram stars; can be identifier of an owned bot, or identifier of an owned channel chat
+    // Identifier of the owner of the Telegram Stars; can be identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
     OwnerId MessageSender `json:"owner_id"`
     // Pass true if a dark theme is used by the application
     IsDark bool `json:"is_dark"`
 }
 
-// Returns detailed Telegram star revenue statistics
+// Returns detailed Telegram Star revenue statistics
 func (client *Client) GetStarRevenueStatistics(req *GetStarRevenueStatisticsRequest) (*StarRevenueStatistics, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19123,15 +19498,15 @@ func (client *Client) GetStarRevenueStatistics(req *GetStarRevenueStatisticsRequ
 }
 
 type GetStarWithdrawalUrlRequest struct { 
-    // Identifier of the owner of the Telegram stars; can be identifier of an owned bot, or identifier of an owned channel chat
+    // Identifier of the owner of the Telegram Stars; can be identifier of an owned bot, or identifier of an owned channel chat
     OwnerId MessageSender `json:"owner_id"`
-    // The number of Telegram stars to withdraw. Must be at least getOption("star_withdrawal_count_min")
+    // The number of Telegram Stars to withdraw. Must be at least getOption("star_withdrawal_count_min")
     StarCount int64 `json:"star_count"`
     // The 2-step verification password of the current user
     Password string `json:"password"`
 }
 
-// Returns a URL for Telegram star withdrawal
+// Returns a URL for Telegram Star withdrawal
 func (client *Client) GetStarWithdrawalUrl(req *GetStarWithdrawalUrlRequest) (*HttpUrl, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19155,11 +19530,11 @@ func (client *Client) GetStarWithdrawalUrl(req *GetStarWithdrawalUrlRequest) (*H
 }
 
 type GetStarAdAccountUrlRequest struct { 
-    // Identifier of the owner of the Telegram stars; can be identifier of an owned bot, or identifier of an owned channel chat
+    // Identifier of the owner of the Telegram Stars; can be identifier of an owned bot, or identifier of an owned channel chat
     OwnerId MessageSender `json:"owner_id"`
 }
 
-// Returns a URL for a Telegram Ad platform account that can be used to set up advertisments for the chat paid in the owned Telegram stars
+// Returns a URL for a Telegram Ad platform account that can be used to set up advertisements for the chat paid in the owned Telegram Stars
 func (client *Client) GetStarAdAccountUrl(req *GetStarAdAccountUrlRequest) (*HttpUrl, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19227,7 +19602,7 @@ type GetMessageStatisticsRequest struct {
     IsDark bool `json:"is_dark"`
 }
 
-// Returns detailed statistics about a message. Can be used only if message.can_get_statistics == true
+// Returns detailed statistics about a message. Can be used only if messageProperties.can_get_statistics == true
 func (client *Client) GetMessageStatistics(req *GetMessageStatisticsRequest) (*MessageStatistics, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19261,7 +19636,7 @@ type GetMessagePublicForwardsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns forwarded copies of a channel message to different public channels and public reposts as a story. Can be used only if message.can_get_statistics == true. For optimal performance, the number of returned messages and stories is chosen by TDLib
+// Returns forwarded copies of a channel message to different public channels and public reposts as a story. Can be used only if messageProperties.can_get_statistics == true. For optimal performance, the number of returned messages and stories is chosen by TDLib
 func (client *Client) GetMessagePublicForwards(req *GetMessagePublicForwardsRequest) (*PublicForwards, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -20973,7 +21348,7 @@ func (client *Client) GetPremiumGiveawayInfo(req *GetPremiumGiveawayInfoRequest)
    }
 }
 
-// Returns available options for Telegram stars purchase
+// Returns available options for Telegram Stars purchase
 func (client *Client) GetStarPaymentOptions() (*StarPaymentOptions, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -20992,8 +21367,34 @@ func (client *Client) GetStarPaymentOptions() (*StarPaymentOptions, error) {
     return UnmarshalStarPaymentOptions(result.Data)
 }
 
+type GetStarGiftPaymentOptionsRequest struct { 
+    // Identifier of the user that will receive Telegram Stars; pass 0 to get options for an unspecified user
+    UserId int64 `json:"user_id"`
+}
+
+// Returns available options for Telegram Stars gifting
+func (client *Client) GetStarGiftPaymentOptions(req *GetStarGiftPaymentOptionsRequest) (*StarPaymentOptions, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStarGiftPaymentOptions",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarPaymentOptions(result.Data)
+}
+
 type GetStarTransactionsRequest struct { 
-    // Identifier of the owner of the Telegram stars; can be the identifier of the current user, identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_revenue_statistics == true
+    // Identifier of the owner of the Telegram Stars; can be the identifier of the current user, identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
     OwnerId MessageSender `json:"owner_id"`
     // Direction of the transactions to receive; pass null to get all transactions
     Direction StarTransactionDirection `json:"direction"`
@@ -21003,7 +21404,7 @@ type GetStarTransactionsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns the list of Telegram star transactions for the specified owner
+// Returns the list of Telegram Star transactions for the specified owner
 func (client *Client) GetStarTransactions(req *GetStarTransactionsRequest) (*StarTransactions, error) {
     result, err := client.Send(Request{
         meta: meta{
