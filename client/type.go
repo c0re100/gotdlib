@@ -24,6 +24,8 @@ const (
     ClassChatPhotoStickerType = "ChatPhotoStickerType"
     ClassInputChatPhoto = "InputChatPhoto"
     ClassStarTransactionDirection = "StarTransactionDirection"
+    ClassBotTransactionPurpose = "BotTransactionPurpose"
+    ClassChannelTransactionPurpose = "ChannelTransactionPurpose"
     ClassStarTransactionPartner = "StarTransactionPartner"
     ClassPremiumGiveawayParticipantStatus = "PremiumGiveawayParticipantStatus"
     ClassPremiumGiveawayInfo = "PremiumGiveawayInfo"
@@ -227,6 +229,9 @@ const (
     ClassChatPhotos = "ChatPhotos"
     ClassChatPermissions = "ChatPermissions"
     ClassChatAdministratorRights = "ChatAdministratorRights"
+    ClassStarSubscriptionPricing = "StarSubscriptionPricing"
+    ClassStarSubscription = "StarSubscription"
+    ClassStarSubscriptions = "StarSubscriptions"
     ClassProductInfo = "ProductInfo"
     ClassPremiumPaymentOption = "PremiumPaymentOption"
     ClassPremiumStatePaymentOption = "PremiumStatePaymentOption"
@@ -258,6 +263,7 @@ const (
     ClassChatInviteLinkCounts = "ChatInviteLinkCounts"
     ClassChatInviteLinkMember = "ChatInviteLinkMember"
     ClassChatInviteLinkMembers = "ChatInviteLinkMembers"
+    ClassChatInviteLinkSubscriptionInfo = "ChatInviteLinkSubscriptionInfo"
     ClassChatInviteLinkInfo = "ChatInviteLinkInfo"
     ClassChatJoinRequest = "ChatJoinRequest"
     ClassChatJoinRequests = "ChatJoinRequests"
@@ -273,6 +279,7 @@ const (
     ClassMessageViewer = "MessageViewer"
     ClassMessageViewers = "MessageViewers"
     ClassForwardSource = "ForwardSource"
+    ClassPaidReactor = "PaidReactor"
     ClassMessageForwardInfo = "MessageForwardInfo"
     ClassMessageImportInfo = "MessageImportInfo"
     ClassMessageReplyInfo = "MessageReplyInfo"
@@ -687,6 +694,9 @@ const (
     TypeInputChatPhotoSticker = "inputChatPhotoSticker"
     TypeChatPermissions = "chatPermissions"
     TypeChatAdministratorRights = "chatAdministratorRights"
+    TypeStarSubscriptionPricing = "starSubscriptionPricing"
+    TypeStarSubscription = "starSubscription"
+    TypeStarSubscriptions = "starSubscriptions"
     TypeProductInfo = "productInfo"
     TypePremiumPaymentOption = "premiumPaymentOption"
     TypePremiumStatePaymentOption = "premiumStatePaymentOption"
@@ -697,12 +707,18 @@ const (
     TypeStarPaymentOptions = "starPaymentOptions"
     TypeStarTransactionDirectionIncoming = "starTransactionDirectionIncoming"
     TypeStarTransactionDirectionOutgoing = "starTransactionDirectionOutgoing"
+    TypeBotTransactionPurposePaidMedia = "botTransactionPurposePaidMedia"
+    TypeBotTransactionPurposeInvoicePayment = "botTransactionPurposeInvoicePayment"
+    TypeChannelTransactionPurposePaidMedia = "channelTransactionPurposePaidMedia"
+    TypeChannelTransactionPurposeJoin = "channelTransactionPurposeJoin"
+    TypeChannelTransactionPurposeReaction = "channelTransactionPurposeReaction"
     TypeStarTransactionPartnerTelegram = "starTransactionPartnerTelegram"
     TypeStarTransactionPartnerAppStore = "starTransactionPartnerAppStore"
     TypeStarTransactionPartnerGooglePlay = "starTransactionPartnerGooglePlay"
     TypeStarTransactionPartnerFragment = "starTransactionPartnerFragment"
     TypeStarTransactionPartnerTelegramAds = "starTransactionPartnerTelegramAds"
     TypeStarTransactionPartnerBot = "starTransactionPartnerBot"
+    TypeStarTransactionPartnerBusiness = "starTransactionPartnerBusiness"
     TypeStarTransactionPartnerChannel = "starTransactionPartnerChannel"
     TypeStarTransactionPartnerUser = "starTransactionPartnerUser"
     TypeStarTransactionPartnerUnsupported = "starTransactionPartnerUnsupported"
@@ -760,6 +776,7 @@ const (
     TypeInviteLinkChatTypeBasicGroup = "inviteLinkChatTypeBasicGroup"
     TypeInviteLinkChatTypeSupergroup = "inviteLinkChatTypeSupergroup"
     TypeInviteLinkChatTypeChannel = "inviteLinkChatTypeChannel"
+    TypeChatInviteLinkSubscriptionInfo = "chatInviteLinkSubscriptionInfo"
     TypeChatInviteLinkInfo = "chatInviteLinkInfo"
     TypeChatJoinRequest = "chatJoinRequest"
     TypeChatJoinRequests = "chatJoinRequests"
@@ -791,6 +808,8 @@ const (
     TypeForwardSource = "forwardSource"
     TypeReactionTypeEmoji = "reactionTypeEmoji"
     TypeReactionTypeCustomEmoji = "reactionTypeCustomEmoji"
+    TypeReactionTypePaid = "reactionTypePaid"
+    TypePaidReactor = "paidReactor"
     TypeMessageForwardInfo = "messageForwardInfo"
     TypeMessageImportInfo = "messageImportInfo"
     TypeMessageReplyInfo = "messageReplyInfo"
@@ -1512,6 +1531,7 @@ const (
     TypeChatEventIsAllHistoryAvailableToggled = "chatEventIsAllHistoryAvailableToggled"
     TypeChatEventHasAggressiveAntiSpamEnabledToggled = "chatEventHasAggressiveAntiSpamEnabledToggled"
     TypeChatEventSignMessagesToggled = "chatEventSignMessagesToggled"
+    TypeChatEventShowMessageSenderToggled = "chatEventShowMessageSenderToggled"
     TypeChatEventInviteLinkEdited = "chatEventInviteLinkEdited"
     TypeChatEventInviteLinkRevoked = "chatEventInviteLinkRevoked"
     TypeChatEventInviteLinkDeleted = "chatEventInviteLinkDeleted"
@@ -1620,6 +1640,7 @@ const (
     TypeTelegramPaymentPurposePremiumGiveaway = "telegramPaymentPurposePremiumGiveaway"
     TypeTelegramPaymentPurposeStars = "telegramPaymentPurposeStars"
     TypeTelegramPaymentPurposeGiftedStars = "telegramPaymentPurposeGiftedStars"
+    TypeTelegramPaymentPurposeJoinChat = "telegramPaymentPurposeJoinChat"
     TypeDeviceTokenFirebaseCloudMessaging = "deviceTokenFirebaseCloudMessaging"
     TypeDeviceTokenApplePush = "deviceTokenApplePush"
     TypeDeviceTokenApplePushVoIP = "deviceTokenApplePushVoIP"
@@ -1805,6 +1826,7 @@ const (
     TypeInternalLinkTypeBotStart = "internalLinkTypeBotStart"
     TypeInternalLinkTypeBotStartInGroup = "internalLinkTypeBotStartInGroup"
     TypeInternalLinkTypeBusinessChat = "internalLinkTypeBusinessChat"
+    TypeInternalLinkTypeBuyStars = "internalLinkTypeBuyStars"
     TypeInternalLinkTypeChangePhoneNumber = "internalLinkTypeChangePhoneNumber"
     TypeInternalLinkTypeChatBoost = "internalLinkTypeChatBoost"
     TypeInternalLinkTypeChatFolderInvite = "internalLinkTypeChatFolderInvite"
@@ -1922,6 +1944,7 @@ const (
     TypeSuggestedActionGiftPremiumForChristmas = "suggestedActionGiftPremiumForChristmas"
     TypeSuggestedActionSetBirthdate = "suggestedActionSetBirthdate"
     TypeSuggestedActionExtendPremium = "suggestedActionExtendPremium"
+    TypeSuggestedActionExtendStarSubscriptions = "suggestedActionExtendStarSubscriptions"
     TypeCount = "count"
     TypeText = "text"
     TypeSeconds = "seconds"
@@ -2093,6 +2116,7 @@ const (
     TypeUpdateAvailableMessageEffects = "updateAvailableMessageEffects"
     TypeUpdateDefaultReactionType = "updateDefaultReactionType"
     TypeUpdateSavedMessagesTags = "updateSavedMessagesTags"
+    TypeUpdateActiveLiveLocationMessages = "updateActiveLiveLocationMessages"
     TypeUpdateOwnedStarCount = "updateOwnedStarCount"
     TypeUpdateChatRevenueAmount = "updateChatRevenueAmount"
     TypeUpdateStarRevenueStatus = "updateStarRevenueStatus"
@@ -2223,6 +2247,16 @@ type InputChatPhoto interface {
 // Describes direction of a transaction with Telegram Stars
 type StarTransactionDirection interface {
     StarTransactionDirectionType() string
+}
+
+// Describes purpose of a transaction with a bot
+type BotTransactionPurpose interface {
+    BotTransactionPurposeType() string
+}
+
+// Describes purpose of a transaction with a channel
+type ChannelTransactionPurpose interface {
+    ChannelTransactionPurposeType() string
 }
 
 // Describes source or recipient of a transaction with Telegram Stars
@@ -7122,6 +7156,97 @@ func (*ChatAdministratorRights) GetType() string {
     return TypeChatAdministratorRights
 }
 
+// Describes subscription plan paid in Telegram Stars
+type StarSubscriptionPricing struct {
+    meta
+    // The number of seconds between consecutive Telegram Star debiting
+    Period int32 `json:"period"`
+    // The amount of Telegram Stars that must be paid for each period
+    StarCount int64 `json:"star_count"`
+}
+
+func (entity *StarSubscriptionPricing) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarSubscriptionPricing
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarSubscriptionPricing) GetClass() string {
+    return ClassStarSubscriptionPricing
+}
+
+func (*StarSubscriptionPricing) GetType() string {
+    return TypeStarSubscriptionPricing
+}
+
+// Contains information about subscription to a channel chat paid in Telegram Stars
+type StarSubscription struct {
+    meta
+    // Unique identifier of the subscription
+    Id string `json:"id"`
+    // Identifier of the channel chat that is subscribed
+    ChatId int64 `json:"chat_id"`
+    // Point in time (Unix timestamp) when the subscription will expire or expired
+    ExpirationDate int32 `json:"expiration_date"`
+    // True, if the subscription is active and the user can use the method reuseStarSubscription to join the subscribed chat again
+    CanReuse bool `json:"can_reuse"`
+    // True, if the subscription was canceled
+    IsCanceled bool `json:"is_canceled"`
+    // True, if the subscription expires soon and there are no enough Telegram Stars on the user's balance to extend it
+    IsExpiring bool `json:"is_expiring"`
+    // The invite link that can be used to renew the subscription if it has been expired; may be empty, if the link isn't available anymore
+    InviteLink string `json:"invite_link"`
+    // The subscription plan
+    Pricing *StarSubscriptionPricing `json:"pricing"`
+}
+
+func (entity *StarSubscription) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarSubscription
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarSubscription) GetClass() string {
+    return ClassStarSubscription
+}
+
+func (*StarSubscription) GetType() string {
+    return TypeStarSubscription
+}
+
+// Represents a list of Telegram Star subscriptions
+type StarSubscriptions struct {
+    meta
+    // The amount of owned Telegram Stars
+    StarCount int64 `json:"star_count"`
+    // List of subbscriptions for Telegram Stars
+    Subscriptions []*StarSubscription `json:"subscriptions"`
+    // The number of Telegram Stars required to buy to extend subscriptions expiring soon
+    RequiredStarCount int64 `json:"required_star_count"`
+    // The offset for the next request. If empty, then there are no more results
+    NextOffset string `json:"next_offset"`
+}
+
+func (entity *StarSubscriptions) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarSubscriptions
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarSubscriptions) GetClass() string {
+    return ClassStarSubscriptions
+}
+
+func (*StarSubscriptions) GetType() string {
+    return TypeStarSubscriptions
+}
+
 // Contains information about a product that can be paid with invoice
 type ProductInfo struct {
     meta
@@ -7462,6 +7587,180 @@ func (*StarTransactionDirectionOutgoing) StarTransactionDirectionType() string {
     return TypeStarTransactionDirectionOutgoing
 }
 
+// Paid media were bought
+type BotTransactionPurposePaidMedia struct {
+    meta
+    // The bought media if the trancastion wasn't refunded
+    Media []PaidMedia `json:"media"`
+}
+
+func (entity *BotTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub BotTransactionPurposePaidMedia
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*BotTransactionPurposePaidMedia) GetClass() string {
+    return ClassBotTransactionPurpose
+}
+
+func (*BotTransactionPurposePaidMedia) GetType() string {
+    return TypeBotTransactionPurposePaidMedia
+}
+
+func (*BotTransactionPurposePaidMedia) BotTransactionPurposeType() string {
+    return TypeBotTransactionPurposePaidMedia
+}
+
+func (botTransactionPurposePaidMedia *BotTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        Media []json.RawMessage `json:"media"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    botTransactionPurposePaidMedia.Media = fieldMedia
+
+    return nil
+}
+
+// User bought a product from the bot
+type BotTransactionPurposeInvoicePayment struct {
+    meta
+    // Information about the bought product; may be null if not applicable
+    ProductInfo *ProductInfo `json:"product_info"`
+    // Invoice payload; for bots only
+    InvoicePayload []byte `json:"invoice_payload"`
+}
+
+func (entity *BotTransactionPurposeInvoicePayment) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub BotTransactionPurposeInvoicePayment
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*BotTransactionPurposeInvoicePayment) GetClass() string {
+    return ClassBotTransactionPurpose
+}
+
+func (*BotTransactionPurposeInvoicePayment) GetType() string {
+    return TypeBotTransactionPurposeInvoicePayment
+}
+
+func (*BotTransactionPurposeInvoicePayment) BotTransactionPurposeType() string {
+    return TypeBotTransactionPurposeInvoicePayment
+}
+
+// Paid media were bought
+type ChannelTransactionPurposePaidMedia struct {
+    meta
+    // Identifier of the corresponding message with paid media; can be an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+    // The bought media if the trancastion wasn't refunded
+    Media []PaidMedia `json:"media"`
+}
+
+func (entity *ChannelTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChannelTransactionPurposePaidMedia
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChannelTransactionPurposePaidMedia) GetClass() string {
+    return ClassChannelTransactionPurpose
+}
+
+func (*ChannelTransactionPurposePaidMedia) GetType() string {
+    return TypeChannelTransactionPurposePaidMedia
+}
+
+func (*ChannelTransactionPurposePaidMedia) ChannelTransactionPurposeType() string {
+    return TypeChannelTransactionPurposePaidMedia
+}
+
+func (channelTransactionPurposePaidMedia *ChannelTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        MessageId int64 `json:"message_id"`
+        Media []json.RawMessage `json:"media"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    channelTransactionPurposePaidMedia.MessageId = tmp.MessageId
+
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    channelTransactionPurposePaidMedia.Media = fieldMedia
+
+    return nil
+}
+
+// User joined the channel and subscribed to regular payments in Telegram Stars
+type ChannelTransactionPurposeJoin struct {
+    meta
+    // The number of seconds between consecutive Telegram Star debiting
+    Period int32 `json:"period"`
+}
+
+func (entity *ChannelTransactionPurposeJoin) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChannelTransactionPurposeJoin
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChannelTransactionPurposeJoin) GetClass() string {
+    return ClassChannelTransactionPurpose
+}
+
+func (*ChannelTransactionPurposeJoin) GetType() string {
+    return TypeChannelTransactionPurposeJoin
+}
+
+func (*ChannelTransactionPurposeJoin) ChannelTransactionPurposeType() string {
+    return TypeChannelTransactionPurposeJoin
+}
+
+// User paid for a reaction
+type ChannelTransactionPurposeReaction struct {
+    meta
+    // Identifier of the reacted message; can be an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+}
+
+func (entity *ChannelTransactionPurposeReaction) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChannelTransactionPurposeReaction
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChannelTransactionPurposeReaction) GetClass() string {
+    return ClassChannelTransactionPurpose
+}
+
+func (*ChannelTransactionPurposeReaction) GetType() string {
+    return TypeChannelTransactionPurposeReaction
+}
+
+func (*ChannelTransactionPurposeReaction) ChannelTransactionPurposeType() string {
+    return TypeChannelTransactionPurposeReaction
+}
+
 // The transaction is a transaction with Telegram through a bot
 type StarTransactionPartnerTelegram struct{
     meta
@@ -7608,12 +7907,10 @@ func (*StarTransactionPartnerTelegramAds) StarTransactionPartnerType() string {
 // The transaction is a transaction with a bot
 type StarTransactionPartnerBot struct {
     meta
-    // Identifier of the bot for the user, or the user for the bot
+    // Identifier of the bot
     UserId int64 `json:"user_id"`
-    // Information about the bought product; may be null if not applicable
-    ProductInfo *ProductInfo `json:"product_info"`
-    // Invoice payload; for bots only
-    InvoicePayload []byte `json:"invoice_payload"`
+    // Purpose of the transaction
+    Purpose BotTransactionPurpose `json:"purpose"`
 }
 
 func (entity *StarTransactionPartnerBot) MarshalJSON() ([]byte, error) {
@@ -7636,15 +7933,80 @@ func (*StarTransactionPartnerBot) StarTransactionPartnerType() string {
     return TypeStarTransactionPartnerBot
 }
 
+func (starTransactionPartnerBot *StarTransactionPartnerBot) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        UserId int64 `json:"user_id"`
+        Purpose json.RawMessage `json:"purpose"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    starTransactionPartnerBot.UserId = tmp.UserId
+
+    fieldPurpose, _ := UnmarshalBotTransactionPurpose(tmp.Purpose)
+    starTransactionPartnerBot.Purpose = fieldPurpose
+
+    return nil
+}
+
+// The transaction is a transaction with a business account
+type StarTransactionPartnerBusiness struct {
+    meta
+    // Identifier of the business account user
+    UserId int64 `json:"user_id"`
+    // The bought media if the trancastion wasn't refunded
+    Media []PaidMedia `json:"media"`
+}
+
+func (entity *StarTransactionPartnerBusiness) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionPartnerBusiness
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionPartnerBusiness) GetClass() string {
+    return ClassStarTransactionPartner
+}
+
+func (*StarTransactionPartnerBusiness) GetType() string {
+    return TypeStarTransactionPartnerBusiness
+}
+
+func (*StarTransactionPartnerBusiness) StarTransactionPartnerType() string {
+    return TypeStarTransactionPartnerBusiness
+}
+
+func (starTransactionPartnerBusiness *StarTransactionPartnerBusiness) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        UserId int64 `json:"user_id"`
+        Media []json.RawMessage `json:"media"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    starTransactionPartnerBusiness.UserId = tmp.UserId
+
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    starTransactionPartnerBusiness.Media = fieldMedia
+
+    return nil
+}
+
 // The transaction is a transaction with a channel chat
 type StarTransactionPartnerChannel struct {
     meta
     // Identifier of the chat
     ChatId int64 `json:"chat_id"`
-    // Identifier of the corresponding message with paid media; can be an identifier of a deleted message
-    PaidMediaMessageId int64 `json:"paid_media_message_id"`
-    // Information about the bought media
-    Media []PaidMedia `json:"media"`
+    // Purpose of the transaction
+    Purpose ChannelTransactionPurpose `json:"purpose"`
 }
 
 func (entity *StarTransactionPartnerChannel) MarshalJSON() ([]byte, error) {
@@ -7670,8 +8032,7 @@ func (*StarTransactionPartnerChannel) StarTransactionPartnerType() string {
 func (starTransactionPartnerChannel *StarTransactionPartnerChannel) UnmarshalJSON(data []byte) error {
     var tmp struct {
         ChatId int64 `json:"chat_id"`
-        PaidMediaMessageId int64 `json:"paid_media_message_id"`
-        Media []json.RawMessage `json:"media"`
+        Purpose json.RawMessage `json:"purpose"`
     }
 
     err := json.Unmarshal(data, &tmp)
@@ -7680,10 +8041,9 @@ func (starTransactionPartnerChannel *StarTransactionPartnerChannel) UnmarshalJSO
     }
 
     starTransactionPartnerChannel.ChatId = tmp.ChatId
-    starTransactionPartnerChannel.PaidMediaMessageId = tmp.PaidMediaMessageId
 
-    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
-    starTransactionPartnerChannel.Media = fieldMedia
+    fieldPurpose, _ := UnmarshalChannelTransactionPurpose(tmp.Purpose)
+    starTransactionPartnerChannel.Purpose = fieldPurpose
 
     return nil
 }
@@ -8378,6 +8738,8 @@ type BotInfo struct {
     MenuButton *BotMenuButton `json:"menu_button"`
     // List of the bot commands
     Commands []*BotCommand `json:"commands"`
+    // The HTTP link to the privacy policy of the bot. If empty, then /privacy command must be used if supported by the bot. If the command isn't supported, then https://telegram.org/privacy-tpa must be opened
+    PrivacyPolicyUrl string `json:"privacy_policy_url"`
     // Default administrator rights for adding the bot to basic group and supergroup chats; may be null
     DefaultGroupAdministratorRights *ChatAdministratorRights `json:"default_group_administrator_rights"`
     // Default administrator rights for adding the bot to channels; may be null
@@ -8418,6 +8780,7 @@ func (botInfo *BotInfo) UnmarshalJSON(data []byte) error {
         Animation *Animation `json:"animation"`
         MenuButton *BotMenuButton `json:"menu_button"`
         Commands []*BotCommand `json:"commands"`
+        PrivacyPolicyUrl string `json:"privacy_policy_url"`
         DefaultGroupAdministratorRights *ChatAdministratorRights `json:"default_group_administrator_rights"`
         DefaultChannelAdministratorRights *ChatAdministratorRights `json:"default_channel_administrator_rights"`
         HasMediaPreviews bool `json:"has_media_previews"`
@@ -8438,6 +8801,7 @@ func (botInfo *BotInfo) UnmarshalJSON(data []byte) error {
     botInfo.Animation = tmp.Animation
     botInfo.MenuButton = tmp.MenuButton
     botInfo.Commands = tmp.Commands
+    botInfo.PrivacyPolicyUrl = tmp.PrivacyPolicyUrl
     botInfo.DefaultGroupAdministratorRights = tmp.DefaultGroupAdministratorRights
     botInfo.DefaultChannelAdministratorRights = tmp.DefaultChannelAdministratorRights
     botInfo.HasMediaPreviews = tmp.HasMediaPreviews
@@ -8736,8 +9100,10 @@ func (*ChatMemberStatusAdministrator) ChatMemberStatusType() string {
 }
 
 // The user is a member of the chat, without any additional privileges or restrictions
-type ChatMemberStatusMember struct{
+type ChatMemberStatusMember struct {
     meta
+    // Point in time (Unix timestamp) when the user will be removed from the chat because of the expired subscription; 0 if never. Ignored in setChatMemberStatus
+    MemberUntilDate int32 `json:"member_until_date"`
 }
 
 func (entity *ChatMemberStatusMember) MarshalJSON() ([]byte, error) {
@@ -9326,10 +9692,14 @@ type ChatInviteLink struct {
     EditDate int32 `json:"edit_date"`
     // Point in time (Unix timestamp) when the link will expire; 0 if never
     ExpirationDate int32 `json:"expiration_date"`
+    // Information about subscription plan that is applied to the users joining the chat by the link; may be null if the link doesn't require subscription
+    SubscriptionPricing *StarSubscriptionPricing `json:"subscription_pricing"`
     // The maximum number of members, which can join the chat using the link simultaneously; 0 if not limited. Always 0 if the link requires approval
     MemberLimit int32 `json:"member_limit"`
     // Number of chat members, which joined the chat using the link
     MemberCount int32 `json:"member_count"`
+    // Number of chat members, which joined the chat using the link, but have already left because of expired subscription; for subscription links only
+    ExpiredMemberCount int32 `json:"expired_member_count"`
     // Number of pending join requests created using this link
     PendingJoinRequestCount int32 `json:"pending_join_request_count"`
     // True, if the link only creates join request. If true, total number of joining members will be unlimited
@@ -9560,6 +9930,33 @@ func (*InviteLinkChatTypeChannel) InviteLinkChatTypeType() string {
     return TypeInviteLinkChatTypeChannel
 }
 
+// Contains information about subscription plan that must be paid by the user to use a chat invite link
+type ChatInviteLinkSubscriptionInfo struct {
+    meta
+    // Information about subscription plan that must be paid by the user to use the link
+    Pricing *StarSubscriptionPricing `json:"pricing"`
+    // True, if the user has already paid for the subscription and can use joinChatByInviteLink to join the subscribed chat again
+    CanReuse bool `json:"can_reuse"`
+    // Identifier of the payment form to use for subscription payment; 0 if the subscription can't be paid
+    FormId JsonInt64 `json:"form_id"`
+}
+
+func (entity *ChatInviteLinkSubscriptionInfo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatInviteLinkSubscriptionInfo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatInviteLinkSubscriptionInfo) GetClass() string {
+    return ClassChatInviteLinkSubscriptionInfo
+}
+
+func (*ChatInviteLinkSubscriptionInfo) GetType() string {
+    return TypeChatInviteLinkSubscriptionInfo
+}
+
 // Contains information about a chat invite link
 type ChatInviteLinkInfo struct {
     meta
@@ -9581,6 +9978,8 @@ type ChatInviteLinkInfo struct {
     MemberCount int32 `json:"member_count"`
     // User identifiers of some chat members that may be known to the current user
     MemberUserIds []int64 `json:"member_user_ids"`
+    // Information about subscription plan that must be paid by the user to use the link; may be null if the link doesn't require subscription
+    SubscriptionInfo *ChatInviteLinkSubscriptionInfo `json:"subscription_info"`
     // True, if the link only creates join request
     CreatesJoinRequest bool `json:"creates_join_request"`
     // True, if the chat is a public supergroup or channel, i.e. it has a username or it is a location-based supergroup
@@ -9620,6 +10019,7 @@ func (chatInviteLinkInfo *ChatInviteLinkInfo) UnmarshalJSON(data []byte) error {
         Description string `json:"description"`
         MemberCount int32 `json:"member_count"`
         MemberUserIds []int64 `json:"member_user_ids"`
+        SubscriptionInfo *ChatInviteLinkSubscriptionInfo `json:"subscription_info"`
         CreatesJoinRequest bool `json:"creates_join_request"`
         IsPublic bool `json:"is_public"`
         IsVerified bool `json:"is_verified"`
@@ -9640,6 +10040,7 @@ func (chatInviteLinkInfo *ChatInviteLinkInfo) UnmarshalJSON(data []byte) error {
     chatInviteLinkInfo.Description = tmp.Description
     chatInviteLinkInfo.MemberCount = tmp.MemberCount
     chatInviteLinkInfo.MemberUserIds = tmp.MemberUserIds
+    chatInviteLinkInfo.SubscriptionInfo = tmp.SubscriptionInfo
     chatInviteLinkInfo.CreatesJoinRequest = tmp.CreatesJoinRequest
     chatInviteLinkInfo.IsPublic = tmp.IsPublic
     chatInviteLinkInfo.IsVerified = tmp.IsVerified
@@ -9847,8 +10248,10 @@ type Supergroup struct {
     HasLinkedChat bool `json:"has_linked_chat"`
     // True, if the supergroup is connected to a location, i.e. the supergroup is a location-based supergroup
     HasLocation bool `json:"has_location"`
-    // True, if messages sent to the channel need to contain information about the sender. This field is only applicable to channels
+    // True, if messages sent to the channel contains name of the sender. This field is only applicable to channels
     SignMessages bool `json:"sign_messages"`
+    // True, if messages sent to the channel have information about the sender user. This field is only applicable to channels
+    ShowMessageSender bool `json:"show_message_sender"`
     // True, if users need to join the supergroup before they can send messages. Always true for channels and non-discussion supergroups
     JoinToSendMessages bool `json:"join_to_send_messages"`
     // True, if all users directly joining the supergroup need to be approved by supergroup administrators. Always false for channels and supergroups without username, location, or a linked chat
@@ -9863,6 +10266,8 @@ type Supergroup struct {
     IsForum bool `json:"is_forum"`
     // True, if the supergroup or channel is verified
     IsVerified bool `json:"is_verified"`
+    // True, if content of media messages in the supergroup or channel chat must be hidden with 18+ spoiler
+    HasSensitiveContent bool `json:"has_sensitive_content"`
     // If non-empty, contains a human-readable description of the reason why access to this supergroup or channel must be restricted
     RestrictionReason string `json:"restriction_reason"`
     // True, if many users reported this supergroup or channel as a scam
@@ -9903,6 +10308,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
         HasLinkedChat bool `json:"has_linked_chat"`
         HasLocation bool `json:"has_location"`
         SignMessages bool `json:"sign_messages"`
+        ShowMessageSender bool `json:"show_message_sender"`
         JoinToSendMessages bool `json:"join_to_send_messages"`
         JoinByRequest bool `json:"join_by_request"`
         IsSlowModeEnabled bool `json:"is_slow_mode_enabled"`
@@ -9910,6 +10316,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
         IsBroadcastGroup bool `json:"is_broadcast_group"`
         IsForum bool `json:"is_forum"`
         IsVerified bool `json:"is_verified"`
+        HasSensitiveContent bool `json:"has_sensitive_content"`
         RestrictionReason string `json:"restriction_reason"`
         IsScam bool `json:"is_scam"`
         IsFake bool `json:"is_fake"`
@@ -9931,6 +10338,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
     supergroup.HasLinkedChat = tmp.HasLinkedChat
     supergroup.HasLocation = tmp.HasLocation
     supergroup.SignMessages = tmp.SignMessages
+    supergroup.ShowMessageSender = tmp.ShowMessageSender
     supergroup.JoinToSendMessages = tmp.JoinToSendMessages
     supergroup.JoinByRequest = tmp.JoinByRequest
     supergroup.IsSlowModeEnabled = tmp.IsSlowModeEnabled
@@ -9938,6 +10346,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
     supergroup.IsBroadcastGroup = tmp.IsBroadcastGroup
     supergroup.IsForum = tmp.IsForum
     supergroup.IsVerified = tmp.IsVerified
+    supergroup.HasSensitiveContent = tmp.HasSensitiveContent
     supergroup.RestrictionReason = tmp.RestrictionReason
     supergroup.IsScam = tmp.IsScam
     supergroup.IsFake = tmp.IsFake
@@ -9971,6 +10380,8 @@ type SupergroupFullInfo struct {
     SlowModeDelay int32 `json:"slow_mode_delay"`
     // Time left before next message can be sent in the supergroup, in seconds. An updateSupergroupFullInfo update is not triggered when value of this field changes, but both new and old values are non-zero
     SlowModeDelayExpiresIn float64 `json:"slow_mode_delay_expires_in"`
+    // True, if paid reaction can be enabled in the channel chat; for channels only
+    CanEnablePaidReaction bool `json:"can_enable_paid_reaction"`
     // True, if members of the chat can be retrieved via getSupergroupMembers or searchChatMembers
     CanGetMembers bool `json:"can_get_members"`
     // True, if non-administrators can receive only administrators and bots using getSupergroupMembers or searchChatMembers
@@ -10738,6 +11149,87 @@ func (*ReactionTypeCustomEmoji) ReactionTypeType() string {
     return TypeReactionTypeCustomEmoji
 }
 
+// The paid reaction in a channel chat
+type ReactionTypePaid struct{
+    meta
+}
+
+func (entity *ReactionTypePaid) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ReactionTypePaid
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ReactionTypePaid) GetClass() string {
+    return ClassReactionType
+}
+
+func (*ReactionTypePaid) GetType() string {
+    return TypeReactionTypePaid
+}
+
+func (*ReactionTypePaid) ReactionTypeType() string {
+    return TypeReactionTypePaid
+}
+
+// Contains information about a user that added paid reactions
+type PaidReactor struct {
+    meta
+    // Identifier of the user or chat that added the reactions; may be null for anonymous reactors that aren't the current user
+    SenderId MessageSender `json:"sender_id"`
+    // Number of Telegram Stars added
+    StarCount int32 `json:"star_count"`
+    // True, if the reactor is one of the most active reactors; can be false if the reactor is the current user
+    IsTop bool `json:"is_top"`
+    // True, if the paid reaction was added by the current user
+    IsMe bool `json:"is_me"`
+    // True, if the reactor is anonymous
+    IsAnonymous bool `json:"is_anonymous"`
+}
+
+func (entity *PaidReactor) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PaidReactor
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PaidReactor) GetClass() string {
+    return ClassPaidReactor
+}
+
+func (*PaidReactor) GetType() string {
+    return TypePaidReactor
+}
+
+func (paidReactor *PaidReactor) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        SenderId json.RawMessage `json:"sender_id"`
+        StarCount int32 `json:"star_count"`
+        IsTop bool `json:"is_top"`
+        IsMe bool `json:"is_me"`
+        IsAnonymous bool `json:"is_anonymous"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    paidReactor.StarCount = tmp.StarCount
+    paidReactor.IsTop = tmp.IsTop
+    paidReactor.IsMe = tmp.IsMe
+    paidReactor.IsAnonymous = tmp.IsAnonymous
+
+    fieldSenderId, _ := UnmarshalMessageSender(tmp.SenderId)
+    paidReactor.SenderId = fieldSenderId
+
+    return nil
+}
+
 // Contains information about a forwarded message
 type MessageForwardInfo struct {
     meta
@@ -10938,6 +11430,10 @@ type MessageReactions struct {
     Reactions []*MessageReaction `json:"reactions"`
     // True, if the reactions are tags and Telegram Premium users can filter messages by them
     AreTags bool `json:"are_tags"`
+    // Information about top users that added the paid reaction
+    PaidReactors []*PaidReactor `json:"paid_reactors"`
+    // True, if the list of added reactions is available using getMessageAddedReactions
+    CanGetAddedReactions bool `json:"can_get_added_reactions"`
 }
 
 func (entity *MessageReactions) MarshalJSON() ([]byte, error) {
@@ -11539,6 +12035,8 @@ type Message struct {
     MediaAlbumId JsonInt64 `json:"media_album_id"`
     // Unique identifier of the effect added to the message; 0 if none
     EffectId JsonInt64 `json:"effect_id"`
+    // True, if media content of the message must be hidden with 18+ spoiler
+    HasSensitiveContent bool `json:"has_sensitive_content"`
     // If non-empty, contains a human-readable description of the reason why access to this message must be restricted
     RestrictionReason string `json:"restriction_reason"`
     // Content of the message
@@ -11597,6 +12095,7 @@ func (message *Message) UnmarshalJSON(data []byte) error {
         AuthorSignature string `json:"author_signature"`
         MediaAlbumId JsonInt64 `json:"media_album_id"`
         EffectId JsonInt64 `json:"effect_id"`
+        HasSensitiveContent bool `json:"has_sensitive_content"`
         RestrictionReason string `json:"restriction_reason"`
         Content json.RawMessage `json:"content"`
         ReplyMarkup json.RawMessage `json:"reply_markup"`
@@ -11634,6 +12133,7 @@ func (message *Message) UnmarshalJSON(data []byte) error {
     message.AuthorSignature = tmp.AuthorSignature
     message.MediaAlbumId = tmp.MediaAlbumId
     message.EffectId = tmp.EffectId
+    message.HasSensitiveContent = tmp.HasSensitiveContent
     message.RestrictionReason = tmp.RestrictionReason
 
     fieldSenderId, _ := UnmarshalMessageSender(tmp.SenderId)
@@ -12175,7 +12675,7 @@ type SponsoredMessage struct {
     IsRecommended bool `json:"is_recommended"`
     // True, if the message can be reported to Telegram moderators through reportChatSponsoredMessage
     CanBeReported bool `json:"can_be_reported"`
-    // Content of the message. Currently, can be only of the type messageText
+    // Content of the message. Currently, can be only of the types messageText, messageAnimation, messagePhoto, or messageVideo
     Content MessageContent `json:"content"`
     // Information about the sponsor of the message
     Sponsor *MessageSponsor `json:"sponsor"`
@@ -13451,7 +13951,7 @@ func (chatPosition *ChatPosition) UnmarshalJSON(data []byte) error {
     return nil
 }
 
-// All reactions are available in the chat
+// All reactions are available in the chat, excluding the paid reaction and custom reactions in channel chats
 type ChatAvailableReactionsAll struct {
     meta
     // The maximum allowed number of reactions per message; 1-11
@@ -18141,6 +18641,8 @@ type LinkPreviewTypeBackground struct {
     meta
     // Document with the background; may be null for filled backgrounds
     Document *Document `json:"document"`
+    // Type of the background; may be null if unknown
+    BackgroundType BackgroundType `json:"background_type"`
 }
 
 func (entity *LinkPreviewTypeBackground) MarshalJSON() ([]byte, error) {
@@ -18161,6 +18663,25 @@ func (*LinkPreviewTypeBackground) GetType() string {
 
 func (*LinkPreviewTypeBackground) LinkPreviewTypeType() string {
     return TypeLinkPreviewTypeBackground
+}
+
+func (linkPreviewTypeBackground *LinkPreviewTypeBackground) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        Document *Document `json:"document"`
+        BackgroundType json.RawMessage `json:"background_type"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    linkPreviewTypeBackground.Document = tmp.Document
+
+    fieldBackgroundType, _ := UnmarshalBackgroundType(tmp.BackgroundType)
+    linkPreviewTypeBackground.BackgroundType = fieldBackgroundType
+
+    return nil
 }
 
 // The link is a link to boost a channel chat
@@ -18511,10 +19032,10 @@ func (*LinkPreviewTypeShareableChatFolder) LinkPreviewTypeType() string {
     return TypeLinkPreviewTypeShareableChatFolder
 }
 
-// The link is a link to a sticker message
+// The link is a link to a sticker
 type LinkPreviewTypeSticker struct {
     meta
-    // The sticker
+    // The sticker. It can be an arbitrary WEBP image and can have dimensions bigger than 512
     Sticker *Sticker `json:"sticker"`
 }
 
@@ -26630,8 +27151,6 @@ type MessageProperties struct {
     CanBeSharedInStory bool `json:"can_be_shared_in_story"`
     // True, if scheduling state of the message can be edited
     CanEditSchedulingState bool `json:"can_edit_scheduling_state"`
-    // True, if the list of added reactions is available using getMessageAddedReactions
-    CanGetAddedReactions bool `json:"can_get_added_reactions"`
     // True, if code for message embedding can be received using getMessageEmbeddingCode
     CanGetEmbeddingCode bool `json:"can_get_embedding_code"`
     // True, if a link can be generated for the message using getMessageLink
@@ -35221,6 +35740,33 @@ func (*ChatEventSignMessagesToggled) ChatEventActionType() string {
     return TypeChatEventSignMessagesToggled
 }
 
+// The show_message_sender setting of a channel was toggled
+type ChatEventShowMessageSenderToggled struct {
+    meta
+    // New value of show_message_sender
+    ShowMessageSender bool `json:"show_message_sender"`
+}
+
+func (entity *ChatEventShowMessageSenderToggled) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatEventShowMessageSenderToggled
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatEventShowMessageSenderToggled) GetClass() string {
+    return ClassChatEventAction
+}
+
+func (*ChatEventShowMessageSenderToggled) GetType() string {
+    return TypeChatEventShowMessageSenderToggled
+}
+
+func (*ChatEventShowMessageSenderToggled) ChatEventActionType() string {
+    return TypeChatEventShowMessageSenderToggled
+}
+
 // A chat invite link was edited
 type ChatEventInviteLinkEdited struct {
     meta
@@ -38347,6 +38893,33 @@ func (*TelegramPaymentPurposeGiftedStars) GetType() string {
 
 func (*TelegramPaymentPurposeGiftedStars) TelegramPaymentPurposeType() string {
     return TypeTelegramPaymentPurposeGiftedStars
+}
+
+// The user joins a chat and subscribes to regular payments in Telegram Stars
+type TelegramPaymentPurposeJoinChat struct {
+    meta
+    // Invite link to use
+    InviteLink string `json:"invite_link"`
+}
+
+func (entity *TelegramPaymentPurposeJoinChat) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub TelegramPaymentPurposeJoinChat
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*TelegramPaymentPurposeJoinChat) GetClass() string {
+    return ClassTelegramPaymentPurpose
+}
+
+func (*TelegramPaymentPurposeJoinChat) GetType() string {
+    return TypeTelegramPaymentPurposeJoinChat
+}
+
+func (*TelegramPaymentPurposeJoinChat) TelegramPaymentPurposeType() string {
+    return TypeTelegramPaymentPurposeJoinChat
 }
 
 // A token for Firebase Cloud Messaging
@@ -43365,7 +43938,7 @@ func (*InternalLinkTypeActiveSessions) InternalLinkTypeType() string {
     return TypeInternalLinkTypeActiveSessions
 }
 
-// The link is a link to an attachment menu bot to be opened in the specified or a chosen chat. Process given target_chat to open the chat. Then, call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to attachment menu, then show a disclaimer about Mini Apps being third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the attachment menu bot can't be used in the opened chat, show an error to the user. If the bot is added to attachment menu and can be used in the chat, then use openWebApp with the given URL
+// The link is a link to an attachment menu bot to be opened in the specified or a chosen chat. Process given target_chat to open the chat. Then, call searchPublicChat with the given bot username, check that the user is a bot and can be added to attachment menu. Then, use getAttachmentMenuBot to receive information about the bot. If the bot isn't added to attachment menu, then show a disclaimer about Mini Apps being third-party applications, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. If the attachment menu bot can't be used in the opened chat, show an error to the user. If the bot is added to attachment menu and can be used in the chat, then use openWebApp with the given URL
 type InternalLinkTypeAttachmentMenuBot struct {
     meta
     // Target chat to be opened
@@ -43589,7 +44162,36 @@ func (*InternalLinkTypeBusinessChat) InternalLinkTypeType() string {
     return TypeInternalLinkTypeBusinessChat
 }
 
-// The link is a link to the change phone number section of the app
+// The link is a link to the Telegram Star purchase section of the application
+type InternalLinkTypeBuyStars struct {
+    meta
+    // The number of Telegram Stars that must be owned by the user
+    StarCount int64 `json:"star_count"`
+    // Purpose of Telegram Star purchase. Arbitrary string specified by the server, for example, "subs" if the Telegram Stars are required to extend channel subscriptions
+    Purpose string `json:"purpose"`
+}
+
+func (entity *InternalLinkTypeBuyStars) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InternalLinkTypeBuyStars
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InternalLinkTypeBuyStars) GetClass() string {
+    return ClassInternalLinkType
+}
+
+func (*InternalLinkTypeBuyStars) GetType() string {
+    return TypeInternalLinkTypeBuyStars
+}
+
+func (*InternalLinkTypeBuyStars) InternalLinkTypeType() string {
+    return TypeInternalLinkTypeBuyStars
+}
+
+// The link is a link to the change phone number section of the application
 type InternalLinkTypeChangePhoneNumber struct{
     meta
 }
@@ -43668,7 +44270,7 @@ func (*InternalLinkTypeChatFolderInvite) InternalLinkTypeType() string {
     return TypeInternalLinkTypeChatFolderInvite
 }
 
-// The link is a link to the folder section of the app settings
+// The link is a link to the folder section of the application settings
 type InternalLinkTypeChatFolderSettings struct{
     meta
 }
@@ -43720,7 +44322,7 @@ func (*InternalLinkTypeChatInvite) InternalLinkTypeType() string {
     return TypeInternalLinkTypeChatInvite
 }
 
-// The link is a link to the default message auto-delete timer settings section of the app settings
+// The link is a link to the default message auto-delete timer settings section of the application settings
 type InternalLinkTypeDefaultMessageAutoDeleteTimerSettings struct{
     meta
 }
@@ -43745,7 +44347,7 @@ func (*InternalLinkTypeDefaultMessageAutoDeleteTimerSettings) InternalLinkTypeTy
     return TypeInternalLinkTypeDefaultMessageAutoDeleteTimerSettings
 }
 
-// The link is a link to the edit profile section of the app settings
+// The link is a link to the edit profile section of the application settings
 type InternalLinkTypeEditProfileSettings struct{
     meta
 }
@@ -43882,7 +44484,7 @@ func (*InternalLinkTypeLanguagePack) InternalLinkTypeType() string {
     return TypeInternalLinkTypeLanguagePack
 }
 
-// The link is a link to the language section of the app settings
+// The link is a link to the language section of the application settings
 type InternalLinkTypeLanguageSettings struct{
     meta
 }
@@ -43907,7 +44509,7 @@ func (*InternalLinkTypeLanguageSettings) InternalLinkTypeType() string {
     return TypeInternalLinkTypeLanguageSettings
 }
 
-// The link is a link to the main Web App of a bot. Call searchPublicChat with the given bot username, check that the user is a bot and has the main Web App. If the bot can be added to attachment menu, then use getAttachmentMenuBot to receive information about the bot, then if the bot isn't added to side menu, show a disclaimer about Mini Apps being third-party apps, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu, then if the user accepts the terms and confirms adding, use toggleBotIsAddedToAttachmentMenu to add the bot. Then, use getMainWebApp with the given start parameter and open the returned URL as a Web App
+// The link is a link to the main Web App of a bot. Call searchPublicChat with the given bot username, check that the user is a bot and has the main Web App. If the bot can be added to attachment menu, then use getAttachmentMenuBot to receive information about the bot, then if the bot isn't added to side menu, show a disclaimer about Mini Apps being third-party applications, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu, then if the user accepts the terms and confirms adding, use toggleBotIsAddedToAttachmentMenu to add the bot. Then, use getMainWebApp with the given start parameter and open the returned URL as a Web App
 type InternalLinkTypeMainWebApp struct {
     meta
     // Username of the bot
@@ -44139,7 +44741,7 @@ func (*InternalLinkTypePremiumGiftCode) InternalLinkTypeType() string {
     return TypeInternalLinkTypePremiumGiftCode
 }
 
-// The link is a link to the privacy and security section of the app settings
+// The link is a link to the privacy and security section of the application settings
 type InternalLinkTypePrivacyAndSecuritySettings struct{
     meta
 }
@@ -44407,7 +45009,7 @@ func (*InternalLinkTypeTheme) InternalLinkTypeType() string {
     return TypeInternalLinkTypeTheme
 }
 
-// The link is a link to the theme section of the app settings
+// The link is a link to the theme section of the application settings
 type InternalLinkTypeThemeSettings struct{
     meta
 }
@@ -44573,7 +45175,7 @@ func (*InternalLinkTypeVideoChat) InternalLinkTypeType() string {
     return TypeInternalLinkTypeVideoChat
 }
 
-// The link is a link to a Web App. Call searchPublicChat with the given bot username, check that the user is a bot, then call searchWebApp with the received bot and the given web_app_short_name. Process received foundWebApp by showing a confirmation dialog if needed. If the bot can be added to attachment or side menu, but isn't added yet, then show a disclaimer about Mini Apps being third-party apps instead of the dialog and ask the user to accept their Terms of service. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. Then, call getWebAppLinkUrl and open the returned URL as a Web App
+// The link is a link to a Web App. Call searchPublicChat with the given bot username, check that the user is a bot, then call searchWebApp with the received bot and the given web_app_short_name. Process received foundWebApp by showing a confirmation dialog if needed. If the bot can be added to attachment or side menu, but isn't added yet, then show a disclaimer about Mini Apps being third-party applications instead of the dialog and ask the user to accept their Terms of service. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. Then, call getWebAppLinkUrl and open the returned URL as a Web App
 type InternalLinkTypeWebApp struct {
     meta
     // Username of the bot that owns the Web App
@@ -46804,6 +47406,31 @@ func (*SuggestedActionExtendPremium) GetType() string {
 
 func (*SuggestedActionExtendPremium) SuggestedActionType() string {
     return TypeSuggestedActionExtendPremium
+}
+
+// Suggests the user to extend their expiring Telegram Star subscriptions. Call getStarSubscriptions with only_expiring == true to get the number of expiring subscriptions and the number of required to buy Telegram Stars
+type SuggestedActionExtendStarSubscriptions struct{
+    meta
+}
+
+func (entity *SuggestedActionExtendStarSubscriptions) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub SuggestedActionExtendStarSubscriptions
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*SuggestedActionExtendStarSubscriptions) GetClass() string {
+    return ClassSuggestedAction
+}
+
+func (*SuggestedActionExtendStarSubscriptions) GetType() string {
+    return TypeSuggestedActionExtendStarSubscriptions
+}
+
+func (*SuggestedActionExtendStarSubscriptions) SuggestedActionType() string {
+    return TypeSuggestedActionExtendStarSubscriptions
 }
 
 // Contains a counter
@@ -52569,6 +53196,33 @@ func (*UpdateSavedMessagesTags) GetType() string {
 
 func (*UpdateSavedMessagesTags) UpdateType() string {
     return TypeUpdateSavedMessagesTags
+}
+
+// The list of messages with active live location that need to be updated by the application has changed. The list is persistent across application restarts only if the message database is used
+type UpdateActiveLiveLocationMessages struct {
+    meta
+    // The list of messages with active live locations
+    Messages []*Message `json:"messages"`
+}
+
+func (entity *UpdateActiveLiveLocationMessages) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdateActiveLiveLocationMessages
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdateActiveLiveLocationMessages) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdateActiveLiveLocationMessages) GetType() string {
+    return TypeUpdateActiveLiveLocationMessages
+}
+
+func (*UpdateActiveLiveLocationMessages) UpdateType() string {
+    return TypeUpdateActiveLiveLocationMessages
 }
 
 // The number of Telegram Stars owned by the current user has changed

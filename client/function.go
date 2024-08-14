@@ -3173,25 +3173,6 @@ func (client *Client) SearchChatRecentLocationMessages(req *SearchChatRecentLoca
     return UnmarshalMessages(result.Data)
 }
 
-// Returns all active live locations that need to be updated by the application. The list is persistent across application restarts only if the message database is used
-func (client *Client) GetActiveLiveLocationMessages() (*Messages, error) {
-    result, err := client.Send(Request{
-        meta: meta{
-            Type: "getActiveLiveLocationMessages",
-        },
-        Data: map[string]interface{}{},
-    })
-    if err != nil {
-        return nil, err
-    }
-
-    if result.Type == "error" {
-        return nil, buildResponseError(result.Data)
-    }
-
-    return UnmarshalMessages(result.Data)
-}
-
 type GetChatMessageByDateRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
@@ -5850,7 +5831,7 @@ type AddMessageReactionRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Type of the reaction to add
+    // Type of the reaction to add. Use addPaidMessageReaction instead to add the paid reaction
     ReactionType ReactionType `json:"reaction_type"`
     // Pass true if the reaction is added with a big animation
     IsBig bool `json:"is_big"`
@@ -5888,7 +5869,7 @@ type RemoveMessageReactionRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Type of the reaction to remove
+    // Type of the reaction to remove. The paid reaction can't be removed
     ReactionType ReactionType `json:"reaction_type"`
 }
 
@@ -5902,6 +5883,102 @@ func (client *Client) RemoveMessageReaction(req *RemoveMessageReactionRequest) (
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "reaction_type": req.ReactionType,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type AddPaidMessageReactionRequest struct { 
+    // Identifier of the chat to which the message belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // Number of Telegram Stars to be used for the reaction; 1-getOption("paid_reaction_star_count_max")
+    StarCount int64 `json:"star_count"`
+    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors
+    IsAnonymous bool `json:"is_anonymous"`
+}
+
+// Adds the paid message reaction to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message
+func (client *Client) AddPaidMessageReaction(req *AddPaidMessageReactionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addPaidMessageReaction",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "star_count": req.StarCount,
+            "is_anonymous": req.IsAnonymous,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type RemovePendingPaidMessageReactionsRequest struct { 
+    // Identifier of the chat to which the message belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Removes all pending paid reactions on a message. Can be called within 5 seconds after the last addPaidMessageReaction call
+func (client *Client) RemovePendingPaidMessageReactions(req *RemovePendingPaidMessageReactionsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "removePendingPaidMessageReactions",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type TogglePaidMessageReactionIsAnonymousRequest struct { 
+    // Identifier of the chat to which the message belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors
+    IsAnonymous bool `json:"is_anonymous"`
+}
+
+// Changes whether the paid message reaction of the user to a message is anonymous. The message must have paid reaction added by the user
+func (client *Client) TogglePaidMessageReactionIsAnonymous(req *TogglePaidMessageReactionIsAnonymousRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "togglePaidMessageReactionIsAnonymous",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "is_anonymous": req.IsAnonymous,
         },
     })
     if err != nil {
@@ -5953,9 +6030,9 @@ func (client *Client) SetMessageReactions(req *SetMessageReactionsRequest) (*Ok,
 type GetMessageAddedReactionsRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message. Use messageProperties.can_get_added_reactions to check whether added reactions can be received for the message
+    // Identifier of the message. Use message.interaction_info.reactions.can_get_added_reactions to check whether added reactions can be received for the message
     MessageId int64 `json:"message_id"`
-    // Type of the reactions to return; pass null to return all added reactions
+    // Type of the reactions to return; pass null to return all added reactions; reactionTypePaid isn't supported
     ReactionType ReactionType `json:"reaction_type"`
     // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
     Offset string `json:"offset"`
@@ -5989,7 +6066,7 @@ func (client *Client) GetMessageAddedReactions(req *GetMessageAddedReactionsRequ
 }
 
 type SetDefaultReactionTypeRequest struct { 
-    // New type of the default reaction
+    // New type of the default reaction. The paid reaction can't be set as default
     ReactionType ReactionType `json:"reaction_type"`
 }
 
@@ -7815,6 +7892,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeBusinessChat:
         return UnmarshalInternalLinkTypeBusinessChat(result.Data)
+
+    case TypeInternalLinkTypeBuyStars:
+        return UnmarshalInternalLinkTypeBuyStars(result.Data)
 
     case TypeInternalLinkTypeChangePhoneNumber:
         return UnmarshalInternalLinkTypeChangePhoneNumber(result.Data)
@@ -11064,7 +11144,7 @@ type SetStoryReactionRequest struct {
     StorySenderChatId int64 `json:"story_sender_chat_id"`
     // The identifier of the story
     StoryId int32 `json:"story_id"`
-    // Type of the reaction to set; pass null to remove the reaction. `reactionTypeCustomEmoji` reactions can be used only by Telegram Premium users
+    // Type of the reaction to set; pass null to remove the reaction. Custom emoji reactions can be used only by Telegram Premium users. Paid reactions can't be set
     ReactionType ReactionType `json:"reaction_type"`
     // Pass true if the reaction needs to be added to recent reactions
     UpdateRecentReactions bool `json:"update_recent_reactions"`
@@ -11143,7 +11223,7 @@ type GetChatStoryInteractionsRequest struct {
     StorySenderChatId int64 `json:"story_sender_chat_id"`
     // Story identifier
     StoryId int32 `json:"story_id"`
-    // Pass the default heart reaction or a suggested reaction type to receive only interactions with the specified reaction type; pass null to receive all interactions
+    // Pass the default heart reaction or a suggested reaction type to receive only interactions with the specified reaction type; pass null to receive all interactions; reactionTypePaid isn't supported
     ReactionType ReactionType `json:"reaction_type"`
     // Pass true to get forwards and reposts first, then reactions, then other views; pass false to get interactions sorted just by interaction date
     PreferForwards bool `json:"prefer_forwards"`
@@ -12416,6 +12496,38 @@ func (client *Client) CreateChatInviteLink(req *CreateChatInviteLinkRequest) (*C
     return UnmarshalChatInviteLink(result.Data)
 }
 
+type CreateChatSubscriptionInviteLinkRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Invite link name; 0-32 characters
+    Name string `json:"name"`
+    // Information about subscription plan that will be applied to the users joining the chat via the link. Subscription period must be 2592000 in production environment, and 60 or 300 if Telegram test environment is used
+    SubscriptionPricing *StarSubscriptionPricing `json:"subscription_pricing"`
+}
+
+// Creates a new subscription invite link for a channel chat. Requires can_invite_users right in the chat
+func (client *Client) CreateChatSubscriptionInviteLink(req *CreateChatSubscriptionInviteLinkRequest) (*ChatInviteLink, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "createChatSubscriptionInviteLink",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "name": req.Name,
+            "subscription_pricing": req.SubscriptionPricing,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatInviteLink(result.Data)
+}
+
 type EditChatInviteLinkRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
@@ -12431,7 +12543,7 @@ type EditChatInviteLinkRequest struct {
     CreatesJoinRequest bool `json:"creates_join_request"`
 }
 
-// Edits a non-primary invite link for a chat. Available for basic groups, supergroups, and channels. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
+// Edits a non-primary invite link for a chat. Available for basic groups, supergroups, and channels. If the link creates a subscription, then expiration_date, member_limit and creates_join_request must not be used Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
 func (client *Client) EditChatInviteLink(req *EditChatInviteLinkRequest) (*ChatInviteLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12444,6 +12556,38 @@ func (client *Client) EditChatInviteLink(req *EditChatInviteLinkRequest) (*ChatI
             "expiration_date": req.ExpirationDate,
             "member_limit": req.MemberLimit,
             "creates_join_request": req.CreatesJoinRequest,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatInviteLink(result.Data)
+}
+
+type EditChatSubscriptionInviteLinkRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Invite link to be edited
+    InviteLink string `json:"invite_link"`
+    // Invite link name; 0-32 characters
+    Name string `json:"name"`
+}
+
+// Edits a subscription invite link for a channel chat. Requires can_invite_users right in the chat for own links and owner privileges for other links
+func (client *Client) EditChatSubscriptionInviteLink(req *EditChatSubscriptionInviteLinkRequest) (*ChatInviteLink, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editChatSubscriptionInviteLink",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "invite_link": req.InviteLink,
+            "name": req.Name,
         },
     })
     if err != nil {
@@ -12558,6 +12702,8 @@ type GetChatInviteLinkMembersRequest struct {
     ChatId int64 `json:"chat_id"`
     // Invite link for which to return chat members
     InviteLink string `json:"invite_link"`
+    // Pass true if the link is a subscription link and only members with expired subscription must be returned
+    OnlyWithExpiredSubscription bool `json:"only_with_expired_subscription"`
     // A chat member from which to return next chat members; pass null to get results from the beginning
     OffsetMember *ChatInviteLinkMember `json:"offset_member"`
     // The maximum number of chat members to return; up to 100
@@ -12573,6 +12719,7 @@ func (client *Client) GetChatInviteLinkMembers(req *GetChatInviteLinkMembersRequ
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "invite_link": req.InviteLink,
+            "only_with_expired_subscription": req.OnlyWithExpiredSubscription,
             "offset_member": req.OffsetMember,
             "limit": req.Limit,
         },
@@ -17637,9 +17784,11 @@ type ToggleSupergroupSignMessagesRequest struct {
     SupergroupId int64 `json:"supergroup_id"`
     // New value of sign_messages
     SignMessages bool `json:"sign_messages"`
+    // New value of show_message_sender
+    ShowMessageSender bool `json:"show_message_sender"`
 }
 
-// Toggles whether sender signature is added to sent messages in a channel; requires can_change_info member right
+// Toggles whether sender signature or link to the account is added to sent messages in a channel; requires can_change_info member right
 func (client *Client) ToggleSupergroupSignMessages(req *ToggleSupergroupSignMessagesRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -17648,6 +17797,7 @@ func (client *Client) ToggleSupergroupSignMessages(req *ToggleSupergroupSignMess
         Data: map[string]interface{}{
             "supergroup_id": req.SupergroupId,
             "sign_messages": req.SignMessages,
+            "show_message_sender": req.ShowMessageSender,
         },
     })
     if err != nil {
@@ -21396,6 +21546,8 @@ func (client *Client) GetStarGiftPaymentOptions(req *GetStarGiftPaymentOptionsRe
 type GetStarTransactionsRequest struct { 
     // Identifier of the owner of the Telegram Stars; can be the identifier of the current user, identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
     OwnerId MessageSender `json:"owner_id"`
+    // If non-empty, only transactions related to the Star Subscription will be returned
+    SubscriptionId string `json:"subscription_id"`
     // Direction of the transactions to receive; pass null to get all transactions
     Direction StarTransactionDirection `json:"direction"`
     // Offset of the first transaction to return as received from the previous request; use empty string to get the first chunk of results
@@ -21412,6 +21564,7 @@ func (client *Client) GetStarTransactions(req *GetStarTransactionsRequest) (*Sta
         },
         Data: map[string]interface{}{
             "owner_id": req.OwnerId,
+            "subscription_id": req.SubscriptionId,
             "direction": req.Direction,
             "offset": req.Offset,
             "limit": req.Limit,
@@ -21426,6 +21579,35 @@ func (client *Client) GetStarTransactions(req *GetStarTransactionsRequest) (*Sta
     }
 
     return UnmarshalStarTransactions(result.Data)
+}
+
+type GetStarSubscriptionsRequest struct { 
+    // Pass true to receive only expiring subscriptions for which there are no enough Telegram Stars to extend
+    OnlyExpiring bool `json:"only_expiring"`
+    // Offset of the first subscription to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+}
+
+// Returns the list of Telegram Star subscriptions for the current user
+func (client *Client) GetStarSubscriptions(req *GetStarSubscriptionsRequest) (*StarSubscriptions, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStarSubscriptions",
+        },
+        Data: map[string]interface{}{
+            "only_expiring": req.OnlyExpiring,
+            "offset": req.Offset,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarSubscriptions(result.Data)
 }
 
 type CanPurchaseFromStoreRequest struct { 
@@ -21505,6 +21687,61 @@ func (client *Client) AssignGooglePlayTransaction(req *AssignGooglePlayTransacti
             "store_product_id": req.StoreProductId,
             "purchase_token": req.PurchaseToken,
             "purpose": req.Purpose,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditStarSubscriptionRequest struct { 
+    // Identifier of the subscription to change
+    SubscriptionId string `json:"subscription_id"`
+    // New value of is_canceled
+    IsCanceled bool `json:"is_canceled"`
+}
+
+// Cancels or reenables Telegram Star subscription to a channel
+func (client *Client) EditStarSubscription(req *EditStarSubscriptionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editStarSubscription",
+        },
+        Data: map[string]interface{}{
+            "subscription_id": req.SubscriptionId,
+            "is_canceled": req.IsCanceled,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ReuseStarSubscriptionRequest struct { 
+    // Identifier of the subscription
+    SubscriptionId string `json:"subscription_id"`
+}
+
+// Reuses an active subscription and joins the subscribed chat again
+func (client *Client) ReuseStarSubscription(req *ReuseStarSubscriptionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "reuseStarSubscription",
+        },
+        Data: map[string]interface{}{
+            "subscription_id": req.SubscriptionId,
         },
     })
     if err != nil {
@@ -23116,6 +23353,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateSavedMessagesTags:
         return UnmarshalUpdateSavedMessagesTags(result.Data)
+
+    case TypeUpdateActiveLiveLocationMessages:
+        return UnmarshalUpdateActiveLiveLocationMessages(result.Data)
 
     case TypeUpdateOwnedStarCount:
         return UnmarshalUpdateOwnedStarCount(result.Data)
