@@ -1362,7 +1362,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messagePremiumGiveawayCompleted and topic messages without non-bundled replied message respectively
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted and topic messages without non-bundled replied message respectively
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2819,7 +2819,7 @@ type SearchSavedMessagesRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Searches for messages tagged by the given reaction and with the given words in the Saved Messages chat; for Telegram Premium users only. Returns the results in reverse chronological order, i.e. in order of decreasing message_id For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+// Searches for messages tagged by the given reaction and with the given words in the Saved Messages chat; for Telegram Premium users only. Returns the results in reverse chronological order, i.e. in order of decreasing message_id. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
 func (client *Client) SearchSavedMessages(req *SearchSavedMessagesRequest) (*FoundChatMessages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -5041,7 +5041,7 @@ func CheckQuickReplyShortcutName(req *CheckQuickReplyShortcutNameRequest) (*Ok, 
 func (client *Client) CheckQuickReplyShortcutName(req *CheckQuickReplyShortcutNameRequest) (*Ok, error) {
     return CheckQuickReplyShortcutName(req)}
 
-// Loads quick reply shortcuts created by the current user. The loaded topics will be sent through updateQuickReplyShortcuts
+// Loads quick reply shortcuts created by the current user. The loaded data will be sent through updateQuickReplyShortcut and updateQuickReplyShortcuts
 func (client *Client) LoadQuickReplyShortcuts() (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -5831,7 +5831,7 @@ type AddMessageReactionRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Type of the reaction to add. Use addPaidMessageReaction instead to add the paid reaction
+    // Type of the reaction to add. Use addPendingPaidMessageReaction instead to add the paid reaction
     ReactionType ReactionType `json:"reaction_type"`
     // Pass true if the reaction is added with a big animation
     IsBig bool `json:"is_big"`
@@ -5896,28 +5896,60 @@ func (client *Client) RemoveMessageReaction(req *RemoveMessageReactionRequest) (
     return UnmarshalOk(result.Data)
 }
 
-type AddPaidMessageReactionRequest struct { 
+type AddPendingPaidMessageReactionRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Number of Telegram Stars to be used for the reaction; 1-getOption("paid_reaction_star_count_max")
+    // Number of Telegram Stars to be used for the reaction. The total number of pending paid reactions must not exceed getOption("paid_reaction_star_count_max")
     StarCount int64 `json:"star_count"`
-    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors
+    // Pass true if the user didn't choose anonymity explicitly, for example, the reaction is set from the message bubble
+    UseDefaultIsAnonymous bool `json:"use_default_is_anonymous"`
+    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors. Ignored if use_default_is_anonymous == true
     IsAnonymous bool `json:"is_anonymous"`
 }
 
-// Adds the paid message reaction to a message. Use getMessageAvailableReactions to receive the list of available reactions for the message
-func (client *Client) AddPaidMessageReaction(req *AddPaidMessageReactionRequest) (*Ok, error) {
+// Adds the paid message reaction to a message. Use getMessageAvailableReactions to check whether the reaction is available for the message
+func (client *Client) AddPendingPaidMessageReaction(req *AddPendingPaidMessageReactionRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "addPaidMessageReaction",
+            Type: "addPendingPaidMessageReaction",
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "star_count": req.StarCount,
+            "use_default_is_anonymous": req.UseDefaultIsAnonymous,
             "is_anonymous": req.IsAnonymous,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type CommitPendingPaidMessageReactionsRequest struct { 
+    // Identifier of the chat to which the message belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Applies all pending paid reactions on a message
+func (client *Client) CommitPendingPaidMessageReactions(req *CommitPendingPaidMessageReactionsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "commitPendingPaidMessageReactions",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
         },
     })
     if err != nil {
@@ -5938,7 +5970,7 @@ type RemovePendingPaidMessageReactionsRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Removes all pending paid reactions on a message. Can be called within 5 seconds after the last addPaidMessageReaction call
+// Removes all pending paid reactions on a message
 func (client *Client) RemovePendingPaidMessageReactions(req *RemovePendingPaidMessageReactionsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7030,18 +7062,18 @@ func (client *Client) AnswerInlineQuery(req *AnswerInlineQueryRequest) (*Ok, err
     return UnmarshalOk(result.Data)
 }
 
-type GetPopularWebAppBotsRequest struct { 
+type GetGrossingWebAppBotsRequest struct { 
     // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
     Offset string `json:"offset"`
     // The maximum number of bots to be returned; up to 100
     Limit int32 `json:"limit"`
 }
 
-// Returns popular Web App bots
-func (client *Client) GetPopularWebAppBots(req *GetPopularWebAppBotsRequest) (*FoundUsers, error) {
+// Returns the most grossing Web App bots
+func (client *Client) GetGrossingWebAppBots(req *GetGrossingWebAppBotsRequest) (*FoundUsers, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getPopularWebAppBots",
+            Type: "getGrossingWebAppBots",
         },
         Data: map[string]interface{}{
             "offset": req.Offset,
@@ -9178,7 +9210,7 @@ type SetChatMessageAutoDeleteTimeRequest struct {
     MessageAutoDeleteTime int32 `json:"message_auto_delete_time"`
 }
 
-// Changes the message auto-delete or self-destruct (for secret chats) time in a chat. Requires change_info administrator right in basic groups, supergroups and channels Message auto-delete time can't be changed in a chat with the current user (Saved Messages) and the chat 777000 (Telegram).
+// Changes the message auto-delete or self-destruct (for secret chats) time in a chat. Requires change_info administrator right in basic groups, supergroups and channels. Message auto-delete time can't be changed in a chat with the current user (Saved Messages) and the chat 777000 (Telegram).
 func (client *Client) SetChatMessageAutoDeleteTime(req *SetChatMessageAutoDeleteTimeRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -10967,7 +10999,7 @@ type GetChatPostedToChatPageStoriesRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the story starting from which stories must be returned; use 0 to get results from pinned and the newest story
     FromStoryId int32 `json:"from_story_id"`
-    // The maximum number of stories to be returned For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of stories to be returned. For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -10999,7 +11031,7 @@ type GetChatArchivedStoriesRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the story starting from which stories must be returned; use 0 to get results from the last story
     FromStoryId int32 `json:"from_story_id"`
-    // The maximum number of stories to be returned For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of stories to be returned. For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -12543,7 +12575,7 @@ type EditChatInviteLinkRequest struct {
     CreatesJoinRequest bool `json:"creates_join_request"`
 }
 
-// Edits a non-primary invite link for a chat. Available for basic groups, supergroups, and channels. If the link creates a subscription, then expiration_date, member_limit and creates_join_request must not be used Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
+// Edits a non-primary invite link for a chat. Available for basic groups, supergroups, and channels. If the link creates a subscription, then expiration_date, member_limit and creates_join_request must not be used. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
 func (client *Client) EditChatInviteLink(req *EditChatInviteLinkRequest) (*ChatInviteLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -14851,6 +14883,32 @@ func (client *Client) GetStickerSet(req *GetStickerSetRequest) (*StickerSet, err
     }
 
     return UnmarshalStickerSet(result.Data)
+}
+
+type GetStickerSetNameRequest struct { 
+    // Identifier of the sticker set
+    SetId JsonInt64 `json:"set_id"`
+}
+
+// Returns name of a sticker set by its identifier
+func (client *Client) GetStickerSetName(req *GetStickerSetNameRequest) (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStickerSetName",
+        },
+        Data: map[string]interface{}{
+            "set_id": req.SetId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
 }
 
 type SearchStickerSetRequest struct { 
@@ -21358,7 +21416,7 @@ type GetPremiumGiftCodePaymentOptionsRequest struct {
     BoostedChatId int64 `json:"boosted_chat_id"`
 }
 
-// Returns available options for Telegram Premium gift code or giveaway creation
+// Returns available options for Telegram Premium gift code or Telegram Premium giveaway creation
 func (client *Client) GetPremiumGiftCodePaymentOptions(req *GetPremiumGiftCodePaymentOptionsRequest) (*PremiumGiftCodePaymentOptions, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -21431,22 +21489,28 @@ func (client *Client) ApplyPremiumGiftCode(req *ApplyPremiumGiftCodeRequest) (*O
     return UnmarshalOk(result.Data)
 }
 
-type LaunchPrepaidPremiumGiveawayRequest struct { 
+type LaunchPrepaidGiveawayRequest struct { 
     // Unique identifier of the prepaid giveaway
     GiveawayId JsonInt64 `json:"giveaway_id"`
     // Giveaway parameters
-    Parameters *PremiumGiveawayParameters `json:"parameters"`
+    Parameters *GiveawayParameters `json:"parameters"`
+    // The number of users to receive giveaway prize
+    WinnerCount int32 `json:"winner_count"`
+    // The number of Telegram Stars to be distributed through the giveaway; pass 0 for Telegram Premium giveaways
+    StarCount int64 `json:"star_count"`
 }
 
-// Launches a prepaid Telegram Premium giveaway
-func (client *Client) LaunchPrepaidPremiumGiveaway(req *LaunchPrepaidPremiumGiveawayRequest) (*Ok, error) {
+// Launches a prepaid giveaway
+func (client *Client) LaunchPrepaidGiveaway(req *LaunchPrepaidGiveawayRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "launchPrepaidPremiumGiveaway",
+            Type: "launchPrepaidGiveaway",
         },
         Data: map[string]interface{}{
             "giveaway_id": req.GiveawayId,
             "parameters": req.Parameters,
+            "winner_count": req.WinnerCount,
+            "star_count": req.StarCount,
         },
     })
     if err != nil {
@@ -21460,18 +21524,18 @@ func (client *Client) LaunchPrepaidPremiumGiveaway(req *LaunchPrepaidPremiumGive
     return UnmarshalOk(result.Data)
 }
 
-type GetPremiumGiveawayInfoRequest struct { 
+type GetGiveawayInfoRequest struct { 
     // Identifier of the channel chat which started the giveaway
     ChatId int64 `json:"chat_id"`
     // Identifier of the giveaway or a giveaway winners message in the chat
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a Telegram Premium giveaway
-func (client *Client) GetPremiumGiveawayInfo(req *GetPremiumGiveawayInfoRequest) (PremiumGiveawayInfo, error) {
+// Returns information about a giveaway
+func (client *Client) GetGiveawayInfo(req *GetGiveawayInfoRequest) (GiveawayInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getPremiumGiveawayInfo",
+            Type: "getGiveawayInfo",
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
@@ -21487,11 +21551,11 @@ func (client *Client) GetPremiumGiveawayInfo(req *GetPremiumGiveawayInfoRequest)
     }
 
     switch result.Type {
-    case TypePremiumGiveawayInfoOngoing:
-        return UnmarshalPremiumGiveawayInfoOngoing(result.Data)
+    case TypeGiveawayInfoOngoing:
+        return UnmarshalGiveawayInfoOngoing(result.Data)
 
-    case TypePremiumGiveawayInfoCompleted:
-        return UnmarshalPremiumGiveawayInfoCompleted(result.Data)
+    case TypeGiveawayInfoCompleted:
+        return UnmarshalGiveawayInfoCompleted(result.Data)
 
     default:
         return nil, errors.New("invalid type")
@@ -21541,6 +21605,25 @@ func (client *Client) GetStarGiftPaymentOptions(req *GetStarGiftPaymentOptionsRe
     }
 
     return UnmarshalStarPaymentOptions(result.Data)
+}
+
+// Returns available options for Telegram Star giveaway creation
+func (client *Client) GetStarGiveawayPaymentOptions() (*StarGiveawayPaymentOptions, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStarGiveawayPaymentOptions",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarGiveawayPaymentOptions(result.Data)
 }
 
 type GetStarTransactionsRequest struct { 
@@ -23449,6 +23532,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateMessageReactions:
         return UnmarshalUpdateMessageReactions(result.Data)
+
+    case TypeUpdatePaidMediaPurchased:
+        return UnmarshalUpdatePaidMediaPurchased(result.Data)
 
     default:
         return nil, errors.New("invalid type")

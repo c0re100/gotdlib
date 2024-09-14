@@ -25,10 +25,11 @@ const (
     ClassInputChatPhoto = "InputChatPhoto"
     ClassStarTransactionDirection = "StarTransactionDirection"
     ClassBotTransactionPurpose = "BotTransactionPurpose"
-    ClassChannelTransactionPurpose = "ChannelTransactionPurpose"
+    ClassChatTransactionPurpose = "ChatTransactionPurpose"
     ClassStarTransactionPartner = "StarTransactionPartner"
-    ClassPremiumGiveawayParticipantStatus = "PremiumGiveawayParticipantStatus"
-    ClassPremiumGiveawayInfo = "PremiumGiveawayInfo"
+    ClassGiveawayParticipantStatus = "GiveawayParticipantStatus"
+    ClassGiveawayInfo = "GiveawayInfo"
+    ClassGiveawayPrize = "GiveawayPrize"
     ClassChatMemberStatus = "ChatMemberStatus"
     ClassChatMembersFilter = "ChatMembersFilter"
     ClassSupergroupMembersFilter = "SupergroupMembersFilter"
@@ -240,6 +241,9 @@ const (
     ClassPremiumGiftCodeInfo = "PremiumGiftCodeInfo"
     ClassStarPaymentOption = "StarPaymentOption"
     ClassStarPaymentOptions = "StarPaymentOptions"
+    ClassStarGiveawayWinnerOption = "StarGiveawayWinnerOption"
+    ClassStarGiveawayPaymentOption = "StarGiveawayPaymentOption"
+    ClassStarGiveawayPaymentOptions = "StarGiveawayPaymentOptions"
     ClassStarTransaction = "StarTransaction"
     ClassStarTransactions = "StarTransactions"
     ClassAccentColor = "AccentColor"
@@ -374,7 +378,7 @@ const (
     ClassValidatedOrderInfo = "ValidatedOrderInfo"
     ClassPaymentResult = "PaymentResult"
     ClassPaymentReceipt = "PaymentReceipt"
-    ClassPremiumGiveawayParameters = "PremiumGiveawayParameters"
+    ClassGiveawayParameters = "GiveawayParameters"
     ClassDatedFile = "DatedFile"
     ClassDate = "Date"
     ClassPersonalDetails = "PersonalDetails"
@@ -431,7 +435,7 @@ const (
     ClassBotMediaPreviewInfo = "BotMediaPreviewInfo"
     ClassChatBoostLevelFeatures = "ChatBoostLevelFeatures"
     ClassChatBoostFeatures = "ChatBoostFeatures"
-    ClassPrepaidPremiumGiveaway = "PrepaidPremiumGiveaway"
+    ClassPrepaidGiveaway = "PrepaidGiveaway"
     ClassChatBoostStatus = "ChatBoostStatus"
     ClassChatBoost = "ChatBoost"
     ClassFoundChatBoosts = "FoundChatBoosts"
@@ -705,13 +709,17 @@ const (
     TypePremiumGiftCodeInfo = "premiumGiftCodeInfo"
     TypeStarPaymentOption = "starPaymentOption"
     TypeStarPaymentOptions = "starPaymentOptions"
+    TypeStarGiveawayWinnerOption = "starGiveawayWinnerOption"
+    TypeStarGiveawayPaymentOption = "starGiveawayPaymentOption"
+    TypeStarGiveawayPaymentOptions = "starGiveawayPaymentOptions"
     TypeStarTransactionDirectionIncoming = "starTransactionDirectionIncoming"
     TypeStarTransactionDirectionOutgoing = "starTransactionDirectionOutgoing"
     TypeBotTransactionPurposePaidMedia = "botTransactionPurposePaidMedia"
     TypeBotTransactionPurposeInvoicePayment = "botTransactionPurposeInvoicePayment"
-    TypeChannelTransactionPurposePaidMedia = "channelTransactionPurposePaidMedia"
-    TypeChannelTransactionPurposeJoin = "channelTransactionPurposeJoin"
-    TypeChannelTransactionPurposeReaction = "channelTransactionPurposeReaction"
+    TypeChatTransactionPurposePaidMedia = "chatTransactionPurposePaidMedia"
+    TypeChatTransactionPurposeJoin = "chatTransactionPurposeJoin"
+    TypeChatTransactionPurposeReaction = "chatTransactionPurposeReaction"
+    TypeChatTransactionPurposeGiveaway = "chatTransactionPurposeGiveaway"
     TypeStarTransactionPartnerTelegram = "starTransactionPartnerTelegram"
     TypeStarTransactionPartnerAppStore = "starTransactionPartnerAppStore"
     TypeStarTransactionPartnerGooglePlay = "starTransactionPartnerGooglePlay"
@@ -719,18 +727,20 @@ const (
     TypeStarTransactionPartnerTelegramAds = "starTransactionPartnerTelegramAds"
     TypeStarTransactionPartnerBot = "starTransactionPartnerBot"
     TypeStarTransactionPartnerBusiness = "starTransactionPartnerBusiness"
-    TypeStarTransactionPartnerChannel = "starTransactionPartnerChannel"
+    TypeStarTransactionPartnerChat = "starTransactionPartnerChat"
     TypeStarTransactionPartnerUser = "starTransactionPartnerUser"
     TypeStarTransactionPartnerUnsupported = "starTransactionPartnerUnsupported"
     TypeStarTransaction = "starTransaction"
     TypeStarTransactions = "starTransactions"
-    TypePremiumGiveawayParticipantStatusEligible = "premiumGiveawayParticipantStatusEligible"
-    TypePremiumGiveawayParticipantStatusParticipating = "premiumGiveawayParticipantStatusParticipating"
-    TypePremiumGiveawayParticipantStatusAlreadyWasMember = "premiumGiveawayParticipantStatusAlreadyWasMember"
-    TypePremiumGiveawayParticipantStatusAdministrator = "premiumGiveawayParticipantStatusAdministrator"
-    TypePremiumGiveawayParticipantStatusDisallowedCountry = "premiumGiveawayParticipantStatusDisallowedCountry"
-    TypePremiumGiveawayInfoOngoing = "premiumGiveawayInfoOngoing"
-    TypePremiumGiveawayInfoCompleted = "premiumGiveawayInfoCompleted"
+    TypeGiveawayParticipantStatusEligible = "giveawayParticipantStatusEligible"
+    TypeGiveawayParticipantStatusParticipating = "giveawayParticipantStatusParticipating"
+    TypeGiveawayParticipantStatusAlreadyWasMember = "giveawayParticipantStatusAlreadyWasMember"
+    TypeGiveawayParticipantStatusAdministrator = "giveawayParticipantStatusAdministrator"
+    TypeGiveawayParticipantStatusDisallowedCountry = "giveawayParticipantStatusDisallowedCountry"
+    TypeGiveawayInfoOngoing = "giveawayInfoOngoing"
+    TypeGiveawayInfoCompleted = "giveawayInfoCompleted"
+    TypeGiveawayPrizePremium = "giveawayPrizePremium"
+    TypeGiveawayPrizeStars = "giveawayPrizeStars"
     TypeAccentColor = "accentColor"
     TypeProfileAccentColors = "profileAccentColors"
     TypeProfileAccentColor = "profileAccentColor"
@@ -1025,6 +1035,8 @@ const (
     TypeLinkPreviewTypeEmbeddedAnimationPlayer = "linkPreviewTypeEmbeddedAnimationPlayer"
     TypeLinkPreviewTypeEmbeddedAudioPlayer = "linkPreviewTypeEmbeddedAudioPlayer"
     TypeLinkPreviewTypeEmbeddedVideoPlayer = "linkPreviewTypeEmbeddedVideoPlayer"
+    TypeLinkPreviewTypeExternalAudio = "linkPreviewTypeExternalAudio"
+    TypeLinkPreviewTypeExternalVideo = "linkPreviewTypeExternalVideo"
     TypeLinkPreviewTypeInvoice = "linkPreviewTypeInvoice"
     TypeLinkPreviewTypeMessage = "linkPreviewTypeMessage"
     TypeLinkPreviewTypePhoto = "linkPreviewTypePhoto"
@@ -1082,7 +1094,7 @@ const (
     TypePaidMediaPhoto = "paidMediaPhoto"
     TypePaidMediaVideo = "paidMediaVideo"
     TypePaidMediaUnsupported = "paidMediaUnsupported"
-    TypePremiumGiveawayParameters = "premiumGiveawayParameters"
+    TypeGiveawayParameters = "giveawayParameters"
     TypeDatedFile = "datedFile"
     TypePassportElementTypePersonalDetails = "passportElementTypePersonalDetails"
     TypePassportElementTypePassport = "passportElementTypePassport"
@@ -1213,11 +1225,12 @@ const (
     TypeMessagePaymentRefunded = "messagePaymentRefunded"
     TypeMessageGiftedPremium = "messageGiftedPremium"
     TypeMessagePremiumGiftCode = "messagePremiumGiftCode"
-    TypeMessagePremiumGiveawayCreated = "messagePremiumGiveawayCreated"
-    TypeMessagePremiumGiveaway = "messagePremiumGiveaway"
-    TypeMessagePremiumGiveawayCompleted = "messagePremiumGiveawayCompleted"
-    TypeMessagePremiumGiveawayWinners = "messagePremiumGiveawayWinners"
+    TypeMessageGiveawayCreated = "messageGiveawayCreated"
+    TypeMessageGiveaway = "messageGiveaway"
+    TypeMessageGiveawayCompleted = "messageGiveawayCompleted"
+    TypeMessageGiveawayWinners = "messageGiveawayWinners"
     TypeMessageGiftedStars = "messageGiftedStars"
+    TypeMessageGiveawayPrizeStars = "messageGiveawayPrizeStars"
     TypeMessageContactRegistered = "messageContactRegistered"
     TypeMessageUsersShared = "messageUsersShared"
     TypeMessageChatShared = "messageChatShared"
@@ -1389,7 +1402,7 @@ const (
     TypeChatBoostSourceGiftCode = "chatBoostSourceGiftCode"
     TypeChatBoostSourceGiveaway = "chatBoostSourceGiveaway"
     TypeChatBoostSourcePremium = "chatBoostSourcePremium"
-    TypePrepaidPremiumGiveaway = "prepaidPremiumGiveaway"
+    TypePrepaidGiveaway = "prepaidGiveaway"
     TypeChatBoostStatus = "chatBoostStatus"
     TypeChatBoost = "chatBoost"
     TypeFoundChatBoosts = "foundChatBoosts"
@@ -1509,6 +1522,7 @@ const (
     TypeChatEventMemberLeft = "chatEventMemberLeft"
     TypeChatEventMemberPromoted = "chatEventMemberPromoted"
     TypeChatEventMemberRestricted = "chatEventMemberRestricted"
+    TypeChatEventMemberSubscriptionExtended = "chatEventMemberSubscriptionExtended"
     TypeChatEventAvailableReactionsChanged = "chatEventAvailableReactionsChanged"
     TypeChatEventBackgroundChanged = "chatEventBackgroundChanged"
     TypeChatEventDescriptionChanged = "chatEventDescriptionChanged"
@@ -1634,12 +1648,14 @@ const (
     TypeStorePaymentPurposeGiftedPremium = "storePaymentPurposeGiftedPremium"
     TypeStorePaymentPurposePremiumGiftCodes = "storePaymentPurposePremiumGiftCodes"
     TypeStorePaymentPurposePremiumGiveaway = "storePaymentPurposePremiumGiveaway"
+    TypeStorePaymentPurposeStarGiveaway = "storePaymentPurposeStarGiveaway"
     TypeStorePaymentPurposeStars = "storePaymentPurposeStars"
     TypeStorePaymentPurposeGiftedStars = "storePaymentPurposeGiftedStars"
     TypeTelegramPaymentPurposePremiumGiftCodes = "telegramPaymentPurposePremiumGiftCodes"
     TypeTelegramPaymentPurposePremiumGiveaway = "telegramPaymentPurposePremiumGiveaway"
     TypeTelegramPaymentPurposeStars = "telegramPaymentPurposeStars"
     TypeTelegramPaymentPurposeGiftedStars = "telegramPaymentPurposeGiftedStars"
+    TypeTelegramPaymentPurposeStarGiveaway = "telegramPaymentPurposeStarGiveaway"
     TypeTelegramPaymentPurposeJoinChat = "telegramPaymentPurposeJoinChat"
     TypeDeviceTokenFirebaseCloudMessaging = "deviceTokenFirebaseCloudMessaging"
     TypeDeviceTokenApplePush = "deviceTokenApplePush"
@@ -1707,7 +1723,7 @@ const (
     TypePushMessageContentPhoto = "pushMessageContentPhoto"
     TypePushMessageContentPoll = "pushMessageContentPoll"
     TypePushMessageContentPremiumGiftCode = "pushMessageContentPremiumGiftCode"
-    TypePushMessageContentPremiumGiveaway = "pushMessageContentPremiumGiveaway"
+    TypePushMessageContentGiveaway = "pushMessageContentGiveaway"
     TypePushMessageContentScreenshotTaken = "pushMessageContentScreenshotTaken"
     TypePushMessageContentSticker = "pushMessageContentSticker"
     TypePushMessageContentStory = "pushMessageContentStory"
@@ -2148,6 +2164,7 @@ const (
     TypeUpdateChatBoost = "updateChatBoost"
     TypeUpdateMessageReaction = "updateMessageReaction"
     TypeUpdateMessageReactions = "updateMessageReactions"
+    TypeUpdatePaidMediaPurchased = "updatePaidMediaPurchased"
     TypeUpdates = "updates"
     TypeLogStreamDefault = "logStreamDefault"
     TypeLogStreamFile = "logStreamFile"
@@ -2254,9 +2271,9 @@ type BotTransactionPurpose interface {
     BotTransactionPurposeType() string
 }
 
-// Describes purpose of a transaction with a channel
-type ChannelTransactionPurpose interface {
-    ChannelTransactionPurposeType() string
+// Describes purpose of a transaction with a supergroup or a channel
+type ChatTransactionPurpose interface {
+    ChatTransactionPurposeType() string
 }
 
 // Describes source or recipient of a transaction with Telegram Stars
@@ -2264,14 +2281,19 @@ type StarTransactionPartner interface {
     StarTransactionPartnerType() string
 }
 
-// Contains information about status of a user in a Telegram Premium giveaway
-type PremiumGiveawayParticipantStatus interface {
-    PremiumGiveawayParticipantStatusType() string
+// Contains information about status of a user in a giveaway
+type GiveawayParticipantStatus interface {
+    GiveawayParticipantStatusType() string
 }
 
-// Contains information about Telegram Premium giveaway
-type PremiumGiveawayInfo interface {
-    PremiumGiveawayInfoType() string
+// Contains information about a giveaway
+type GiveawayInfo interface {
+    GiveawayInfoType() string
+}
+
+// Contains information about a giveaway prize
+type GiveawayPrize interface {
+    GiveawayPrizeType() string
 }
 
 // Provides information about the status of a member in a chat
@@ -7363,7 +7385,7 @@ func (*PremiumStatePaymentOption) GetType() string {
     return TypePremiumStatePaymentOption
 }
 
-// Describes an option for creating Telegram Premium gift codes. Use telegramPaymentPurposePremiumGiftCodes for out-of-store payments
+// Describes an option for creating Telegram Premium gift codes or Telegram Premium giveaway. Use telegramPaymentPurposePremiumGiftCodes or telegramPaymentPurposePremiumGiveaway for out-of-store payments
 type PremiumGiftCodePaymentOption struct {
     meta
     // ISO 4217 currency code for Telegram Premium gift code payment
@@ -7371,7 +7393,7 @@ type PremiumGiftCodePaymentOption struct {
     // The amount to pay, in the smallest units of the currency
     Amount int64 `json:"amount"`
     // Number of users which will be able to activate the gift codes
-    UserCount int32 `json:"user_count"`
+    WinnerCount int32 `json:"winner_count"`
     // Number of months the Telegram Premium subscription will be active
     MonthCount int32 `json:"month_count"`
     // Identifier of the store product associated with the option; may be empty if none
@@ -7396,7 +7418,7 @@ func (*PremiumGiftCodePaymentOption) GetType() string {
     return TypePremiumGiftCodePaymentOption
 }
 
-// Contains a list of options for creating Telegram Premium gift codes
+// Contains a list of options for creating Telegram Premium gift codes or Telegram Premium giveaway
 type PremiumGiftCodePaymentOptions struct {
     meta
     // The list of options
@@ -7537,6 +7559,93 @@ func (*StarPaymentOptions) GetType() string {
     return TypeStarPaymentOptions
 }
 
+// Describes an option for the number of winners of a Telegram Star giveaway
+type StarGiveawayWinnerOption struct {
+    meta
+    // The number of users that will be chosen as winners
+    WinnerCount int32 `json:"winner_count"`
+    // The number of Telegram Stars that will be won by the winners of the giveaway
+    WonStarCount int64 `json:"won_star_count"`
+    // True, if the option must be chosen by default
+    IsDefault bool `json:"is_default"`
+}
+
+func (entity *StarGiveawayWinnerOption) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarGiveawayWinnerOption
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarGiveawayWinnerOption) GetClass() string {
+    return ClassStarGiveawayWinnerOption
+}
+
+func (*StarGiveawayWinnerOption) GetType() string {
+    return TypeStarGiveawayWinnerOption
+}
+
+// Describes an option for creating Telegram Star giveaway. Use telegramPaymentPurposeStarGiveaway for out-of-store payments
+type StarGiveawayPaymentOption struct {
+    meta
+    // ISO 4217 currency code for the payment
+    Currency string `json:"currency"`
+    // The amount to pay, in the smallest units of the currency
+    Amount int64 `json:"amount"`
+    // Number of Telegram Stars that will be distributed among winners
+    StarCount int64 `json:"star_count"`
+    // Identifier of the store product associated with the option; may be empty if none
+    StoreProductId string `json:"store_product_id"`
+    // Number of times the chat will be boosted for one year if the option is chosen
+    YearlyBoostCount int32 `json:"yearly_boost_count"`
+    // Allowed options for the number of giveaway winners
+    WinnerOptions []*StarGiveawayWinnerOption `json:"winner_options"`
+    // True, if the option must be chosen by default
+    IsDefault bool `json:"is_default"`
+    // True, if the option must be shown only in the full list of payment options
+    IsAdditional bool `json:"is_additional"`
+}
+
+func (entity *StarGiveawayPaymentOption) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarGiveawayPaymentOption
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarGiveawayPaymentOption) GetClass() string {
+    return ClassStarGiveawayPaymentOption
+}
+
+func (*StarGiveawayPaymentOption) GetType() string {
+    return TypeStarGiveawayPaymentOption
+}
+
+// Contains a list of options for creating Telegram Star giveaway
+type StarGiveawayPaymentOptions struct {
+    meta
+    // The list of options
+    Options []*StarGiveawayPaymentOption `json:"options"`
+}
+
+func (entity *StarGiveawayPaymentOptions) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarGiveawayPaymentOptions
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarGiveawayPaymentOptions) GetClass() string {
+    return ClassStarGiveawayPaymentOptions
+}
+
+func (*StarGiveawayPaymentOptions) GetType() string {
+    return TypeStarGiveawayPaymentOptions
+}
+
 // The transaction is incoming and increases the number of owned Telegram Stars
 type StarTransactionDirectionIncoming struct{
     meta
@@ -7592,6 +7701,8 @@ type BotTransactionPurposePaidMedia struct {
     meta
     // The bought media if the trancastion wasn't refunded
     Media []PaidMedia `json:"media"`
+    // Bot-provided payload; for bots only
+    Payload string `json:"payload"`
 }
 
 func (entity *BotTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
@@ -7617,12 +7728,15 @@ func (*BotTransactionPurposePaidMedia) BotTransactionPurposeType() string {
 func (botTransactionPurposePaidMedia *BotTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
     var tmp struct {
         Media []json.RawMessage `json:"media"`
+        Payload string `json:"payload"`
     }
 
     err := json.Unmarshal(data, &tmp)
     if err != nil {
         return err
     }
+
+    botTransactionPurposePaidMedia.Payload = tmp.Payload
 
     fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
     botTransactionPurposePaidMedia.Media = fieldMedia
@@ -7660,35 +7774,35 @@ func (*BotTransactionPurposeInvoicePayment) BotTransactionPurposeType() string {
 }
 
 // Paid media were bought
-type ChannelTransactionPurposePaidMedia struct {
+type ChatTransactionPurposePaidMedia struct {
     meta
-    // Identifier of the corresponding message with paid media; can be an identifier of a deleted message
+    // Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
     MessageId int64 `json:"message_id"`
     // The bought media if the trancastion wasn't refunded
     Media []PaidMedia `json:"media"`
 }
 
-func (entity *ChannelTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
+func (entity *ChatTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub ChannelTransactionPurposePaidMedia
+    type stub ChatTransactionPurposePaidMedia
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*ChannelTransactionPurposePaidMedia) GetClass() string {
-    return ClassChannelTransactionPurpose
+func (*ChatTransactionPurposePaidMedia) GetClass() string {
+    return ClassChatTransactionPurpose
 }
 
-func (*ChannelTransactionPurposePaidMedia) GetType() string {
-    return TypeChannelTransactionPurposePaidMedia
+func (*ChatTransactionPurposePaidMedia) GetType() string {
+    return TypeChatTransactionPurposePaidMedia
 }
 
-func (*ChannelTransactionPurposePaidMedia) ChannelTransactionPurposeType() string {
-    return TypeChannelTransactionPurposePaidMedia
+func (*ChatTransactionPurposePaidMedia) ChatTransactionPurposeType() string {
+    return TypeChatTransactionPurposePaidMedia
 }
 
-func (channelTransactionPurposePaidMedia *ChannelTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
+func (chatTransactionPurposePaidMedia *ChatTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
     var tmp struct {
         MessageId int64 `json:"message_id"`
         Media []json.RawMessage `json:"media"`
@@ -7699,66 +7813,93 @@ func (channelTransactionPurposePaidMedia *ChannelTransactionPurposePaidMedia) Un
         return err
     }
 
-    channelTransactionPurposePaidMedia.MessageId = tmp.MessageId
+    chatTransactionPurposePaidMedia.MessageId = tmp.MessageId
 
     fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
-    channelTransactionPurposePaidMedia.Media = fieldMedia
+    chatTransactionPurposePaidMedia.Media = fieldMedia
 
     return nil
 }
 
 // User joined the channel and subscribed to regular payments in Telegram Stars
-type ChannelTransactionPurposeJoin struct {
+type ChatTransactionPurposeJoin struct {
     meta
     // The number of seconds between consecutive Telegram Star debiting
     Period int32 `json:"period"`
 }
 
-func (entity *ChannelTransactionPurposeJoin) MarshalJSON() ([]byte, error) {
+func (entity *ChatTransactionPurposeJoin) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub ChannelTransactionPurposeJoin
+    type stub ChatTransactionPurposeJoin
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*ChannelTransactionPurposeJoin) GetClass() string {
-    return ClassChannelTransactionPurpose
+func (*ChatTransactionPurposeJoin) GetClass() string {
+    return ClassChatTransactionPurpose
 }
 
-func (*ChannelTransactionPurposeJoin) GetType() string {
-    return TypeChannelTransactionPurposeJoin
+func (*ChatTransactionPurposeJoin) GetType() string {
+    return TypeChatTransactionPurposeJoin
 }
 
-func (*ChannelTransactionPurposeJoin) ChannelTransactionPurposeType() string {
-    return TypeChannelTransactionPurposeJoin
+func (*ChatTransactionPurposeJoin) ChatTransactionPurposeType() string {
+    return TypeChatTransactionPurposeJoin
 }
 
 // User paid for a reaction
-type ChannelTransactionPurposeReaction struct {
+type ChatTransactionPurposeReaction struct {
     meta
-    // Identifier of the reacted message; can be an identifier of a deleted message
+    // Identifier of the reacted message; can be 0 or an identifier of a deleted message
     MessageId int64 `json:"message_id"`
 }
 
-func (entity *ChannelTransactionPurposeReaction) MarshalJSON() ([]byte, error) {
+func (entity *ChatTransactionPurposeReaction) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub ChannelTransactionPurposeReaction
+    type stub ChatTransactionPurposeReaction
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*ChannelTransactionPurposeReaction) GetClass() string {
-    return ClassChannelTransactionPurpose
+func (*ChatTransactionPurposeReaction) GetClass() string {
+    return ClassChatTransactionPurpose
 }
 
-func (*ChannelTransactionPurposeReaction) GetType() string {
-    return TypeChannelTransactionPurposeReaction
+func (*ChatTransactionPurposeReaction) GetType() string {
+    return TypeChatTransactionPurposeReaction
 }
 
-func (*ChannelTransactionPurposeReaction) ChannelTransactionPurposeType() string {
-    return TypeChannelTransactionPurposeReaction
+func (*ChatTransactionPurposeReaction) ChatTransactionPurposeType() string {
+    return TypeChatTransactionPurposeReaction
+}
+
+// User received Telegram Stars from a giveaway
+type ChatTransactionPurposeGiveaway struct {
+    meta
+    // Identifier of the message with giveaway; can be 0 or an identifier of a deleted message
+    GiveawayMessageId int64 `json:"giveaway_message_id"`
+}
+
+func (entity *ChatTransactionPurposeGiveaway) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatTransactionPurposeGiveaway
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatTransactionPurposeGiveaway) GetClass() string {
+    return ClassChatTransactionPurpose
+}
+
+func (*ChatTransactionPurposeGiveaway) GetType() string {
+    return TypeChatTransactionPurposeGiveaway
+}
+
+func (*ChatTransactionPurposeGiveaway) ChatTransactionPurposeType() string {
+    return TypeChatTransactionPurposeGiveaway
 }
 
 // The transaction is a transaction with Telegram through a bot
@@ -8000,36 +8141,36 @@ func (starTransactionPartnerBusiness *StarTransactionPartnerBusiness) UnmarshalJ
     return nil
 }
 
-// The transaction is a transaction with a channel chat
-type StarTransactionPartnerChannel struct {
+// The transaction is a transaction with a supergroup or a channel chat
+type StarTransactionPartnerChat struct {
     meta
     // Identifier of the chat
     ChatId int64 `json:"chat_id"`
     // Purpose of the transaction
-    Purpose ChannelTransactionPurpose `json:"purpose"`
+    Purpose ChatTransactionPurpose `json:"purpose"`
 }
 
-func (entity *StarTransactionPartnerChannel) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionPartnerChat) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerChannel
+    type stub StarTransactionPartnerChat
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerChannel) GetClass() string {
+func (*StarTransactionPartnerChat) GetClass() string {
     return ClassStarTransactionPartner
 }
 
-func (*StarTransactionPartnerChannel) GetType() string {
-    return TypeStarTransactionPartnerChannel
+func (*StarTransactionPartnerChat) GetType() string {
+    return TypeStarTransactionPartnerChat
 }
 
-func (*StarTransactionPartnerChannel) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerChannel
+func (*StarTransactionPartnerChat) StarTransactionPartnerType() string {
+    return TypeStarTransactionPartnerChat
 }
 
-func (starTransactionPartnerChannel *StarTransactionPartnerChannel) UnmarshalJSON(data []byte) error {
+func (starTransactionPartnerChat *StarTransactionPartnerChat) UnmarshalJSON(data []byte) error {
     var tmp struct {
         ChatId int64 `json:"chat_id"`
         Purpose json.RawMessage `json:"purpose"`
@@ -8040,10 +8181,10 @@ func (starTransactionPartnerChannel *StarTransactionPartnerChannel) UnmarshalJSO
         return err
     }
 
-    starTransactionPartnerChannel.ChatId = tmp.ChatId
+    starTransactionPartnerChat.ChatId = tmp.ChatId
 
-    fieldPurpose, _ := UnmarshalChannelTransactionPurpose(tmp.Purpose)
-    starTransactionPartnerChannel.Purpose = fieldPurpose
+    fieldPurpose, _ := UnmarshalChatTransactionPurpose(tmp.Purpose)
+    starTransactionPartnerChat.Purpose = fieldPurpose
 
     return nil
 }
@@ -8186,168 +8327,168 @@ func (*StarTransactions) GetType() string {
 }
 
 // The user is eligible for the giveaway
-type PremiumGiveawayParticipantStatusEligible struct{
+type GiveawayParticipantStatusEligible struct{
     meta
 }
 
-func (entity *PremiumGiveawayParticipantStatusEligible) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParticipantStatusEligible) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParticipantStatusEligible
+    type stub GiveawayParticipantStatusEligible
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParticipantStatusEligible) GetClass() string {
-    return ClassPremiumGiveawayParticipantStatus
+func (*GiveawayParticipantStatusEligible) GetClass() string {
+    return ClassGiveawayParticipantStatus
 }
 
-func (*PremiumGiveawayParticipantStatusEligible) GetType() string {
-    return TypePremiumGiveawayParticipantStatusEligible
+func (*GiveawayParticipantStatusEligible) GetType() string {
+    return TypeGiveawayParticipantStatusEligible
 }
 
-func (*PremiumGiveawayParticipantStatusEligible) PremiumGiveawayParticipantStatusType() string {
-    return TypePremiumGiveawayParticipantStatusEligible
+func (*GiveawayParticipantStatusEligible) GiveawayParticipantStatusType() string {
+    return TypeGiveawayParticipantStatusEligible
 }
 
 // The user participates in the giveaway
-type PremiumGiveawayParticipantStatusParticipating struct{
+type GiveawayParticipantStatusParticipating struct{
     meta
 }
 
-func (entity *PremiumGiveawayParticipantStatusParticipating) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParticipantStatusParticipating) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParticipantStatusParticipating
+    type stub GiveawayParticipantStatusParticipating
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParticipantStatusParticipating) GetClass() string {
-    return ClassPremiumGiveawayParticipantStatus
+func (*GiveawayParticipantStatusParticipating) GetClass() string {
+    return ClassGiveawayParticipantStatus
 }
 
-func (*PremiumGiveawayParticipantStatusParticipating) GetType() string {
-    return TypePremiumGiveawayParticipantStatusParticipating
+func (*GiveawayParticipantStatusParticipating) GetType() string {
+    return TypeGiveawayParticipantStatusParticipating
 }
 
-func (*PremiumGiveawayParticipantStatusParticipating) PremiumGiveawayParticipantStatusType() string {
-    return TypePremiumGiveawayParticipantStatusParticipating
+func (*GiveawayParticipantStatusParticipating) GiveawayParticipantStatusType() string {
+    return TypeGiveawayParticipantStatusParticipating
 }
 
 // The user can't participate in the giveaway, because they have already been member of the chat
-type PremiumGiveawayParticipantStatusAlreadyWasMember struct {
+type GiveawayParticipantStatusAlreadyWasMember struct {
     meta
     // Point in time (Unix timestamp) when the user joined the chat
     JoinedChatDate int32 `json:"joined_chat_date"`
 }
 
-func (entity *PremiumGiveawayParticipantStatusAlreadyWasMember) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParticipantStatusAlreadyWasMember) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParticipantStatusAlreadyWasMember
+    type stub GiveawayParticipantStatusAlreadyWasMember
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParticipantStatusAlreadyWasMember) GetClass() string {
-    return ClassPremiumGiveawayParticipantStatus
+func (*GiveawayParticipantStatusAlreadyWasMember) GetClass() string {
+    return ClassGiveawayParticipantStatus
 }
 
-func (*PremiumGiveawayParticipantStatusAlreadyWasMember) GetType() string {
-    return TypePremiumGiveawayParticipantStatusAlreadyWasMember
+func (*GiveawayParticipantStatusAlreadyWasMember) GetType() string {
+    return TypeGiveawayParticipantStatusAlreadyWasMember
 }
 
-func (*PremiumGiveawayParticipantStatusAlreadyWasMember) PremiumGiveawayParticipantStatusType() string {
-    return TypePremiumGiveawayParticipantStatusAlreadyWasMember
+func (*GiveawayParticipantStatusAlreadyWasMember) GiveawayParticipantStatusType() string {
+    return TypeGiveawayParticipantStatusAlreadyWasMember
 }
 
 // The user can't participate in the giveaway, because they are an administrator in one of the chats that created the giveaway
-type PremiumGiveawayParticipantStatusAdministrator struct {
+type GiveawayParticipantStatusAdministrator struct {
     meta
     // Identifier of the chat administered by the user
     ChatId int64 `json:"chat_id"`
 }
 
-func (entity *PremiumGiveawayParticipantStatusAdministrator) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParticipantStatusAdministrator) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParticipantStatusAdministrator
+    type stub GiveawayParticipantStatusAdministrator
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParticipantStatusAdministrator) GetClass() string {
-    return ClassPremiumGiveawayParticipantStatus
+func (*GiveawayParticipantStatusAdministrator) GetClass() string {
+    return ClassGiveawayParticipantStatus
 }
 
-func (*PremiumGiveawayParticipantStatusAdministrator) GetType() string {
-    return TypePremiumGiveawayParticipantStatusAdministrator
+func (*GiveawayParticipantStatusAdministrator) GetType() string {
+    return TypeGiveawayParticipantStatusAdministrator
 }
 
-func (*PremiumGiveawayParticipantStatusAdministrator) PremiumGiveawayParticipantStatusType() string {
-    return TypePremiumGiveawayParticipantStatusAdministrator
+func (*GiveawayParticipantStatusAdministrator) GiveawayParticipantStatusType() string {
+    return TypeGiveawayParticipantStatusAdministrator
 }
 
 // The user can't participate in the giveaway, because they phone number is from a disallowed country
-type PremiumGiveawayParticipantStatusDisallowedCountry struct {
+type GiveawayParticipantStatusDisallowedCountry struct {
     meta
     // A two-letter ISO 3166-1 alpha-2 country code of the user's country
     UserCountryCode string `json:"user_country_code"`
 }
 
-func (entity *PremiumGiveawayParticipantStatusDisallowedCountry) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParticipantStatusDisallowedCountry) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParticipantStatusDisallowedCountry
+    type stub GiveawayParticipantStatusDisallowedCountry
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParticipantStatusDisallowedCountry) GetClass() string {
-    return ClassPremiumGiveawayParticipantStatus
+func (*GiveawayParticipantStatusDisallowedCountry) GetClass() string {
+    return ClassGiveawayParticipantStatus
 }
 
-func (*PremiumGiveawayParticipantStatusDisallowedCountry) GetType() string {
-    return TypePremiumGiveawayParticipantStatusDisallowedCountry
+func (*GiveawayParticipantStatusDisallowedCountry) GetType() string {
+    return TypeGiveawayParticipantStatusDisallowedCountry
 }
 
-func (*PremiumGiveawayParticipantStatusDisallowedCountry) PremiumGiveawayParticipantStatusType() string {
-    return TypePremiumGiveawayParticipantStatusDisallowedCountry
+func (*GiveawayParticipantStatusDisallowedCountry) GiveawayParticipantStatusType() string {
+    return TypeGiveawayParticipantStatusDisallowedCountry
 }
 
 // Describes an ongoing giveaway
-type PremiumGiveawayInfoOngoing struct {
+type GiveawayInfoOngoing struct {
     meta
     // Point in time (Unix timestamp) when the giveaway was created
     CreationDate int32 `json:"creation_date"`
     // Status of the current user in the giveaway
-    Status PremiumGiveawayParticipantStatus `json:"status"`
+    Status GiveawayParticipantStatus `json:"status"`
     // True, if the giveaway has ended and results are being prepared
     IsEnded bool `json:"is_ended"`
 }
 
-func (entity *PremiumGiveawayInfoOngoing) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayInfoOngoing) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayInfoOngoing
+    type stub GiveawayInfoOngoing
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayInfoOngoing) GetClass() string {
-    return ClassPremiumGiveawayInfo
+func (*GiveawayInfoOngoing) GetClass() string {
+    return ClassGiveawayInfo
 }
 
-func (*PremiumGiveawayInfoOngoing) GetType() string {
-    return TypePremiumGiveawayInfoOngoing
+func (*GiveawayInfoOngoing) GetType() string {
+    return TypeGiveawayInfoOngoing
 }
 
-func (*PremiumGiveawayInfoOngoing) PremiumGiveawayInfoType() string {
-    return TypePremiumGiveawayInfoOngoing
+func (*GiveawayInfoOngoing) GiveawayInfoType() string {
+    return TypeGiveawayInfoOngoing
 }
 
-func (premiumGiveawayInfoOngoing *PremiumGiveawayInfoOngoing) UnmarshalJSON(data []byte) error {
+func (giveawayInfoOngoing *GiveawayInfoOngoing) UnmarshalJSON(data []byte) error {
     var tmp struct {
         CreationDate int32 `json:"creation_date"`
         Status json.RawMessage `json:"status"`
@@ -8359,17 +8500,17 @@ func (premiumGiveawayInfoOngoing *PremiumGiveawayInfoOngoing) UnmarshalJSON(data
         return err
     }
 
-    premiumGiveawayInfoOngoing.CreationDate = tmp.CreationDate
-    premiumGiveawayInfoOngoing.IsEnded = tmp.IsEnded
+    giveawayInfoOngoing.CreationDate = tmp.CreationDate
+    giveawayInfoOngoing.IsEnded = tmp.IsEnded
 
-    fieldStatus, _ := UnmarshalPremiumGiveawayParticipantStatus(tmp.Status)
-    premiumGiveawayInfoOngoing.Status = fieldStatus
+    fieldStatus, _ := UnmarshalGiveawayParticipantStatus(tmp.Status)
+    giveawayInfoOngoing.Status = fieldStatus
 
     return nil
 }
 
 // Describes a completed giveaway
-type PremiumGiveawayInfoCompleted struct {
+type GiveawayInfoCompleted struct {
     meta
     // Point in time (Unix timestamp) when the giveaway was created
     CreationDate int32 `json:"creation_date"`
@@ -8377,32 +8518,90 @@ type PremiumGiveawayInfoCompleted struct {
     ActualWinnersSelectionDate int32 `json:"actual_winners_selection_date"`
     // True, if the giveaway was canceled and was fully refunded
     WasRefunded bool `json:"was_refunded"`
+    // True, if the cuurent user is a winner of the giveaway
+    IsWinner bool `json:"is_winner"`
     // Number of winners in the giveaway
     WinnerCount int32 `json:"winner_count"`
-    // Number of winners, which activated their gift codes
+    // Number of winners, which activated their gift codes; for Telegram Premium giveaways only
     ActivationCount int32 `json:"activation_count"`
-    // Telegram Premium gift code that was received by the current user; empty if the user isn't a winner in the giveaway
+    // Telegram Premium gift code that was received by the current user; empty if the user isn't a winner in the giveaway or the giveaway isn't a Telegram Premium giveaway
     GiftCode string `json:"gift_code"`
+    // The amount of Telegram Stars won by the current user; 0 if the user isn't a winner in the giveaway or the giveaway isn't a Telegram Star giveaway
+    WonStarCount int64 `json:"won_star_count"`
 }
 
-func (entity *PremiumGiveawayInfoCompleted) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayInfoCompleted) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayInfoCompleted
+    type stub GiveawayInfoCompleted
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayInfoCompleted) GetClass() string {
-    return ClassPremiumGiveawayInfo
+func (*GiveawayInfoCompleted) GetClass() string {
+    return ClassGiveawayInfo
 }
 
-func (*PremiumGiveawayInfoCompleted) GetType() string {
-    return TypePremiumGiveawayInfoCompleted
+func (*GiveawayInfoCompleted) GetType() string {
+    return TypeGiveawayInfoCompleted
 }
 
-func (*PremiumGiveawayInfoCompleted) PremiumGiveawayInfoType() string {
-    return TypePremiumGiveawayInfoCompleted
+func (*GiveawayInfoCompleted) GiveawayInfoType() string {
+    return TypeGiveawayInfoCompleted
+}
+
+// The giveaway sends Telegram Premium subscriptions to the winners
+type GiveawayPrizePremium struct {
+    meta
+    // Number of months the Telegram Premium subscription will be active after code activation
+    MonthCount int32 `json:"month_count"`
+}
+
+func (entity *GiveawayPrizePremium) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiveawayPrizePremium
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiveawayPrizePremium) GetClass() string {
+    return ClassGiveawayPrize
+}
+
+func (*GiveawayPrizePremium) GetType() string {
+    return TypeGiveawayPrizePremium
+}
+
+func (*GiveawayPrizePremium) GiveawayPrizeType() string {
+    return TypeGiveawayPrizePremium
+}
+
+// The giveaway sends Telegram Stars to the winners
+type GiveawayPrizeStars struct {
+    meta
+    // Number of Telegram Stars that will be shared by all winners
+    StarCount int64 `json:"star_count"`
+}
+
+func (entity *GiveawayPrizeStars) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiveawayPrizeStars
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiveawayPrizeStars) GetClass() string {
+    return ClassGiveawayPrize
+}
+
+func (*GiveawayPrizeStars) GetType() string {
+    return TypeGiveawayPrizeStars
+}
+
+func (*GiveawayPrizeStars) GiveawayPrizeType() string {
+    return TypeGiveawayPrizeStars
 }
 
 // Contains information about supported accent color for user/chat name, background of empty chat photo, replies to messages and link previews
@@ -11772,7 +11971,7 @@ type MessageReplyToMessage struct {
     Origin MessageOrigin `json:"origin"`
     // Point in time (Unix timestamp) when the message was sent if the message was from another chat or topic; 0 for messages from the same chat
     OriginSendDate int32 `json:"origin_send_date"`
-    // Media content of the message if the message was from another chat or topic; may be null for messages from the same chat and messages without media. Can be only one of the following types: messageAnimation, messageAudio, messageContact, messageDice, messageDocument, messageGame, messageInvoice, messageLocation, messagePaidMedia, messagePhoto, messagePoll, messagePremiumGiveaway, messagePremiumGiveawayWinners, messageSticker, messageStory, messageText (for link preview), messageVenue, messageVideo, messageVideoNote, or messageVoiceNote
+    // Media content of the message if the message was from another chat or topic; may be null for messages from the same chat and messages without media. Can be only one of the following types: messageAnimation, messageAudio, messageContact, messageDice, messageDocument, messageGame, messageGiveaway, messageGiveawayWinners, messageInvoice, messageLocation, messagePaidMedia, messagePhoto, messagePoll, messageSticker, messageStory, messageText (for link preview), messageVenue, messageVideo, messageVideoNote, or messageVoiceNote
     Content MessageContent `json:"content"`
 }
 
@@ -18519,8 +18718,6 @@ type LinkPreviewTypeAnimation struct {
     meta
     // The animation
     Animation *Animation `json:"animation"`
-    // Author of the animation
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeAnimation) MarshalJSON() ([]byte, error) {
@@ -18548,8 +18745,6 @@ type LinkPreviewTypeApp struct {
     meta
     // Photo for the app
     Photo *Photo `json:"photo"`
-    // Author of the app
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeApp) MarshalJSON() ([]byte, error) {
@@ -18577,8 +18772,6 @@ type LinkPreviewTypeArticle struct {
     meta
     // Article's main photo; may be null
     Photo *Photo `json:"photo"`
-    // Author of the article
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeArticle) MarshalJSON() ([]byte, error) {
@@ -18604,16 +18797,8 @@ func (*LinkPreviewTypeArticle) LinkPreviewTypeType() string {
 // The link is a link to an audio
 type LinkPreviewTypeAudio struct {
     meta
-    // URL of the audio; may be empty if none
-    Url string `json:"url"`
-    // MIME type of the audio file
-    MimeType string `json:"mime_type"`
-    // The audio description; may be null if unknown
+    // The audio description
     Audio *Audio `json:"audio"`
-    // Duration of the audio, in seconds; 0 if unknown
-    Duration int32 `json:"duration"`
-    // Author of the audio
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeAudio) MarshalJSON() ([]byte, error) {
@@ -18768,8 +18953,6 @@ type LinkPreviewTypeDocument struct {
     meta
     // The document description
     Document *Document `json:"document"`
-    // Author of the document
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeDocument) MarshalJSON() ([]byte, error) {
@@ -18801,8 +18984,6 @@ type LinkPreviewTypeEmbeddedAnimationPlayer struct {
     Thumbnail *Photo `json:"thumbnail"`
     // Duration of the animation, in seconds
     Duration int32 `json:"duration"`
-    // Author of the animation
-    Author string `json:"author"`
     // Expected width of the embedded player
     Width int32 `json:"width"`
     // Expected height of the embedded player
@@ -18838,8 +19019,6 @@ type LinkPreviewTypeEmbeddedAudioPlayer struct {
     Thumbnail *Photo `json:"thumbnail"`
     // Duration of the audio, in seconds
     Duration int32 `json:"duration"`
-    // Author of the audio
-    Author string `json:"author"`
     // Expected width of the embedded player
     Width int32 `json:"width"`
     // Expected height of the embedded player
@@ -18875,8 +19054,6 @@ type LinkPreviewTypeEmbeddedVideoPlayer struct {
     Thumbnail *Photo `json:"thumbnail"`
     // Duration of the video, in seconds
     Duration int32 `json:"duration"`
-    // Author of the video
-    Author string `json:"author"`
     // Expected width of the embedded player
     Width int32 `json:"width"`
     // Expected height of the embedded player
@@ -18901,6 +19078,72 @@ func (*LinkPreviewTypeEmbeddedVideoPlayer) GetType() string {
 
 func (*LinkPreviewTypeEmbeddedVideoPlayer) LinkPreviewTypeType() string {
     return TypeLinkPreviewTypeEmbeddedVideoPlayer
+}
+
+// The link is a link to an audio file
+type LinkPreviewTypeExternalAudio struct {
+    meta
+    // URL of the audio file
+    Url string `json:"url"`
+    // MIME type of the audio file
+    MimeType string `json:"mime_type"`
+    // Duration of the audio, in seconds; 0 if unknown
+    Duration int32 `json:"duration"`
+}
+
+func (entity *LinkPreviewTypeExternalAudio) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub LinkPreviewTypeExternalAudio
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*LinkPreviewTypeExternalAudio) GetClass() string {
+    return ClassLinkPreviewType
+}
+
+func (*LinkPreviewTypeExternalAudio) GetType() string {
+    return TypeLinkPreviewTypeExternalAudio
+}
+
+func (*LinkPreviewTypeExternalAudio) LinkPreviewTypeType() string {
+    return TypeLinkPreviewTypeExternalAudio
+}
+
+// The link is a link to a video file
+type LinkPreviewTypeExternalVideo struct {
+    meta
+    // URL of the video file
+    Url string `json:"url"`
+    // MIME type of the video file
+    MimeType string `json:"mime_type"`
+    // Expected width of the video preview; 0 if unknown
+    Width int32 `json:"width"`
+    // Expected height of the video preview; 0 if unknown
+    Height int32 `json:"height"`
+    // Duration of the video, in seconds; 0 if unknown
+    Duration int32 `json:"duration"`
+}
+
+func (entity *LinkPreviewTypeExternalVideo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub LinkPreviewTypeExternalVideo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*LinkPreviewTypeExternalVideo) GetClass() string {
+    return ClassLinkPreviewType
+}
+
+func (*LinkPreviewTypeExternalVideo) GetType() string {
+    return TypeLinkPreviewTypeExternalVideo
+}
+
+func (*LinkPreviewTypeExternalVideo) LinkPreviewTypeType() string {
+    return TypeLinkPreviewTypeExternalVideo
 }
 
 // The link is a link to an invoice
@@ -18958,8 +19201,6 @@ type LinkPreviewTypePhoto struct {
     meta
     // The photo
     Photo *Photo `json:"photo"`
-    // Author of the photo
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypePhoto) MarshalJSON() ([]byte, error) {
@@ -19228,20 +19469,8 @@ func (*LinkPreviewTypeUser) LinkPreviewTypeType() string {
 // The link is a link to a video
 type LinkPreviewTypeVideo struct {
     meta
-    // URL of the video; may be empty if none
-    Url string `json:"url"`
-    // MIME type of the video file
-    MimeType string `json:"mime_type"`
-    // The video description; may be null if unknown
+    // The video description
     Video *Video `json:"video"`
-    // Expected width of the preview
-    Width int32 `json:"width"`
-    // Expected height of the preview
-    Height int32 `json:"height"`
-    // Duration of the video, in seconds; 0 if unknown
-    Duration int32 `json:"duration"`
-    // Author of the video
-    Author string `json:"author"`
 }
 
 func (entity *LinkPreviewTypeVideo) MarshalJSON() ([]byte, error) {
@@ -19387,6 +19616,8 @@ type LinkPreview struct {
     Title string `json:"title"`
     // Description of the content
     Description *FormattedText `json:"description"`
+    // Author of the content
+    Author string `json:"author"`
     // Type of the link preview
     Type LinkPreviewType `json:"type"`
     // True, if size of media in the preview can be changed
@@ -19426,6 +19657,7 @@ func (linkPreview *LinkPreview) UnmarshalJSON(data []byte) error {
         SiteName string `json:"site_name"`
         Title string `json:"title"`
         Description *FormattedText `json:"description"`
+        Author string `json:"author"`
         Type json.RawMessage `json:"type"`
         HasLargeMedia bool `json:"has_large_media"`
         ShowLargeMedia bool `json:"show_large_media"`
@@ -19445,6 +19677,7 @@ func (linkPreview *LinkPreview) UnmarshalJSON(data []byte) error {
     linkPreview.SiteName = tmp.SiteName
     linkPreview.Title = tmp.Title
     linkPreview.Description = tmp.Description
+    linkPreview.Author = tmp.Author
     linkPreview.HasLargeMedia = tmp.HasLargeMedia
     linkPreview.ShowLargeMedia = tmp.ShowLargeMedia
     linkPreview.ShowMediaAboveDescription = tmp.ShowMediaAboveDescription
@@ -19749,6 +19982,8 @@ type ThemeParameters struct {
     SecondaryBackgroundColor int32 `json:"secondary_background_color"`
     // A color of the header background in the RGB24 format
     HeaderBackgroundColor int32 `json:"header_background_color"`
+    // A color of the bottom bar background in the RGB24 format
+    BottomBarBackgroundColor int32 `json:"bottom_bar_background_color"`
     // A color of the section background in the RGB24 format
     SectionBackgroundColor int32 `json:"section_background_color"`
     // A color of the section separator in the RGB24 format
@@ -20698,10 +20933,10 @@ func (*PaidMediaUnsupported) PaidMediaType() string {
     return TypePaidMediaUnsupported
 }
 
-// Describes parameters of a Telegram Premium giveaway
-type PremiumGiveawayParameters struct {
+// Describes parameters of a giveaway
+type GiveawayParameters struct {
     meta
-    // Identifier of the supergroup or channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Premium subscription. If the chat is a channel, then can_post_messages right is required in the channel, otherwise, the user must be an administrator in the supergroup
+    // Identifier of the supergroup or channel chat, which will be automatically boosted by the winners of the giveaway for duration of the Telegram Premium subscription, or for the specified time. If the chat is a channel, then can_post_messages right is required in the channel, otherwise, the user must be an administrator in the supergroup
     BoostedChatId int64 `json:"boosted_chat_id"`
     // Identifiers of other supergroup or channel chats that must be subscribed by the users to be eligible for the giveaway. There can be up to getOption("giveaway_additional_chat_count_max") additional chats
     AdditionalChatIds []int64 `json:"additional_chat_ids"`
@@ -20717,20 +20952,20 @@ type PremiumGiveawayParameters struct {
     PrizeDescription string `json:"prize_description"`
 }
 
-func (entity *PremiumGiveawayParameters) MarshalJSON() ([]byte, error) {
+func (entity *GiveawayParameters) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumGiveawayParameters
+    type stub GiveawayParameters
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumGiveawayParameters) GetClass() string {
-    return ClassPremiumGiveawayParameters
+func (*GiveawayParameters) GetClass() string {
+    return ClassGiveawayParameters
 }
 
-func (*PremiumGiveawayParameters) GetType() string {
-    return TypePremiumGiveawayParameters
+func (*GiveawayParameters) GetType() string {
+    return TypeGiveawayParameters
 }
 
 // File with the date it was uploaded
@@ -24755,99 +24990,126 @@ func (messagePremiumGiftCode *MessagePremiumGiftCode) UnmarshalJSON(data []byte)
     return nil
 }
 
-// A Telegram Premium giveaway was created for the chat. Use telegramPaymentPurposePremiumGiveaway or storePaymentPurposePremiumGiveaway to create a giveaway
-type MessagePremiumGiveawayCreated struct{
+// A giveaway was created for the chat. Use telegramPaymentPurposePremiumGiveaway, storePaymentPurposePremiumGiveaway, telegramPaymentPurposeStarGiveaway, or storePaymentPurposeStarGiveaway to create a giveaway
+type MessageGiveawayCreated struct {
     meta
+    // Number of Telegram Stars that will be shared by winners of the giveaway; 0 for Telegram Premium giveaways
+    StarCount int64 `json:"star_count"`
 }
 
-func (entity *MessagePremiumGiveawayCreated) MarshalJSON() ([]byte, error) {
+func (entity *MessageGiveawayCreated) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub MessagePremiumGiveawayCreated
+    type stub MessageGiveawayCreated
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*MessagePremiumGiveawayCreated) GetClass() string {
+func (*MessageGiveawayCreated) GetClass() string {
     return ClassMessageContent
 }
 
-func (*MessagePremiumGiveawayCreated) GetType() string {
-    return TypeMessagePremiumGiveawayCreated
+func (*MessageGiveawayCreated) GetType() string {
+    return TypeMessageGiveawayCreated
 }
 
-func (*MessagePremiumGiveawayCreated) MessageContentType() string {
-    return TypeMessagePremiumGiveawayCreated
+func (*MessageGiveawayCreated) MessageContentType() string {
+    return TypeMessageGiveawayCreated
 }
 
-// A Telegram Premium giveaway
-type MessagePremiumGiveaway struct {
+// A giveaway
+type MessageGiveaway struct {
     meta
     // Giveaway parameters
-    Parameters *PremiumGiveawayParameters `json:"parameters"`
+    Parameters *GiveawayParameters `json:"parameters"`
     // Number of users which will receive Telegram Premium subscription gift codes
     WinnerCount int32 `json:"winner_count"`
-    // Number of months the Telegram Premium subscription will be active after code activation
-    MonthCount int32 `json:"month_count"`
+    // Prize of the giveaway
+    Prize GiveawayPrize `json:"prize"`
     // A sticker to be shown in the message; may be null if unknown
     Sticker *Sticker `json:"sticker"`
 }
 
-func (entity *MessagePremiumGiveaway) MarshalJSON() ([]byte, error) {
+func (entity *MessageGiveaway) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub MessagePremiumGiveaway
+    type stub MessageGiveaway
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*MessagePremiumGiveaway) GetClass() string {
+func (*MessageGiveaway) GetClass() string {
     return ClassMessageContent
 }
 
-func (*MessagePremiumGiveaway) GetType() string {
-    return TypeMessagePremiumGiveaway
+func (*MessageGiveaway) GetType() string {
+    return TypeMessageGiveaway
 }
 
-func (*MessagePremiumGiveaway) MessageContentType() string {
-    return TypeMessagePremiumGiveaway
+func (*MessageGiveaway) MessageContentType() string {
+    return TypeMessageGiveaway
 }
 
-// A Telegram Premium giveaway without public winners has been completed for the chat
-type MessagePremiumGiveawayCompleted struct {
+func (messageGiveaway *MessageGiveaway) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        Parameters *GiveawayParameters `json:"parameters"`
+        WinnerCount int32 `json:"winner_count"`
+        Prize json.RawMessage `json:"prize"`
+        Sticker *Sticker `json:"sticker"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    messageGiveaway.Parameters = tmp.Parameters
+    messageGiveaway.WinnerCount = tmp.WinnerCount
+    messageGiveaway.Sticker = tmp.Sticker
+
+    fieldPrize, _ := UnmarshalGiveawayPrize(tmp.Prize)
+    messageGiveaway.Prize = fieldPrize
+
+    return nil
+}
+
+// A giveaway without public winners has been completed for the chat
+type MessageGiveawayCompleted struct {
     meta
     // Identifier of the message with the giveaway; can be 0 if the message was deleted
     GiveawayMessageId int64 `json:"giveaway_message_id"`
     // Number of winners in the giveaway
     WinnerCount int32 `json:"winner_count"`
-    // Number of undistributed prizes
+    // True, if the giveaway is a Telegram Star giveaway
+    IsStarGiveaway bool `json:"is_star_giveaway"`
+    // Number of undistributed prizes; for Telegram Premium giveaways only
     UnclaimedPrizeCount int32 `json:"unclaimed_prize_count"`
 }
 
-func (entity *MessagePremiumGiveawayCompleted) MarshalJSON() ([]byte, error) {
+func (entity *MessageGiveawayCompleted) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub MessagePremiumGiveawayCompleted
+    type stub MessageGiveawayCompleted
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*MessagePremiumGiveawayCompleted) GetClass() string {
+func (*MessageGiveawayCompleted) GetClass() string {
     return ClassMessageContent
 }
 
-func (*MessagePremiumGiveawayCompleted) GetType() string {
-    return TypeMessagePremiumGiveawayCompleted
+func (*MessageGiveawayCompleted) GetType() string {
+    return TypeMessageGiveawayCompleted
 }
 
-func (*MessagePremiumGiveawayCompleted) MessageContentType() string {
-    return TypeMessagePremiumGiveawayCompleted
+func (*MessageGiveawayCompleted) MessageContentType() string {
+    return TypeMessageGiveawayCompleted
 }
 
-// A Telegram Premium giveaway with public winners has been completed for the chat
-type MessagePremiumGiveawayWinners struct {
+// A giveaway with public winners has been completed for the chat
+type MessageGiveawayWinners struct {
     meta
-    // Identifier of the channel chat, which was automatically boosted by the winners of the giveaway for duration of the Premium subscription
+    // Identifier of the supergroup or channel chat, which was automatically boosted by the winners of the giveaway
     BoostedChatId int64 `json:"boosted_chat_id"`
     // Identifier of the message with the giveaway in the boosted chat
     GiveawayMessageId int64 `json:"giveaway_message_id"`
@@ -24859,36 +25121,73 @@ type MessagePremiumGiveawayWinners struct {
     OnlyNewMembers bool `json:"only_new_members"`
     // True, if the giveaway was canceled and was fully refunded
     WasRefunded bool `json:"was_refunded"`
-    // Number of months the Telegram Premium subscription will be active after code activation
-    MonthCount int32 `json:"month_count"`
+    // Prize of the giveaway
+    Prize GiveawayPrize `json:"prize"`
     // Additional description of the giveaway prize
     PrizeDescription string `json:"prize_description"`
     // Total number of winners in the giveaway
     WinnerCount int32 `json:"winner_count"`
     // Up to 100 user identifiers of the winners of the giveaway
     WinnerUserIds []int64 `json:"winner_user_ids"`
-    // Number of undistributed prizes
+    // Number of undistributed prizes; for Telegram Premium giveaways only
     UnclaimedPrizeCount int32 `json:"unclaimed_prize_count"`
 }
 
-func (entity *MessagePremiumGiveawayWinners) MarshalJSON() ([]byte, error) {
+func (entity *MessageGiveawayWinners) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub MessagePremiumGiveawayWinners
+    type stub MessageGiveawayWinners
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*MessagePremiumGiveawayWinners) GetClass() string {
+func (*MessageGiveawayWinners) GetClass() string {
     return ClassMessageContent
 }
 
-func (*MessagePremiumGiveawayWinners) GetType() string {
-    return TypeMessagePremiumGiveawayWinners
+func (*MessageGiveawayWinners) GetType() string {
+    return TypeMessageGiveawayWinners
 }
 
-func (*MessagePremiumGiveawayWinners) MessageContentType() string {
-    return TypeMessagePremiumGiveawayWinners
+func (*MessageGiveawayWinners) MessageContentType() string {
+    return TypeMessageGiveawayWinners
+}
+
+func (messageGiveawayWinners *MessageGiveawayWinners) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        BoostedChatId int64 `json:"boosted_chat_id"`
+        GiveawayMessageId int64 `json:"giveaway_message_id"`
+        AdditionalChatCount int32 `json:"additional_chat_count"`
+        ActualWinnersSelectionDate int32 `json:"actual_winners_selection_date"`
+        OnlyNewMembers bool `json:"only_new_members"`
+        WasRefunded bool `json:"was_refunded"`
+        Prize json.RawMessage `json:"prize"`
+        PrizeDescription string `json:"prize_description"`
+        WinnerCount int32 `json:"winner_count"`
+        WinnerUserIds []int64 `json:"winner_user_ids"`
+        UnclaimedPrizeCount int32 `json:"unclaimed_prize_count"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    messageGiveawayWinners.BoostedChatId = tmp.BoostedChatId
+    messageGiveawayWinners.GiveawayMessageId = tmp.GiveawayMessageId
+    messageGiveawayWinners.AdditionalChatCount = tmp.AdditionalChatCount
+    messageGiveawayWinners.ActualWinnersSelectionDate = tmp.ActualWinnersSelectionDate
+    messageGiveawayWinners.OnlyNewMembers = tmp.OnlyNewMembers
+    messageGiveawayWinners.WasRefunded = tmp.WasRefunded
+    messageGiveawayWinners.PrizeDescription = tmp.PrizeDescription
+    messageGiveawayWinners.WinnerCount = tmp.WinnerCount
+    messageGiveawayWinners.WinnerUserIds = tmp.WinnerUserIds
+    messageGiveawayWinners.UnclaimedPrizeCount = tmp.UnclaimedPrizeCount
+
+    fieldPrize, _ := UnmarshalGiveawayPrize(tmp.Prize)
+    messageGiveawayWinners.Prize = fieldPrize
+
+    return nil
 }
 
 // Telegram Stars were gifted to a user
@@ -24932,6 +25231,43 @@ func (*MessageGiftedStars) GetType() string {
 
 func (*MessageGiftedStars) MessageContentType() string {
     return TypeMessageGiftedStars
+}
+
+// A Telegram Stars were received by the cuurent user from a giveaway
+type MessageGiveawayPrizeStars struct {
+    meta
+    // Number of Telegram Stars that were received
+    StarCount int64 `json:"star_count"`
+    // Identifier of the transaction for Telegram Stars credit
+    TransactionId string `json:"transaction_id"`
+    // Identifier of the supergroup or channel chat, which was automatically boosted by the winners of the giveaway
+    BoostedChatId int64 `json:"boosted_chat_id"`
+    // Identifier of the message with the giveaway in the boosted chat; can be 0 if the message was deleted
+    GiveawayMessageId int64 `json:"giveaway_message_id"`
+    // True, if the corresponding winner wasn't chosen and the Telegram Stars were received by the owner of the boosted chat
+    IsUnclaimed bool `json:"is_unclaimed"`
+    // A sticker to be shown in the message; may be null if unknown
+    Sticker *Sticker `json:"sticker"`
+}
+
+func (entity *MessageGiveawayPrizeStars) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub MessageGiveawayPrizeStars
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*MessageGiveawayPrizeStars) GetClass() string {
+    return ClassMessageContent
+}
+
+func (*MessageGiveawayPrizeStars) GetType() string {
+    return TypeMessageGiveawayPrizeStars
+}
+
+func (*MessageGiveawayPrizeStars) MessageContentType() string {
+    return TypeMessageGiveawayPrizeStars
 }
 
 // A contact has registered with Telegram
@@ -26163,7 +26499,7 @@ func (messageSendOptions *MessageSendOptions) UnmarshalJSON(data []byte) error {
     return nil
 }
 
-// Options to be used when a message content is copied without reference to the original sender. Service messages, messages with messageInvoice, messagePaidMedia, messagePremiumGiveaway, or messagePremiumGiveawayWinners content can't be copied
+// Options to be used when a message content is copied without reference to the original sender. Service messages, messages with messageInvoice, messagePaidMedia, messageGiveaway, or messageGiveawayWinners content can't be copied
 type MessageCopyOptions struct {
     meta
     // True, if content of the message needs to be copied without reference to the original sender. Always true if the message is forwarded to a secret chat or is local
@@ -26430,6 +26766,8 @@ type InputMessagePaidMedia struct {
     Caption *FormattedText `json:"caption"`
     // True, if the caption must be shown above the video; otherwise, the caption must be shown below the video; not supported in secret chats
     ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
+    // Bot-provided data for the paid media; bots only
+    Payload string `json:"payload"`
 }
 
 func (entity *InputMessagePaidMedia) MarshalJSON() ([]byte, error) {
@@ -27129,6 +27467,8 @@ func (*InputMessageForwarded) InputMessageContentType() string {
 // Contains properties of a message and describes actions that can be done with the message right now
 type MessageProperties struct {
     meta
+    // True, if content of the message can be copied to a secret chat using inputMessageForwarded or forwardMessages with copy options
+    CanBeCopiedToSecretChat bool `json:"can_be_copied_to_secret_chat"`
     // True, if the message can be deleted only for the current user while other users will continue to see it using the method deleteMessages with revoke == false
     CanBeDeletedOnlyForSelf bool `json:"can_be_deleted_only_for_self"`
     // True, if the message can be deleted for all users using the method deleteMessages with revoke == true
@@ -30654,16 +30994,18 @@ func (*ChatBoostSourceGiftCode) ChatBoostSourceType() string {
     return TypeChatBoostSourceGiftCode
 }
 
-// The chat created a Telegram Premium giveaway
+// The chat created a giveaway
 type ChatBoostSourceGiveaway struct {
     meta
     // Identifier of a user that won in the giveaway; 0 if none
     UserId int64 `json:"user_id"`
-    // The created Telegram Premium gift code if it was used by the user or can be claimed by the current user; an empty string otherwise
+    // The created Telegram Premium gift code if it was used by the user or can be claimed by the current user; an empty string otherwise; for Telegram Premium giveways only
     GiftCode string `json:"gift_code"`
+    // Number of Telegram Stars distributed among winners of the giveaway
+    StarCount int64 `json:"star_count"`
     // Identifier of the corresponding giveaway message; can be an identifier of a deleted message
     GiveawayMessageId int64 `json:"giveaway_message_id"`
-    // True, if the winner for the corresponding Telegram Premium subscription wasn't chosen, because there were not enough participants
+    // True, if the winner for the corresponding giveaway prize wasn't chosen, because there were not enough participants
     IsUnclaimed bool `json:"is_unclaimed"`
 }
 
@@ -30714,33 +31056,60 @@ func (*ChatBoostSourcePremium) ChatBoostSourceType() string {
     return TypeChatBoostSourcePremium
 }
 
-// Describes a prepaid Telegram Premium giveaway
-type PrepaidPremiumGiveaway struct {
+// Describes a prepaid giveaway
+type PrepaidGiveaway struct {
     meta
     // Unique identifier of the prepaid giveaway
     Id JsonInt64 `json:"id"`
-    // Number of users which will receive Telegram Premium subscription gift codes
+    // Number of users which will receive giveaway prize
     WinnerCount int32 `json:"winner_count"`
-    // Number of months the Telegram Premium subscription will be active after code activation
-    MonthCount int32 `json:"month_count"`
+    // Prize of the giveaway
+    Prize GiveawayPrize `json:"prize"`
+    // The number of boosts received by the chat from the giveaway; for Telegram Star giveaways only
+    BoostCount int32 `json:"boost_count"`
     // Point in time (Unix timestamp) when the giveaway was paid
     PaymentDate int32 `json:"payment_date"`
 }
 
-func (entity *PrepaidPremiumGiveaway) MarshalJSON() ([]byte, error) {
+func (entity *PrepaidGiveaway) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PrepaidPremiumGiveaway
+    type stub PrepaidGiveaway
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PrepaidPremiumGiveaway) GetClass() string {
-    return ClassPrepaidPremiumGiveaway
+func (*PrepaidGiveaway) GetClass() string {
+    return ClassPrepaidGiveaway
 }
 
-func (*PrepaidPremiumGiveaway) GetType() string {
-    return TypePrepaidPremiumGiveaway
+func (*PrepaidGiveaway) GetType() string {
+    return TypePrepaidGiveaway
+}
+
+func (prepaidGiveaway *PrepaidGiveaway) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        Id JsonInt64 `json:"id"`
+        WinnerCount int32 `json:"winner_count"`
+        Prize json.RawMessage `json:"prize"`
+        BoostCount int32 `json:"boost_count"`
+        PaymentDate int32 `json:"payment_date"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    prepaidGiveaway.Id = tmp.Id
+    prepaidGiveaway.WinnerCount = tmp.WinnerCount
+    prepaidGiveaway.BoostCount = tmp.BoostCount
+    prepaidGiveaway.PaymentDate = tmp.PaymentDate
+
+    fieldPrize, _ := UnmarshalGiveawayPrize(tmp.Prize)
+    prepaidGiveaway.Prize = fieldPrize
+
+    return nil
 }
 
 // Describes current boost status of a chat
@@ -30765,7 +31134,7 @@ type ChatBoostStatus struct {
     // A percentage of Telegram Premium subscribers joined the chat; always 0 if the current user isn't an administrator in the chat
     PremiumMemberPercentage float64 `json:"premium_member_percentage"`
     // The list of prepaid giveaways available for the chat; only for chat administrators
-    PrepaidGiveaways []*PrepaidPremiumGiveaway `json:"prepaid_giveaways"`
+    PrepaidGiveaways []*PrepaidGiveaway `json:"prepaid_giveaways"`
 }
 
 func (entity *ChatBoostStatus) MarshalJSON() ([]byte, error) {
@@ -35084,6 +35453,60 @@ func (chatEventMemberRestricted *ChatEventMemberRestricted) UnmarshalJSON(data [
     return nil
 }
 
+// A chat member extended their subscription to the chat
+type ChatEventMemberSubscriptionExtended struct {
+    meta
+    // Affected chat member user identifier
+    UserId int64 `json:"user_id"`
+    // Previous status of the chat member
+    OldStatus ChatMemberStatus `json:"old_status"`
+    // New status of the chat member
+    NewStatus ChatMemberStatus `json:"new_status"`
+}
+
+func (entity *ChatEventMemberSubscriptionExtended) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatEventMemberSubscriptionExtended
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatEventMemberSubscriptionExtended) GetClass() string {
+    return ClassChatEventAction
+}
+
+func (*ChatEventMemberSubscriptionExtended) GetType() string {
+    return TypeChatEventMemberSubscriptionExtended
+}
+
+func (*ChatEventMemberSubscriptionExtended) ChatEventActionType() string {
+    return TypeChatEventMemberSubscriptionExtended
+}
+
+func (chatEventMemberSubscriptionExtended *ChatEventMemberSubscriptionExtended) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        UserId int64 `json:"user_id"`
+        OldStatus json.RawMessage `json:"old_status"`
+        NewStatus json.RawMessage `json:"new_status"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    chatEventMemberSubscriptionExtended.UserId = tmp.UserId
+
+    fieldOldStatus, _ := UnmarshalChatMemberStatus(tmp.OldStatus)
+    chatEventMemberSubscriptionExtended.OldStatus = fieldOldStatus
+
+    fieldNewStatus, _ := UnmarshalChatMemberStatus(tmp.NewStatus)
+    chatEventMemberSubscriptionExtended.NewStatus = fieldNewStatus
+
+    return nil
+}
+
 // The chat available reactions were changed
 type ChatEventAvailableReactionsChanged struct {
     meta
@@ -36326,6 +36749,8 @@ type ChatEventLogFilters struct {
     VideoChatChanges bool `json:"video_chat_changes"`
     // True, if forum-related actions need to be returned
     ForumChanges bool `json:"forum_changes"`
+    // True, if subscription extensions need to be returned
+    SubscriptionExtensions bool `json:"subscription_extensions"`
 }
 
 func (entity *ChatEventLogFilters) MarshalJSON() ([]byte, error) {
@@ -38670,7 +39095,7 @@ func (*StorePaymentPurposePremiumGiftCodes) StorePaymentPurposeType() string {
 type StorePaymentPurposePremiumGiveaway struct {
     meta
     // Giveaway parameters
-    Parameters *PremiumGiveawayParameters `json:"parameters"`
+    Parameters *GiveawayParameters `json:"parameters"`
     // ISO 4217 currency code of the payment currency
     Currency string `json:"currency"`
     // Paid amount, in the smallest units of the currency
@@ -38695,6 +39120,41 @@ func (*StorePaymentPurposePremiumGiveaway) GetType() string {
 
 func (*StorePaymentPurposePremiumGiveaway) StorePaymentPurposeType() string {
     return TypeStorePaymentPurposePremiumGiveaway
+}
+
+// The user creating a Telegram Star giveaway
+type StorePaymentPurposeStarGiveaway struct {
+    meta
+    // Giveaway parameters
+    Parameters *GiveawayParameters `json:"parameters"`
+    // ISO 4217 currency code of the payment currency
+    Currency string `json:"currency"`
+    // Paid amount, in the smallest units of the currency
+    Amount int64 `json:"amount"`
+    // The number of users to receive Telegram Stars
+    WinnerCount int32 `json:"winner_count"`
+    // The number of Telegram Stars to be distributed through the giveaway
+    StarCount int64 `json:"star_count"`
+}
+
+func (entity *StorePaymentPurposeStarGiveaway) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StorePaymentPurposeStarGiveaway
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StorePaymentPurposeStarGiveaway) GetClass() string {
+    return ClassStorePaymentPurpose
+}
+
+func (*StorePaymentPurposeStarGiveaway) GetType() string {
+    return TypeStorePaymentPurposeStarGiveaway
+}
+
+func (*StorePaymentPurposeStarGiveaway) StorePaymentPurposeType() string {
+    return TypeStorePaymentPurposeStarGiveaway
 }
 
 // The user buying Telegram Stars
@@ -38800,7 +39260,7 @@ func (*TelegramPaymentPurposePremiumGiftCodes) TelegramPaymentPurposeType() stri
 type TelegramPaymentPurposePremiumGiveaway struct {
     meta
     // Giveaway parameters
-    Parameters *PremiumGiveawayParameters `json:"parameters"`
+    Parameters *GiveawayParameters `json:"parameters"`
     // ISO 4217 currency code of the payment currency
     Currency string `json:"currency"`
     // Paid amount, in the smallest units of the currency
@@ -38893,6 +39353,41 @@ func (*TelegramPaymentPurposeGiftedStars) GetType() string {
 
 func (*TelegramPaymentPurposeGiftedStars) TelegramPaymentPurposeType() string {
     return TypeTelegramPaymentPurposeGiftedStars
+}
+
+// The user creating a Telegram Star giveaway
+type TelegramPaymentPurposeStarGiveaway struct {
+    meta
+    // Giveaway parameters
+    Parameters *GiveawayParameters `json:"parameters"`
+    // ISO 4217 currency code of the payment currency
+    Currency string `json:"currency"`
+    // Paid amount, in the smallest units of the currency
+    Amount int64 `json:"amount"`
+    // The number of users to receive Telegram Stars
+    WinnerCount int32 `json:"winner_count"`
+    // The number of Telegram Stars to be distributed through the giveaway
+    StarCount int64 `json:"star_count"`
+}
+
+func (entity *TelegramPaymentPurposeStarGiveaway) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub TelegramPaymentPurposeStarGiveaway
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*TelegramPaymentPurposeStarGiveaway) GetClass() string {
+    return ClassTelegramPaymentPurpose
+}
+
+func (*TelegramPaymentPurposeStarGiveaway) GetType() string {
+    return TypeTelegramPaymentPurposeStarGiveaway
+}
+
+func (*TelegramPaymentPurposeStarGiveaway) TelegramPaymentPurposeType() string {
+    return TypeTelegramPaymentPurposeStarGiveaway
 }
 
 // The user joins a chat and subscribes to regular payments in Telegram Stars
@@ -40769,35 +41264,56 @@ func (*PushMessageContentPremiumGiftCode) PushMessageContentType() string {
     return TypePushMessageContentPremiumGiftCode
 }
 
-// A message with a Telegram Premium giveaway
-type PushMessageContentPremiumGiveaway struct {
+// A message with a giveaway
+type PushMessageContentGiveaway struct {
     meta
-    // Number of users which will receive Telegram Premium subscription gift codes; 0 for pinned message
+    // Number of users which will receive giveaway prizes; 0 for pinned message
     WinnerCount int32 `json:"winner_count"`
-    // Number of months the Telegram Premium subscription will be active after code activation; 0 for pinned message
-    MonthCount int32 `json:"month_count"`
+    // Prize of the giveaway; may be null for pinned message
+    Prize GiveawayPrize `json:"prize"`
     // True, if the message is a pinned message with the specified content
     IsPinned bool `json:"is_pinned"`
 }
 
-func (entity *PushMessageContentPremiumGiveaway) MarshalJSON() ([]byte, error) {
+func (entity *PushMessageContentGiveaway) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PushMessageContentPremiumGiveaway
+    type stub PushMessageContentGiveaway
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PushMessageContentPremiumGiveaway) GetClass() string {
+func (*PushMessageContentGiveaway) GetClass() string {
     return ClassPushMessageContent
 }
 
-func (*PushMessageContentPremiumGiveaway) GetType() string {
-    return TypePushMessageContentPremiumGiveaway
+func (*PushMessageContentGiveaway) GetType() string {
+    return TypePushMessageContentGiveaway
 }
 
-func (*PushMessageContentPremiumGiveaway) PushMessageContentType() string {
-    return TypePushMessageContentPremiumGiveaway
+func (*PushMessageContentGiveaway) PushMessageContentType() string {
+    return TypePushMessageContentGiveaway
+}
+
+func (pushMessageContentGiveaway *PushMessageContentGiveaway) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        WinnerCount int32 `json:"winner_count"`
+        Prize json.RawMessage `json:"prize"`
+        IsPinned bool `json:"is_pinned"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    pushMessageContentGiveaway.WinnerCount = tmp.WinnerCount
+    pushMessageContentGiveaway.IsPinned = tmp.IsPinned
+
+    fieldPrize, _ := UnmarshalGiveawayPrize(tmp.Prize)
+    pushMessageContentGiveaway.Prize = fieldPrize
+
+    return nil
 }
 
 // A screenshot of a message in the chat has been taken
@@ -42870,7 +43386,7 @@ func (*CanSendMessageToUserResultUserRestrictsNewChats) CanSendMessageToUserResu
 // Contains information about the period of inactivity after which the current user's account will automatically be deleted
 type AccountTtl struct {
     meta
-    // Number of days of inactivity before the account will be flagged for deletion; 30-366 days
+    // Number of days of inactivity before the account will be flagged for deletion; 30-730 days
     Days int32 `json:"days"`
 }
 
@@ -44017,7 +44533,7 @@ func (*InternalLinkTypeAuthenticationCode) InternalLinkTypeType() string {
     return TypeInternalLinkTypeAuthenticationCode
 }
 
-// The link is a link to a background. Call searchBackground with the given background name to process the link If background is found and the user wants to apply it, then call setDefaultBackground
+// The link is a link to a background. Call searchBackground with the given background name to process the link. If background is found and the user wants to apply it, then call setDefaultBackground
 type InternalLinkTypeBackground struct {
     meta
     // Name of the background
@@ -44818,7 +45334,7 @@ func (internalLinkTypeProxy *InternalLinkTypeProxy) UnmarshalJSON(data []byte) e
     return nil
 }
 
-// The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link If the chat is found, open its profile information screen or the chat itself. If draft text isn't empty and the chat is a private chat with a regular user, then put the draft text in the input field
+// The link is a link to a chat by its username. Call searchPublicChat with the given chat username to process the link. If the chat is found, open its profile information screen or the chat itself. If draft text isn't empty and the chat is a private chat with a regular user, then put the draft text in the input field
 type InternalLinkTypePublicChat struct {
     meta
     // Username of the chat
@@ -48431,6 +48947,8 @@ type ChatRevenueAmount struct {
     BalanceAmount JsonInt64 `json:"balance_amount"`
     // Amount of the cryptocurrency available for withdrawal, in the smallest units of the cryptocurrency
     AvailableAmount JsonInt64 `json:"available_amount"`
+    // True, if Telegram Stars can be withdrawn now or later
+    WithdrawalEnabled bool `json:"withdrawal_enabled"`
 }
 
 func (entity *ChatRevenueAmount) MarshalJSON() ([]byte, error) {
@@ -53498,7 +54016,7 @@ func (updateSuggestedActions *UpdateSuggestedActions) UnmarshalJSON(data []byte)
     return nil
 }
 
-// Download or upload file speed for the user was limited, but it can be restored by subscription to Telegram Premium. The notification can be postponed until a being downloaded or uploaded file is visible to the user Use getOption("premium_download_speedup") or getOption("premium_upload_speedup") to get expected speedup after subscription to Telegram Premium
+// Download or upload file speed for the user was limited, but it can be restored by subscription to Telegram Premium. The notification can be postponed until a being downloaded or uploaded file is visible to the user. Use getOption("premium_download_speedup") or getOption("premium_upload_speedup") to get expected speedup after subscription to Telegram Premium
 type UpdateSpeedLimitNotification struct {
     meta
     // True, if upload speed was limited; false, if download speed was limited
@@ -54414,6 +54932,35 @@ func (*UpdateMessageReactions) GetType() string {
 
 func (*UpdateMessageReactions) UpdateType() string {
     return TypeUpdateMessageReactions
+}
+
+// Paid media were purchased by a user; for bots only
+type UpdatePaidMediaPurchased struct {
+    meta
+    // User identifier
+    UserId int64 `json:"user_id"`
+    // Bot-specified payload for the paid media
+    Payload string `json:"payload"`
+}
+
+func (entity *UpdatePaidMediaPurchased) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdatePaidMediaPurchased
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdatePaidMediaPurchased) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdatePaidMediaPurchased) GetType() string {
+    return TypeUpdatePaidMediaPurchased
+}
+
+func (*UpdatePaidMediaPurchased) UpdateType() string {
+    return TypeUpdatePaidMediaPurchased
 }
 
 // Contains a list of updates

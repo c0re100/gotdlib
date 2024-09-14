@@ -727,7 +727,7 @@ func UnmarshalListOfBotTransactionPurpose(dataList []json.RawMessage) ([]BotTran
     return list, nil
 }
 
-func UnmarshalChannelTransactionPurpose(data json.RawMessage) (ChannelTransactionPurpose, error) {
+func UnmarshalChatTransactionPurpose(data json.RawMessage) (ChatTransactionPurpose, error) {
     var meta meta
 
     err := json.Unmarshal(data, &meta)
@@ -736,25 +736,28 @@ func UnmarshalChannelTransactionPurpose(data json.RawMessage) (ChannelTransactio
     }
 
     switch meta.Type {
-    case TypeChannelTransactionPurposePaidMedia:
-        return UnmarshalChannelTransactionPurposePaidMedia(data)
+    case TypeChatTransactionPurposePaidMedia:
+        return UnmarshalChatTransactionPurposePaidMedia(data)
 
-    case TypeChannelTransactionPurposeJoin:
-        return UnmarshalChannelTransactionPurposeJoin(data)
+    case TypeChatTransactionPurposeJoin:
+        return UnmarshalChatTransactionPurposeJoin(data)
 
-    case TypeChannelTransactionPurposeReaction:
-        return UnmarshalChannelTransactionPurposeReaction(data)
+    case TypeChatTransactionPurposeReaction:
+        return UnmarshalChatTransactionPurposeReaction(data)
+
+    case TypeChatTransactionPurposeGiveaway:
+        return UnmarshalChatTransactionPurposeGiveaway(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
 }
 
-func UnmarshalListOfChannelTransactionPurpose(dataList []json.RawMessage) ([]ChannelTransactionPurpose, error) {
-    list := []ChannelTransactionPurpose{}
+func UnmarshalListOfChatTransactionPurpose(dataList []json.RawMessage) ([]ChatTransactionPurpose, error) {
+    list := []ChatTransactionPurpose{}
 
     for _, data := range dataList {
-        entity, err := UnmarshalChannelTransactionPurpose(data)
+        entity, err := UnmarshalChatTransactionPurpose(data)
         if err != nil {
             return nil, err
         }
@@ -794,8 +797,8 @@ func UnmarshalStarTransactionPartner(data json.RawMessage) (StarTransactionPartn
     case TypeStarTransactionPartnerBusiness:
         return UnmarshalStarTransactionPartnerBusiness(data)
 
-    case TypeStarTransactionPartnerChannel:
-        return UnmarshalStarTransactionPartnerChannel(data)
+    case TypeStarTransactionPartnerChat:
+        return UnmarshalStarTransactionPartnerChat(data)
 
     case TypeStarTransactionPartnerUser:
         return UnmarshalStarTransactionPartnerUser(data)
@@ -822,7 +825,7 @@ func UnmarshalListOfStarTransactionPartner(dataList []json.RawMessage) ([]StarTr
     return list, nil
 }
 
-func UnmarshalPremiumGiveawayParticipantStatus(data json.RawMessage) (PremiumGiveawayParticipantStatus, error) {
+func UnmarshalGiveawayParticipantStatus(data json.RawMessage) (GiveawayParticipantStatus, error) {
     var meta meta
 
     err := json.Unmarshal(data, &meta)
@@ -831,31 +834,31 @@ func UnmarshalPremiumGiveawayParticipantStatus(data json.RawMessage) (PremiumGiv
     }
 
     switch meta.Type {
-    case TypePremiumGiveawayParticipantStatusEligible:
-        return UnmarshalPremiumGiveawayParticipantStatusEligible(data)
+    case TypeGiveawayParticipantStatusEligible:
+        return UnmarshalGiveawayParticipantStatusEligible(data)
 
-    case TypePremiumGiveawayParticipantStatusParticipating:
-        return UnmarshalPremiumGiveawayParticipantStatusParticipating(data)
+    case TypeGiveawayParticipantStatusParticipating:
+        return UnmarshalGiveawayParticipantStatusParticipating(data)
 
-    case TypePremiumGiveawayParticipantStatusAlreadyWasMember:
-        return UnmarshalPremiumGiveawayParticipantStatusAlreadyWasMember(data)
+    case TypeGiveawayParticipantStatusAlreadyWasMember:
+        return UnmarshalGiveawayParticipantStatusAlreadyWasMember(data)
 
-    case TypePremiumGiveawayParticipantStatusAdministrator:
-        return UnmarshalPremiumGiveawayParticipantStatusAdministrator(data)
+    case TypeGiveawayParticipantStatusAdministrator:
+        return UnmarshalGiveawayParticipantStatusAdministrator(data)
 
-    case TypePremiumGiveawayParticipantStatusDisallowedCountry:
-        return UnmarshalPremiumGiveawayParticipantStatusDisallowedCountry(data)
+    case TypeGiveawayParticipantStatusDisallowedCountry:
+        return UnmarshalGiveawayParticipantStatusDisallowedCountry(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
 }
 
-func UnmarshalListOfPremiumGiveawayParticipantStatus(dataList []json.RawMessage) ([]PremiumGiveawayParticipantStatus, error) {
-    list := []PremiumGiveawayParticipantStatus{}
+func UnmarshalListOfGiveawayParticipantStatus(dataList []json.RawMessage) ([]GiveawayParticipantStatus, error) {
+    list := []GiveawayParticipantStatus{}
 
     for _, data := range dataList {
-        entity, err := UnmarshalPremiumGiveawayParticipantStatus(data)
+        entity, err := UnmarshalGiveawayParticipantStatus(data)
         if err != nil {
             return nil, err
         }
@@ -865,7 +868,7 @@ func UnmarshalListOfPremiumGiveawayParticipantStatus(dataList []json.RawMessage)
     return list, nil
 }
 
-func UnmarshalPremiumGiveawayInfo(data json.RawMessage) (PremiumGiveawayInfo, error) {
+func UnmarshalGiveawayInfo(data json.RawMessage) (GiveawayInfo, error) {
     var meta meta
 
     err := json.Unmarshal(data, &meta)
@@ -874,22 +877,56 @@ func UnmarshalPremiumGiveawayInfo(data json.RawMessage) (PremiumGiveawayInfo, er
     }
 
     switch meta.Type {
-    case TypePremiumGiveawayInfoOngoing:
-        return UnmarshalPremiumGiveawayInfoOngoing(data)
+    case TypeGiveawayInfoOngoing:
+        return UnmarshalGiveawayInfoOngoing(data)
 
-    case TypePremiumGiveawayInfoCompleted:
-        return UnmarshalPremiumGiveawayInfoCompleted(data)
+    case TypeGiveawayInfoCompleted:
+        return UnmarshalGiveawayInfoCompleted(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
 }
 
-func UnmarshalListOfPremiumGiveawayInfo(dataList []json.RawMessage) ([]PremiumGiveawayInfo, error) {
-    list := []PremiumGiveawayInfo{}
+func UnmarshalListOfGiveawayInfo(dataList []json.RawMessage) ([]GiveawayInfo, error) {
+    list := []GiveawayInfo{}
 
     for _, data := range dataList {
-        entity, err := UnmarshalPremiumGiveawayInfo(data)
+        entity, err := UnmarshalGiveawayInfo(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalGiveawayPrize(data json.RawMessage) (GiveawayPrize, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeGiveawayPrizePremium:
+        return UnmarshalGiveawayPrizePremium(data)
+
+    case TypeGiveawayPrizeStars:
+        return UnmarshalGiveawayPrizeStars(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfGiveawayPrize(dataList []json.RawMessage) ([]GiveawayPrize, error) {
+    list := []GiveawayPrize{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalGiveawayPrize(data)
         if err != nil {
             return nil, err
         }
@@ -2378,6 +2415,12 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
     case TypeLinkPreviewTypeEmbeddedVideoPlayer:
         return UnmarshalLinkPreviewTypeEmbeddedVideoPlayer(data)
 
+    case TypeLinkPreviewTypeExternalAudio:
+        return UnmarshalLinkPreviewTypeExternalAudio(data)
+
+    case TypeLinkPreviewTypeExternalVideo:
+        return UnmarshalLinkPreviewTypeExternalVideo(data)
+
     case TypeLinkPreviewTypeInvoice:
         return UnmarshalLinkPreviewTypeInvoice(data)
 
@@ -3195,20 +3238,23 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
     case TypeMessagePremiumGiftCode:
         return UnmarshalMessagePremiumGiftCode(data)
 
-    case TypeMessagePremiumGiveawayCreated:
-        return UnmarshalMessagePremiumGiveawayCreated(data)
+    case TypeMessageGiveawayCreated:
+        return UnmarshalMessageGiveawayCreated(data)
 
-    case TypeMessagePremiumGiveaway:
-        return UnmarshalMessagePremiumGiveaway(data)
+    case TypeMessageGiveaway:
+        return UnmarshalMessageGiveaway(data)
 
-    case TypeMessagePremiumGiveawayCompleted:
-        return UnmarshalMessagePremiumGiveawayCompleted(data)
+    case TypeMessageGiveawayCompleted:
+        return UnmarshalMessageGiveawayCompleted(data)
 
-    case TypeMessagePremiumGiveawayWinners:
-        return UnmarshalMessagePremiumGiveawayWinners(data)
+    case TypeMessageGiveawayWinners:
+        return UnmarshalMessageGiveawayWinners(data)
 
     case TypeMessageGiftedStars:
         return UnmarshalMessageGiftedStars(data)
+
+    case TypeMessageGiveawayPrizeStars:
+        return UnmarshalMessageGiveawayPrizeStars(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -4826,6 +4872,9 @@ func UnmarshalChatEventAction(data json.RawMessage) (ChatEventAction, error) {
     case TypeChatEventMemberRestricted:
         return UnmarshalChatEventMemberRestricted(data)
 
+    case TypeChatEventMemberSubscriptionExtended:
+        return UnmarshalChatEventMemberSubscriptionExtended(data)
+
     case TypeChatEventAvailableReactionsChanged:
         return UnmarshalChatEventAvailableReactionsChanged(data)
 
@@ -5358,6 +5407,9 @@ func UnmarshalStorePaymentPurpose(data json.RawMessage) (StorePaymentPurpose, er
     case TypeStorePaymentPurposePremiumGiveaway:
         return UnmarshalStorePaymentPurposePremiumGiveaway(data)
 
+    case TypeStorePaymentPurposeStarGiveaway:
+        return UnmarshalStorePaymentPurposeStarGiveaway(data)
+
     case TypeStorePaymentPurposeStars:
         return UnmarshalStorePaymentPurposeStars(data)
 
@@ -5403,6 +5455,9 @@ func UnmarshalTelegramPaymentPurpose(data json.RawMessage) (TelegramPaymentPurpo
 
     case TypeTelegramPaymentPurposeGiftedStars:
         return UnmarshalTelegramPaymentPurposeGiftedStars(data)
+
+    case TypeTelegramPaymentPurposeStarGiveaway:
+        return UnmarshalTelegramPaymentPurposeStarGiveaway(data)
 
     case TypeTelegramPaymentPurposeJoinChat:
         return UnmarshalTelegramPaymentPurposeJoinChat(data)
@@ -5898,8 +5953,8 @@ func UnmarshalPushMessageContent(data json.RawMessage) (PushMessageContent, erro
     case TypePushMessageContentPremiumGiftCode:
         return UnmarshalPushMessageContentPremiumGiftCode(data)
 
-    case TypePushMessageContentPremiumGiveaway:
-        return UnmarshalPushMessageContentPremiumGiveaway(data)
+    case TypePushMessageContentGiveaway:
+        return UnmarshalPushMessageContentGiveaway(data)
 
     case TypePushMessageContentScreenshotTaken:
         return UnmarshalPushMessageContentScreenshotTaken(data)
@@ -7943,6 +7998,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateMessageReactions:
         return UnmarshalUpdateMessageReactions(data)
 
+    case TypeUpdatePaidMediaPurchased:
+        return UnmarshalUpdatePaidMediaPurchased(data)
+
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
@@ -9159,6 +9217,30 @@ func UnmarshalStarPaymentOptions(data json.RawMessage) (*StarPaymentOptions, err
     return &resp, err
 }
 
+func UnmarshalStarGiveawayWinnerOption(data json.RawMessage) (*StarGiveawayWinnerOption, error) {
+    var resp StarGiveawayWinnerOption
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalStarGiveawayPaymentOption(data json.RawMessage) (*StarGiveawayPaymentOption, error) {
+    var resp StarGiveawayPaymentOption
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalStarGiveawayPaymentOptions(data json.RawMessage) (*StarGiveawayPaymentOptions, error) {
+    var resp StarGiveawayPaymentOptions
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStarTransactionDirectionIncoming(data json.RawMessage) (*StarTransactionDirectionIncoming, error) {
     var resp StarTransactionDirectionIncoming
 
@@ -9191,24 +9273,32 @@ func UnmarshalBotTransactionPurposeInvoicePayment(data json.RawMessage) (*BotTra
     return &resp, err
 }
 
-func UnmarshalChannelTransactionPurposePaidMedia(data json.RawMessage) (*ChannelTransactionPurposePaidMedia, error) {
-    var resp ChannelTransactionPurposePaidMedia
+func UnmarshalChatTransactionPurposePaidMedia(data json.RawMessage) (*ChatTransactionPurposePaidMedia, error) {
+    var resp ChatTransactionPurposePaidMedia
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalChannelTransactionPurposeJoin(data json.RawMessage) (*ChannelTransactionPurposeJoin, error) {
-    var resp ChannelTransactionPurposeJoin
+func UnmarshalChatTransactionPurposeJoin(data json.RawMessage) (*ChatTransactionPurposeJoin, error) {
+    var resp ChatTransactionPurposeJoin
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalChannelTransactionPurposeReaction(data json.RawMessage) (*ChannelTransactionPurposeReaction, error) {
-    var resp ChannelTransactionPurposeReaction
+func UnmarshalChatTransactionPurposeReaction(data json.RawMessage) (*ChatTransactionPurposeReaction, error) {
+    var resp ChatTransactionPurposeReaction
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalChatTransactionPurposeGiveaway(data json.RawMessage) (*ChatTransactionPurposeGiveaway, error) {
+    var resp ChatTransactionPurposeGiveaway
 
     err := json.Unmarshal(data, &resp)
 
@@ -9271,8 +9361,8 @@ func UnmarshalStarTransactionPartnerBusiness(data json.RawMessage) (*StarTransac
     return &resp, err
 }
 
-func UnmarshalStarTransactionPartnerChannel(data json.RawMessage) (*StarTransactionPartnerChannel, error) {
-    var resp StarTransactionPartnerChannel
+func UnmarshalStarTransactionPartnerChat(data json.RawMessage) (*StarTransactionPartnerChat, error) {
+    var resp StarTransactionPartnerChat
 
     err := json.Unmarshal(data, &resp)
 
@@ -9311,56 +9401,72 @@ func UnmarshalStarTransactions(data json.RawMessage) (*StarTransactions, error) 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParticipantStatusEligible(data json.RawMessage) (*PremiumGiveawayParticipantStatusEligible, error) {
-    var resp PremiumGiveawayParticipantStatusEligible
+func UnmarshalGiveawayParticipantStatusEligible(data json.RawMessage) (*GiveawayParticipantStatusEligible, error) {
+    var resp GiveawayParticipantStatusEligible
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParticipantStatusParticipating(data json.RawMessage) (*PremiumGiveawayParticipantStatusParticipating, error) {
-    var resp PremiumGiveawayParticipantStatusParticipating
+func UnmarshalGiveawayParticipantStatusParticipating(data json.RawMessage) (*GiveawayParticipantStatusParticipating, error) {
+    var resp GiveawayParticipantStatusParticipating
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParticipantStatusAlreadyWasMember(data json.RawMessage) (*PremiumGiveawayParticipantStatusAlreadyWasMember, error) {
-    var resp PremiumGiveawayParticipantStatusAlreadyWasMember
+func UnmarshalGiveawayParticipantStatusAlreadyWasMember(data json.RawMessage) (*GiveawayParticipantStatusAlreadyWasMember, error) {
+    var resp GiveawayParticipantStatusAlreadyWasMember
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParticipantStatusAdministrator(data json.RawMessage) (*PremiumGiveawayParticipantStatusAdministrator, error) {
-    var resp PremiumGiveawayParticipantStatusAdministrator
+func UnmarshalGiveawayParticipantStatusAdministrator(data json.RawMessage) (*GiveawayParticipantStatusAdministrator, error) {
+    var resp GiveawayParticipantStatusAdministrator
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParticipantStatusDisallowedCountry(data json.RawMessage) (*PremiumGiveawayParticipantStatusDisallowedCountry, error) {
-    var resp PremiumGiveawayParticipantStatusDisallowedCountry
+func UnmarshalGiveawayParticipantStatusDisallowedCountry(data json.RawMessage) (*GiveawayParticipantStatusDisallowedCountry, error) {
+    var resp GiveawayParticipantStatusDisallowedCountry
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayInfoOngoing(data json.RawMessage) (*PremiumGiveawayInfoOngoing, error) {
-    var resp PremiumGiveawayInfoOngoing
+func UnmarshalGiveawayInfoOngoing(data json.RawMessage) (*GiveawayInfoOngoing, error) {
+    var resp GiveawayInfoOngoing
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayInfoCompleted(data json.RawMessage) (*PremiumGiveawayInfoCompleted, error) {
-    var resp PremiumGiveawayInfoCompleted
+func UnmarshalGiveawayInfoCompleted(data json.RawMessage) (*GiveawayInfoCompleted, error) {
+    var resp GiveawayInfoCompleted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiveawayPrizePremium(data json.RawMessage) (*GiveawayPrizePremium, error) {
+    var resp GiveawayPrizePremium
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiveawayPrizeStars(data json.RawMessage) (*GiveawayPrizeStars, error) {
+    var resp GiveawayPrizeStars
 
     err := json.Unmarshal(data, &resp)
 
@@ -11719,6 +11825,22 @@ func UnmarshalLinkPreviewTypeEmbeddedVideoPlayer(data json.RawMessage) (*LinkPre
     return &resp, err
 }
 
+func UnmarshalLinkPreviewTypeExternalAudio(data json.RawMessage) (*LinkPreviewTypeExternalAudio, error) {
+    var resp LinkPreviewTypeExternalAudio
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalLinkPreviewTypeExternalVideo(data json.RawMessage) (*LinkPreviewTypeExternalVideo, error) {
+    var resp LinkPreviewTypeExternalVideo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalLinkPreviewTypeInvoice(data json.RawMessage) (*LinkPreviewTypeInvoice, error) {
     var resp LinkPreviewTypeInvoice
 
@@ -12175,8 +12297,8 @@ func UnmarshalPaidMediaUnsupported(data json.RawMessage) (*PaidMediaUnsupported,
     return &resp, err
 }
 
-func UnmarshalPremiumGiveawayParameters(data json.RawMessage) (*PremiumGiveawayParameters, error) {
-    var resp PremiumGiveawayParameters
+func UnmarshalGiveawayParameters(data json.RawMessage) (*GiveawayParameters, error) {
+    var resp GiveawayParameters
 
     err := json.Unmarshal(data, &resp)
 
@@ -13223,32 +13345,32 @@ func UnmarshalMessagePremiumGiftCode(data json.RawMessage) (*MessagePremiumGiftC
     return &resp, err
 }
 
-func UnmarshalMessagePremiumGiveawayCreated(data json.RawMessage) (*MessagePremiumGiveawayCreated, error) {
-    var resp MessagePremiumGiveawayCreated
+func UnmarshalMessageGiveawayCreated(data json.RawMessage) (*MessageGiveawayCreated, error) {
+    var resp MessageGiveawayCreated
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalMessagePremiumGiveaway(data json.RawMessage) (*MessagePremiumGiveaway, error) {
-    var resp MessagePremiumGiveaway
+func UnmarshalMessageGiveaway(data json.RawMessage) (*MessageGiveaway, error) {
+    var resp MessageGiveaway
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalMessagePremiumGiveawayCompleted(data json.RawMessage) (*MessagePremiumGiveawayCompleted, error) {
-    var resp MessagePremiumGiveawayCompleted
+func UnmarshalMessageGiveawayCompleted(data json.RawMessage) (*MessageGiveawayCompleted, error) {
+    var resp MessageGiveawayCompleted
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalMessagePremiumGiveawayWinners(data json.RawMessage) (*MessagePremiumGiveawayWinners, error) {
-    var resp MessagePremiumGiveawayWinners
+func UnmarshalMessageGiveawayWinners(data json.RawMessage) (*MessageGiveawayWinners, error) {
+    var resp MessageGiveawayWinners
 
     err := json.Unmarshal(data, &resp)
 
@@ -13257,6 +13379,14 @@ func UnmarshalMessagePremiumGiveawayWinners(data json.RawMessage) (*MessagePremi
 
 func UnmarshalMessageGiftedStars(data json.RawMessage) (*MessageGiftedStars, error) {
     var resp MessageGiftedStars
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageGiveawayPrizeStars(data json.RawMessage) (*MessageGiveawayPrizeStars, error) {
+    var resp MessageGiveawayPrizeStars
 
     err := json.Unmarshal(data, &resp)
 
@@ -14631,8 +14761,8 @@ func UnmarshalChatBoostSourcePremium(data json.RawMessage) (*ChatBoostSourcePrem
     return &resp, err
 }
 
-func UnmarshalPrepaidPremiumGiveaway(data json.RawMessage) (*PrepaidPremiumGiveaway, error) {
-    var resp PrepaidPremiumGiveaway
+func UnmarshalPrepaidGiveaway(data json.RawMessage) (*PrepaidGiveaway, error) {
+    var resp PrepaidGiveaway
 
     err := json.Unmarshal(data, &resp)
 
@@ -15585,6 +15715,14 @@ func UnmarshalChatEventMemberPromoted(data json.RawMessage) (*ChatEventMemberPro
 
 func UnmarshalChatEventMemberRestricted(data json.RawMessage) (*ChatEventMemberRestricted, error) {
     var resp ChatEventMemberRestricted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalChatEventMemberSubscriptionExtended(data json.RawMessage) (*ChatEventMemberSubscriptionExtended, error) {
+    var resp ChatEventMemberSubscriptionExtended
 
     err := json.Unmarshal(data, &resp)
 
@@ -16591,6 +16729,14 @@ func UnmarshalStorePaymentPurposePremiumGiveaway(data json.RawMessage) (*StorePa
     return &resp, err
 }
 
+func UnmarshalStorePaymentPurposeStarGiveaway(data json.RawMessage) (*StorePaymentPurposeStarGiveaway, error) {
+    var resp StorePaymentPurposeStarGiveaway
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStorePaymentPurposeStars(data json.RawMessage) (*StorePaymentPurposeStars, error) {
     var resp StorePaymentPurposeStars
 
@@ -16633,6 +16779,14 @@ func UnmarshalTelegramPaymentPurposeStars(data json.RawMessage) (*TelegramPaymen
 
 func UnmarshalTelegramPaymentPurposeGiftedStars(data json.RawMessage) (*TelegramPaymentPurposeGiftedStars, error) {
     var resp TelegramPaymentPurposeGiftedStars
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTelegramPaymentPurposeStarGiveaway(data json.RawMessage) (*TelegramPaymentPurposeStarGiveaway, error) {
+    var resp TelegramPaymentPurposeStarGiveaway
 
     err := json.Unmarshal(data, &resp)
 
@@ -17175,8 +17329,8 @@ func UnmarshalPushMessageContentPremiumGiftCode(data json.RawMessage) (*PushMess
     return &resp, err
 }
 
-func UnmarshalPushMessageContentPremiumGiveaway(data json.RawMessage) (*PushMessageContentPremiumGiveaway, error) {
-    var resp PushMessageContentPremiumGiveaway
+func UnmarshalPushMessageContentGiveaway(data json.RawMessage) (*PushMessageContentGiveaway, error) {
+    var resp PushMessageContentGiveaway
 
     err := json.Unmarshal(data, &resp)
 
@@ -20703,6 +20857,14 @@ func UnmarshalUpdateMessageReactions(data json.RawMessage) (*UpdateMessageReacti
     return &resp, err
 }
 
+func UnmarshalUpdatePaidMediaPurchased(data json.RawMessage) (*UpdatePaidMediaPurchased, error) {
+    var resp UpdatePaidMediaPurchased
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdates(data json.RawMessage) (*Updates, error) {
     var resp Updates
 
@@ -21259,6 +21421,15 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarPaymentOptions:
         return UnmarshalStarPaymentOptions(data)
 
+    case TypeStarGiveawayWinnerOption:
+        return UnmarshalStarGiveawayWinnerOption(data)
+
+    case TypeStarGiveawayPaymentOption:
+        return UnmarshalStarGiveawayPaymentOption(data)
+
+    case TypeStarGiveawayPaymentOptions:
+        return UnmarshalStarGiveawayPaymentOptions(data)
+
     case TypeStarTransactionDirectionIncoming:
         return UnmarshalStarTransactionDirectionIncoming(data)
 
@@ -21271,14 +21442,17 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeBotTransactionPurposeInvoicePayment:
         return UnmarshalBotTransactionPurposeInvoicePayment(data)
 
-    case TypeChannelTransactionPurposePaidMedia:
-        return UnmarshalChannelTransactionPurposePaidMedia(data)
+    case TypeChatTransactionPurposePaidMedia:
+        return UnmarshalChatTransactionPurposePaidMedia(data)
 
-    case TypeChannelTransactionPurposeJoin:
-        return UnmarshalChannelTransactionPurposeJoin(data)
+    case TypeChatTransactionPurposeJoin:
+        return UnmarshalChatTransactionPurposeJoin(data)
 
-    case TypeChannelTransactionPurposeReaction:
-        return UnmarshalChannelTransactionPurposeReaction(data)
+    case TypeChatTransactionPurposeReaction:
+        return UnmarshalChatTransactionPurposeReaction(data)
+
+    case TypeChatTransactionPurposeGiveaway:
+        return UnmarshalChatTransactionPurposeGiveaway(data)
 
     case TypeStarTransactionPartnerTelegram:
         return UnmarshalStarTransactionPartnerTelegram(data)
@@ -21301,8 +21475,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarTransactionPartnerBusiness:
         return UnmarshalStarTransactionPartnerBusiness(data)
 
-    case TypeStarTransactionPartnerChannel:
-        return UnmarshalStarTransactionPartnerChannel(data)
+    case TypeStarTransactionPartnerChat:
+        return UnmarshalStarTransactionPartnerChat(data)
 
     case TypeStarTransactionPartnerUser:
         return UnmarshalStarTransactionPartnerUser(data)
@@ -21316,26 +21490,32 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarTransactions:
         return UnmarshalStarTransactions(data)
 
-    case TypePremiumGiveawayParticipantStatusEligible:
-        return UnmarshalPremiumGiveawayParticipantStatusEligible(data)
+    case TypeGiveawayParticipantStatusEligible:
+        return UnmarshalGiveawayParticipantStatusEligible(data)
 
-    case TypePremiumGiveawayParticipantStatusParticipating:
-        return UnmarshalPremiumGiveawayParticipantStatusParticipating(data)
+    case TypeGiveawayParticipantStatusParticipating:
+        return UnmarshalGiveawayParticipantStatusParticipating(data)
 
-    case TypePremiumGiveawayParticipantStatusAlreadyWasMember:
-        return UnmarshalPremiumGiveawayParticipantStatusAlreadyWasMember(data)
+    case TypeGiveawayParticipantStatusAlreadyWasMember:
+        return UnmarshalGiveawayParticipantStatusAlreadyWasMember(data)
 
-    case TypePremiumGiveawayParticipantStatusAdministrator:
-        return UnmarshalPremiumGiveawayParticipantStatusAdministrator(data)
+    case TypeGiveawayParticipantStatusAdministrator:
+        return UnmarshalGiveawayParticipantStatusAdministrator(data)
 
-    case TypePremiumGiveawayParticipantStatusDisallowedCountry:
-        return UnmarshalPremiumGiveawayParticipantStatusDisallowedCountry(data)
+    case TypeGiveawayParticipantStatusDisallowedCountry:
+        return UnmarshalGiveawayParticipantStatusDisallowedCountry(data)
 
-    case TypePremiumGiveawayInfoOngoing:
-        return UnmarshalPremiumGiveawayInfoOngoing(data)
+    case TypeGiveawayInfoOngoing:
+        return UnmarshalGiveawayInfoOngoing(data)
 
-    case TypePremiumGiveawayInfoCompleted:
-        return UnmarshalPremiumGiveawayInfoCompleted(data)
+    case TypeGiveawayInfoCompleted:
+        return UnmarshalGiveawayInfoCompleted(data)
+
+    case TypeGiveawayPrizePremium:
+        return UnmarshalGiveawayPrizePremium(data)
+
+    case TypeGiveawayPrizeStars:
+        return UnmarshalGiveawayPrizeStars(data)
 
     case TypeAccentColor:
         return UnmarshalAccentColor(data)
@@ -22219,6 +22399,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeLinkPreviewTypeEmbeddedVideoPlayer:
         return UnmarshalLinkPreviewTypeEmbeddedVideoPlayer(data)
 
+    case TypeLinkPreviewTypeExternalAudio:
+        return UnmarshalLinkPreviewTypeExternalAudio(data)
+
+    case TypeLinkPreviewTypeExternalVideo:
+        return UnmarshalLinkPreviewTypeExternalVideo(data)
+
     case TypeLinkPreviewTypeInvoice:
         return UnmarshalLinkPreviewTypeInvoice(data)
 
@@ -22390,8 +22576,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePaidMediaUnsupported:
         return UnmarshalPaidMediaUnsupported(data)
 
-    case TypePremiumGiveawayParameters:
-        return UnmarshalPremiumGiveawayParameters(data)
+    case TypeGiveawayParameters:
+        return UnmarshalGiveawayParameters(data)
 
     case TypeDatedFile:
         return UnmarshalDatedFile(data)
@@ -22783,20 +22969,23 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeMessagePremiumGiftCode:
         return UnmarshalMessagePremiumGiftCode(data)
 
-    case TypeMessagePremiumGiveawayCreated:
-        return UnmarshalMessagePremiumGiveawayCreated(data)
+    case TypeMessageGiveawayCreated:
+        return UnmarshalMessageGiveawayCreated(data)
 
-    case TypeMessagePremiumGiveaway:
-        return UnmarshalMessagePremiumGiveaway(data)
+    case TypeMessageGiveaway:
+        return UnmarshalMessageGiveaway(data)
 
-    case TypeMessagePremiumGiveawayCompleted:
-        return UnmarshalMessagePremiumGiveawayCompleted(data)
+    case TypeMessageGiveawayCompleted:
+        return UnmarshalMessageGiveawayCompleted(data)
 
-    case TypeMessagePremiumGiveawayWinners:
-        return UnmarshalMessagePremiumGiveawayWinners(data)
+    case TypeMessageGiveawayWinners:
+        return UnmarshalMessageGiveawayWinners(data)
 
     case TypeMessageGiftedStars:
         return UnmarshalMessageGiftedStars(data)
+
+    case TypeMessageGiveawayPrizeStars:
+        return UnmarshalMessageGiveawayPrizeStars(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -23311,8 +23500,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeChatBoostSourcePremium:
         return UnmarshalChatBoostSourcePremium(data)
 
-    case TypePrepaidPremiumGiveaway:
-        return UnmarshalPrepaidPremiumGiveaway(data)
+    case TypePrepaidGiveaway:
+        return UnmarshalPrepaidGiveaway(data)
 
     case TypeChatBoostStatus:
         return UnmarshalChatBoostStatus(data)
@@ -23670,6 +23859,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeChatEventMemberRestricted:
         return UnmarshalChatEventMemberRestricted(data)
+
+    case TypeChatEventMemberSubscriptionExtended:
+        return UnmarshalChatEventMemberSubscriptionExtended(data)
 
     case TypeChatEventAvailableReactionsChanged:
         return UnmarshalChatEventAvailableReactionsChanged(data)
@@ -24046,6 +24238,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStorePaymentPurposePremiumGiveaway:
         return UnmarshalStorePaymentPurposePremiumGiveaway(data)
 
+    case TypeStorePaymentPurposeStarGiveaway:
+        return UnmarshalStorePaymentPurposeStarGiveaway(data)
+
     case TypeStorePaymentPurposeStars:
         return UnmarshalStorePaymentPurposeStars(data)
 
@@ -24063,6 +24258,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeTelegramPaymentPurposeGiftedStars:
         return UnmarshalTelegramPaymentPurposeGiftedStars(data)
+
+    case TypeTelegramPaymentPurposeStarGiveaway:
+        return UnmarshalTelegramPaymentPurposeStarGiveaway(data)
 
     case TypeTelegramPaymentPurposeJoinChat:
         return UnmarshalTelegramPaymentPurposeJoinChat(data)
@@ -24265,8 +24463,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePushMessageContentPremiumGiftCode:
         return UnmarshalPushMessageContentPremiumGiftCode(data)
 
-    case TypePushMessageContentPremiumGiveaway:
-        return UnmarshalPushMessageContentPremiumGiveaway(data)
+    case TypePushMessageContentGiveaway:
+        return UnmarshalPushMessageContentGiveaway(data)
 
     case TypePushMessageContentScreenshotTaken:
         return UnmarshalPushMessageContentScreenshotTaken(data)
@@ -25587,6 +25785,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateMessageReactions:
         return UnmarshalUpdateMessageReactions(data)
+
+    case TypeUpdatePaidMediaPurchased:
+        return UnmarshalUpdatePaidMediaPurchased(data)
 
     case TypeUpdates:
         return UnmarshalUpdates(data)
