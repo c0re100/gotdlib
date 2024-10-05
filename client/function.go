@@ -1304,7 +1304,7 @@ type GetMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a message
+// Returns information about a message. Returns a 404 error if the message doesn't exist
 func (client *Client) GetMessage(req *GetMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1333,7 +1333,7 @@ type GetMessageLocallyRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a message, if it is available without sending network request. This is an offline request
+// Returns information about a message, if it is available without sending network request. Returns a 404 error if message isn't available locally. This is an offline request
 func (client *Client) GetMessageLocally(req *GetMessageLocallyRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1362,7 +1362,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted and topic messages without non-bundled replied message respectively
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted and topic messages without non-bundled replied message respectively. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1389,7 +1389,7 @@ type GetChatPinnedMessageRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns information about a newest pinned message in the chat
+// Returns information about a newest pinned message in the chat. Returns a 404 error if the message doesn't exist
 func (client *Client) GetChatPinnedMessage(req *GetChatPinnedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1833,7 +1833,7 @@ type SearchChatsNearbyRequest struct {
     Location *Location `json:"location"`
 }
 
-// Returns a list of users and location-based supergroups nearby. The list of users nearby will be updated for 60 seconds after the request by the updates updateUsersNearby. The request must be sent again every 25 seconds with adjusted location to not miss new chats
+// Returns a list of users and location-based supergroups nearby. The method was disabled and returns an empty list of chats now
 func (client *Client) SearchChatsNearby(req *SearchChatsNearbyRequest) (*ChatsNearby, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3180,7 +3180,7 @@ type GetChatMessageByDateRequest struct {
     Date int32 `json:"date"`
 }
 
-// Returns the last message sent in a chat no later than the specified date
+// Returns the last message sent in a chat no later than the specified date. Returns a 404 error if such message doesn't exist
 func (client *Client) GetChatMessageByDate(req *GetChatMessageByDateRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3405,9 +3405,13 @@ type ClickChatSponsoredMessageRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the sponsored message
     MessageId int64 `json:"message_id"`
+    // Pass true if the media was clicked in the sponsored message
+    IsMediaClick bool `json:"is_media_click"`
+    // Pass true if the user expanded the video from the sponsored message fullscreen before the click
+    FromFullscreen bool `json:"from_fullscreen"`
 }
 
-// Informs TDLib that the user opened the sponsored chat via the button, the name, the photo, or a mention in the sponsored message
+// Informs TDLib that the user opened the sponsored chat via the button, the name, the chat photo, a mention in the sponsored message text, or the media in the sponsored message
 func (client *Client) ClickChatSponsoredMessage(req *ClickChatSponsoredMessageRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3416,6 +3420,8 @@ func (client *Client) ClickChatSponsoredMessage(req *ClickChatSponsoredMessageRe
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
+            "is_media_click": req.IsMediaClick,
+            "from_fullscreen": req.FromFullscreen,
         },
     })
     if err != nil {
@@ -4356,7 +4362,7 @@ type EditMessageCaptionRequest struct {
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
     // New message content caption; 0-getOption("message_caption_length_max") characters; pass null to remove caption
     Caption *FormattedText `json:"caption"`
-    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. Can be true only for animation, photo, and video messages
+    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. May be true only for animation, photo, and video messages
     ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
 }
 
@@ -4529,7 +4535,7 @@ type EditInlineMessageCaptionRequest struct {
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
     // New message content caption; pass null to remove caption; 0-getOption("message_caption_length_max") characters
     Caption *FormattedText `json:"caption"`
-    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. Can be true only for animation, photo, and video messages
+    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. May be true only for animation, photo, and video messages
     ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
 }
 
@@ -4875,7 +4881,7 @@ type EditBusinessMessageCaptionRequest struct {
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
     // New message content caption; pass null to remove caption; 0-getOption("message_caption_length_max") characters
     Caption *FormattedText `json:"caption"`
-    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. Can be true only for animation, photo, and video messages
+    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. May be true only for animation, photo, and video messages
     ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
 }
 
@@ -6466,7 +6472,7 @@ type CleanFileNameRequest struct {
     FileName string `json:"file_name"`
 }
 
-// Removes potentially dangerous characters from the name of a file. The encoding of the file name is supposed to be UTF-8. Returns an empty string on failure. Can be called synchronously
+// Removes potentially dangerous characters from the name of a file. Returns an empty string on failure. Can be called synchronously
 func CleanFileName(req *CleanFileNameRequest) (*Text, error) {
     result, err := Execute(Request{
         meta: meta{
@@ -6488,7 +6494,7 @@ func CleanFileName(req *CleanFileNameRequest) (*Text, error) {
 }
 
 // deprecated
-// Removes potentially dangerous characters from the name of a file. The encoding of the file name is supposed to be UTF-8. Returns an empty string on failure. Can be called synchronously
+// Removes potentially dangerous characters from the name of a file. Returns an empty string on failure. Can be called synchronously
 func (client *Client) CleanFileName(req *CleanFileNameRequest) (*Text, error) {
     return CleanFileName(req)}
 
@@ -11296,14 +11302,14 @@ type ReportStoryRequest struct {
     StorySenderChatId int64 `json:"story_sender_chat_id"`
     // The identifier of the story to report
     StoryId int32 `json:"story_id"`
-    // The reason for reporting the story
-    Reason ReportReason `json:"reason"`
-    // Additional report details; 0-1024 characters
+    // Option identifier chosen by the user; leave empty for the initial request
+    OptionId []byte `json:"option_id"`
+    // Additional report details; 0-1024 characters; leave empty for the initial request
     Text string `json:"text"`
 }
 
 // Reports a story to the Telegram moderators
-func (client *Client) ReportStory(req *ReportStoryRequest) (*Ok, error) {
+func (client *Client) ReportStory(req *ReportStoryRequest) (ReportStoryResult, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "reportStory",
@@ -11311,7 +11317,7 @@ func (client *Client) ReportStory(req *ReportStoryRequest) (*Ok, error) {
         Data: map[string]interface{}{
             "story_sender_chat_id": req.StorySenderChatId,
             "story_id": req.StoryId,
-            "reason": req.Reason,
+            "option_id": req.OptionId,
             "text": req.Text,
         },
     })
@@ -11323,7 +11329,19 @@ func (client *Client) ReportStory(req *ReportStoryRequest) (*Ok, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalOk(result.Data)
+    switch result.Type {
+    case TypeReportStoryResultOk:
+        return UnmarshalReportStoryResultOk(result.Data)
+
+    case TypeReportStoryResultOptionRequired:
+        return UnmarshalReportStoryResultOptionRequired(result.Data)
+
+    case TypeReportStoryResultTextRequired:
+        return UnmarshalReportStoryResultTextRequired(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
 }
 
 // Activates stealth mode for stories, which hides all views of stories from the current user in the last "story_stealth_mode_past_period" seconds and for the next "story_stealth_mode_future_period" seconds; for Telegram Premium users only
@@ -11915,7 +11933,7 @@ func (client *Client) CancelDownloadFile(req *CancelDownloadFileRequest) (*Ok, e
 type GetSuggestedFileNameRequest struct { 
     // Identifier of the file
     FileId int32 `json:"file_id"`
-    // Directory in which the file is supposed to be saved
+    // Directory in which the file is expected to be saved
     Directory string `json:"directory"`
 }
 
@@ -11978,7 +11996,7 @@ type CancelPreliminaryUploadFileRequest struct {
     FileId int32 `json:"file_id"`
 }
 
-// Stops the preliminary uploading of a file. Supported only for files uploaded by using preliminaryUploadFile. For other files the behavior is undefined
+// Stops the preliminary uploading of a file. Supported only for files uploaded by using preliminaryUploadFile
 func (client *Client) CancelPreliminaryUploadFile(req *CancelPreliminaryUploadFileRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -13289,7 +13307,7 @@ type CreateVideoChatRequest struct {
     ChatId int64 `json:"chat_id"`
     // Group call title; if empty, chat title will be used
     Title string `json:"title"`
-    // Point in time (Unix timestamp) when the group call is supposed to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future
+    // Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future
     StartDate int32 `json:"start_date"`
     // Pass true to create an RTMP stream instead of an ordinary video chat; requires owner privileges
     IsRtmpStream bool `json:"is_rtmp_stream"`
@@ -18101,7 +18119,7 @@ func (client *Client) ToggleSupergroupIsBroadcastGroup(req *ToggleSupergroupIsBr
 type ReportSupergroupSpamRequest struct { 
     // Supergroup identifier
     SupergroupId int64 `json:"supergroup_id"`
-    // Identifiers of messages to report. Use messageProperties.can_be_reported to check whether the message can be reported
+    // Identifiers of messages to report. Use messageProperties.can_report_supergroup_spam to check whether the message can be reported
     MessageIds []int64 `json:"message_ids"`
 }
 
@@ -18465,6 +18483,153 @@ func (client *Client) DeleteSavedCredentials() (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+// Returns gifts that can be sent to other users
+func (client *Client) GetAvailableGifts() (*Gifts, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getAvailableGifts",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGifts(result.Data)
+}
+
+type SendGiftRequest struct { 
+    // Identifier of the gift to send
+    GiftId JsonInt64 `json:"gift_id"`
+    // Identifier of the user that will receive the gift
+    UserId int64 `json:"user_id"`
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
+    Text *FormattedText `json:"text"`
+    // Pass true to show the current user as sender and gift text only to the gift receiver; otherwise, everyone will be able to see them
+    IsPrivate bool `json:"is_private"`
+}
+
+// Send a gift to another user
+func (client *Client) SendGift(req *SendGiftRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "sendGift",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+            "user_id": req.UserId,
+            "text": req.Text,
+            "is_private": req.IsPrivate,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SellGiftRequest struct { 
+    // Identifier of the user that sent the gift
+    SenderUserId int64 `json:"sender_user_id"`
+    // Identifier of the message with the gift in the chat with the user
+    MessageId int64 `json:"message_id"`
+}
+
+// Sells a gift received by the current user for Telegram Stars
+func (client *Client) SellGift(req *SellGiftRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "sellGift",
+        },
+        Data: map[string]interface{}{
+            "sender_user_id": req.SenderUserId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ToggleGiftIsSavedRequest struct { 
+    // Identifier of the user that sent the gift
+    SenderUserId int64 `json:"sender_user_id"`
+    // Identifier of the message with the gift in the chat with the user
+    MessageId int64 `json:"message_id"`
+    // Pass true to display the gift on the user's profile page; pass false to remove it from the profile page
+    IsSaved bool `json:"is_saved"`
+}
+
+// Toggles whether a gift is shown on the current user's profile page
+func (client *Client) ToggleGiftIsSaved(req *ToggleGiftIsSavedRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "toggleGiftIsSaved",
+        },
+        Data: map[string]interface{}{
+            "sender_user_id": req.SenderUserId,
+            "message_id": req.MessageId,
+            "is_saved": req.IsSaved,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type GetUserGiftsRequest struct { 
+    // Identifier of the user
+    UserId int64 `json:"user_id"`
+    // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of gifts to be returned; must be positive and can't be greater than 100. For optimal performance, the number of returned objects is chosen by TDLib and can be smaller than the specified limit
+    Limit int32 `json:"limit"`
+}
+
+// Returns gifts saved to profile by the given user
+func (client *Client) GetUserGifts(req *GetUserGiftsRequest) (*UserGifts, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getUserGifts",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalUserGifts(result.Data)
+}
+
 type CreateInvoiceLinkRequest struct { 
     // Information about the invoice of the type inputMessageInvoice
     Invoice InputMessageContent `json:"invoice"`
@@ -18498,7 +18663,7 @@ type RefundStarPaymentRequest struct {
     TelegramPaymentChargeId string `json:"telegram_payment_charge_id"`
 }
 
-// Refunds a previously done payment in Telegram Stars
+// Refunds a previously done payment in Telegram Stars; for bots only
 func (client *Client) RefundStarPayment(req *RefundStarPaymentRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19487,24 +19652,24 @@ func (client *Client) RemoveChatActionBar(req *RemoveChatActionBarRequest) (*Ok,
 type ReportChatRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifiers of reported messages; may be empty to report the whole chat. Use messageProperties.can_be_reported to check whether the message can be reported
+    // Option identifier chosen by the user; leave empty for the initial request
+    OptionId []byte `json:"option_id"`
+    // Identifiers of reported messages. Use messageProperties.can_report_chat to check whether the message can be reported
     MessageIds []int64 `json:"message_ids"`
-    // The reason for reporting the chat
-    Reason ReportReason `json:"reason"`
-    // Additional report details; 0-1024 characters
+    // Additional report details if asked by the server; 0-1024 characters; leave empty for the initial request
     Text string `json:"text"`
 }
 
 // Reports a chat to the Telegram moderators. A chat can be reported only from the chat action bar, or if chat.can_be_reported
-func (client *Client) ReportChat(req *ReportChatRequest) (*Ok, error) {
+func (client *Client) ReportChat(req *ReportChatRequest) (ReportChatResult, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "reportChat",
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
+            "option_id": req.OptionId,
             "message_ids": req.MessageIds,
-            "reason": req.Reason,
             "text": req.Text,
         },
     })
@@ -19516,7 +19681,22 @@ func (client *Client) ReportChat(req *ReportChatRequest) (*Ok, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalOk(result.Data)
+    switch result.Type {
+    case TypeReportChatResultOk:
+        return UnmarshalReportChatResultOk(result.Data)
+
+    case TypeReportChatResultOptionRequired:
+        return UnmarshalReportChatResultOptionRequired(result.Data)
+
+    case TypeReportChatResultTextRequired:
+        return UnmarshalReportChatResultTextRequired(result.Data)
+
+    case TypeReportChatResultMessagesRequired:
+        return UnmarshalReportChatResultMessagesRequired(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
 }
 
 type ReportChatPhotoRequest struct { 
@@ -21345,6 +21525,32 @@ func (client *Client) GetPremiumStickerExamples() (*Stickers, error) {
     }
 
     return UnmarshalStickers(result.Data)
+}
+
+type GetPremiumInfoStickerRequest struct { 
+    // Number of months the Telegram Premium subscription will be active
+    MonthCount int32 `json:"month_count"`
+}
+
+// Returns the sticker to be used as representation of the Telegram Premium subscription
+func (client *Client) GetPremiumInfoSticker(req *GetPremiumInfoStickerRequest) (*Sticker, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPremiumInfoSticker",
+        },
+        Data: map[string]interface{}{
+            "month_count": req.MonthCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalSticker(result.Data)
 }
 
 type ViewPremiumFeatureRequest struct { 

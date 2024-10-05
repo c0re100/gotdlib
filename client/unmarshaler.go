@@ -767,6 +767,43 @@ func UnmarshalListOfChatTransactionPurpose(dataList []json.RawMessage) ([]ChatTr
     return list, nil
 }
 
+func UnmarshalUserTransactionPurpose(data json.RawMessage) (UserTransactionPurpose, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeUserTransactionPurposeGiftedStars:
+        return UnmarshalUserTransactionPurposeGiftedStars(data)
+
+    case TypeUserTransactionPurposeGiftSell:
+        return UnmarshalUserTransactionPurposeGiftSell(data)
+
+    case TypeUserTransactionPurposeGiftSend:
+        return UnmarshalUserTransactionPurposeGiftSend(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfUserTransactionPurpose(dataList []json.RawMessage) ([]UserTransactionPurpose, error) {
+    list := []UserTransactionPurpose{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalUserTransactionPurpose(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalStarTransactionPartner(data json.RawMessage) (StarTransactionPartner, error) {
     var meta meta
 
@@ -1937,6 +1974,9 @@ func UnmarshalInlineKeyboardButtonType(data json.RawMessage) (InlineKeyboardButt
 
     case TypeInlineKeyboardButtonTypeUser:
         return UnmarshalInlineKeyboardButtonTypeUser(data)
+
+    case TypeInlineKeyboardButtonTypeCopyText:
+        return UnmarshalInlineKeyboardButtonTypeCopyText(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -3255,6 +3295,9 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
 
     case TypeMessageGiveawayPrizeStars:
         return UnmarshalMessageGiveawayPrizeStars(data)
+
+    case TypeMessageGift:
+        return UnmarshalMessageGift(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -5956,6 +5999,9 @@ func UnmarshalPushMessageContent(data json.RawMessage) (PushMessageContent, erro
     case TypePushMessageContentGiveaway:
         return UnmarshalPushMessageContentGiveaway(data)
 
+    case TypePushMessageContentGift:
+        return UnmarshalPushMessageContentGift(data)
+
     case TypePushMessageContentScreenshotTaken:
         return UnmarshalPushMessageContentScreenshotTaken(data)
 
@@ -6522,6 +6568,83 @@ func UnmarshalListOfReportReason(dataList []json.RawMessage) ([]ReportReason, er
 
     for _, data := range dataList {
         entity, err := UnmarshalReportReason(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalReportChatResult(data json.RawMessage) (ReportChatResult, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeReportChatResultOk:
+        return UnmarshalReportChatResultOk(data)
+
+    case TypeReportChatResultOptionRequired:
+        return UnmarshalReportChatResultOptionRequired(data)
+
+    case TypeReportChatResultTextRequired:
+        return UnmarshalReportChatResultTextRequired(data)
+
+    case TypeReportChatResultMessagesRequired:
+        return UnmarshalReportChatResultMessagesRequired(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfReportChatResult(dataList []json.RawMessage) ([]ReportChatResult, error) {
+    list := []ReportChatResult{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalReportChatResult(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalReportStoryResult(data json.RawMessage) (ReportStoryResult, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeReportStoryResultOk:
+        return UnmarshalReportStoryResultOk(data)
+
+    case TypeReportStoryResultOptionRequired:
+        return UnmarshalReportStoryResultOptionRequired(data)
+
+    case TypeReportStoryResultTextRequired:
+        return UnmarshalReportStoryResultTextRequired(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfReportStoryResult(dataList []json.RawMessage) ([]ReportStoryResult, error) {
+    list := []ReportStoryResult{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalReportStoryResult(data)
         if err != nil {
             return nil, err
         }
@@ -8777,6 +8900,14 @@ func UnmarshalPoll(data json.RawMessage) (*Poll, error) {
     return &resp, err
 }
 
+func UnmarshalAlternativeVideo(data json.RawMessage) (*AlternativeVideo, error) {
+    var resp AlternativeVideo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalBackground(data json.RawMessage) (*Background, error) {
     var resp Background
 
@@ -9241,6 +9372,38 @@ func UnmarshalStarGiveawayPaymentOptions(data json.RawMessage) (*StarGiveawayPay
     return &resp, err
 }
 
+func UnmarshalGift(data json.RawMessage) (*Gift, error) {
+    var resp Gift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGifts(data json.RawMessage) (*Gifts, error) {
+    var resp Gifts
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserGift(data json.RawMessage) (*UserGift, error) {
+    var resp UserGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserGifts(data json.RawMessage) (*UserGifts, error) {
+    var resp UserGifts
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStarTransactionDirectionIncoming(data json.RawMessage) (*StarTransactionDirectionIncoming, error) {
     var resp StarTransactionDirectionIncoming
 
@@ -9299,6 +9462,30 @@ func UnmarshalChatTransactionPurposeReaction(data json.RawMessage) (*ChatTransac
 
 func UnmarshalChatTransactionPurposeGiveaway(data json.RawMessage) (*ChatTransactionPurposeGiveaway, error) {
     var resp ChatTransactionPurposeGiveaway
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserTransactionPurposeGiftedStars(data json.RawMessage) (*UserTransactionPurposeGiftedStars, error) {
+    var resp UserTransactionPurposeGiftedStars
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserTransactionPurposeGiftSell(data json.RawMessage) (*UserTransactionPurposeGiftSell, error) {
+    var resp UserTransactionPurposeGiftSell
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserTransactionPurposeGiftSend(data json.RawMessage) (*UserTransactionPurposeGiftSend, error) {
+    var resp UserTransactionPurposeGiftSend
 
     err := json.Unmarshal(data, &resp)
 
@@ -10449,8 +10636,8 @@ func UnmarshalSponsoredMessages(data json.RawMessage) (*SponsoredMessages, error
     return &resp, err
 }
 
-func UnmarshalReportChatSponsoredMessageOption(data json.RawMessage) (*ReportChatSponsoredMessageOption, error) {
-    var resp ReportChatSponsoredMessageOption
+func UnmarshalReportOption(data json.RawMessage) (*ReportOption, error) {
+    var resp ReportOption
 
     err := json.Unmarshal(data, &resp)
 
@@ -11067,6 +11254,14 @@ func UnmarshalInlineKeyboardButtonTypeBuy(data json.RawMessage) (*InlineKeyboard
 
 func UnmarshalInlineKeyboardButtonTypeUser(data json.RawMessage) (*InlineKeyboardButtonTypeUser, error) {
     var resp InlineKeyboardButtonTypeUser
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInlineKeyboardButtonTypeCopyText(data json.RawMessage) (*InlineKeyboardButtonTypeCopyText, error) {
+    var resp InlineKeyboardButtonTypeCopyText
 
     err := json.Unmarshal(data, &resp)
 
@@ -13387,6 +13582,14 @@ func UnmarshalMessageGiftedStars(data json.RawMessage) (*MessageGiftedStars, err
 
 func UnmarshalMessageGiveawayPrizeStars(data json.RawMessage) (*MessageGiveawayPrizeStars, error) {
     var resp MessageGiveawayPrizeStars
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageGift(data json.RawMessage) (*MessageGift, error) {
+    var resp MessageGift
 
     err := json.Unmarshal(data, &resp)
 
@@ -17337,6 +17540,14 @@ func UnmarshalPushMessageContentGiveaway(data json.RawMessage) (*PushMessageCont
     return &resp, err
 }
 
+func UnmarshalPushMessageContentGift(data json.RawMessage) (*PushMessageContentGift, error) {
+    var resp PushMessageContentGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalPushMessageContentScreenshotTaken(data json.RawMessage) (*PushMessageContentScreenshotTaken, error) {
     var resp PushMessageContentScreenshotTaken
 
@@ -18187,6 +18398,62 @@ func UnmarshalReportReasonPersonalDetails(data json.RawMessage) (*ReportReasonPe
 
 func UnmarshalReportReasonCustom(data json.RawMessage) (*ReportReasonCustom, error) {
     var resp ReportReasonCustom
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportChatResultOk(data json.RawMessage) (*ReportChatResultOk, error) {
+    var resp ReportChatResultOk
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportChatResultOptionRequired(data json.RawMessage) (*ReportChatResultOptionRequired, error) {
+    var resp ReportChatResultOptionRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportChatResultTextRequired(data json.RawMessage) (*ReportChatResultTextRequired, error) {
+    var resp ReportChatResultTextRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportChatResultMessagesRequired(data json.RawMessage) (*ReportChatResultMessagesRequired, error) {
+    var resp ReportChatResultMessagesRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportStoryResultOk(data json.RawMessage) (*ReportStoryResultOk, error) {
+    var resp ReportStoryResultOk
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportStoryResultOptionRequired(data json.RawMessage) (*ReportStoryResultOptionRequired, error) {
+    var resp ReportStoryResultOptionRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalReportStoryResultTextRequired(data json.RawMessage) (*ReportStoryResultTextRequired, error) {
+    var resp ReportStoryResultTextRequired
 
     err := json.Unmarshal(data, &resp)
 
@@ -21256,6 +21523,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePoll:
         return UnmarshalPoll(data)
 
+    case TypeAlternativeVideo:
+        return UnmarshalAlternativeVideo(data)
+
     case TypeBackground:
         return UnmarshalBackground(data)
 
@@ -21430,6 +21700,18 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarGiveawayPaymentOptions:
         return UnmarshalStarGiveawayPaymentOptions(data)
 
+    case TypeGift:
+        return UnmarshalGift(data)
+
+    case TypeGifts:
+        return UnmarshalGifts(data)
+
+    case TypeUserGift:
+        return UnmarshalUserGift(data)
+
+    case TypeUserGifts:
+        return UnmarshalUserGifts(data)
+
     case TypeStarTransactionDirectionIncoming:
         return UnmarshalStarTransactionDirectionIncoming(data)
 
@@ -21453,6 +21735,15 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeChatTransactionPurposeGiveaway:
         return UnmarshalChatTransactionPurposeGiveaway(data)
+
+    case TypeUserTransactionPurposeGiftedStars:
+        return UnmarshalUserTransactionPurposeGiftedStars(data)
+
+    case TypeUserTransactionPurposeGiftSell:
+        return UnmarshalUserTransactionPurposeGiftSell(data)
+
+    case TypeUserTransactionPurposeGiftSend:
+        return UnmarshalUserTransactionPurposeGiftSend(data)
 
     case TypeStarTransactionPartnerTelegram:
         return UnmarshalStarTransactionPartnerTelegram(data)
@@ -21883,8 +22174,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeSponsoredMessages:
         return UnmarshalSponsoredMessages(data)
 
-    case TypeReportChatSponsoredMessageOption:
-        return UnmarshalReportChatSponsoredMessageOption(data)
+    case TypeReportOption:
+        return UnmarshalReportOption(data)
 
     case TypeReportChatSponsoredMessageResultOk:
         return UnmarshalReportChatSponsoredMessageResultOk(data)
@@ -22116,6 +22407,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInlineKeyboardButtonTypeUser:
         return UnmarshalInlineKeyboardButtonTypeUser(data)
+
+    case TypeInlineKeyboardButtonTypeCopyText:
+        return UnmarshalInlineKeyboardButtonTypeCopyText(data)
 
     case TypeInlineKeyboardButton:
         return UnmarshalInlineKeyboardButton(data)
@@ -22986,6 +23280,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessageGiveawayPrizeStars:
         return UnmarshalMessageGiveawayPrizeStars(data)
+
+    case TypeMessageGift:
+        return UnmarshalMessageGift(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -24466,6 +24763,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePushMessageContentGiveaway:
         return UnmarshalPushMessageContentGiveaway(data)
 
+    case TypePushMessageContentGift:
+        return UnmarshalPushMessageContentGift(data)
+
     case TypePushMessageContentScreenshotTaken:
         return UnmarshalPushMessageContentScreenshotTaken(data)
 
@@ -24786,6 +25086,27 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeReportReasonCustom:
         return UnmarshalReportReasonCustom(data)
+
+    case TypeReportChatResultOk:
+        return UnmarshalReportChatResultOk(data)
+
+    case TypeReportChatResultOptionRequired:
+        return UnmarshalReportChatResultOptionRequired(data)
+
+    case TypeReportChatResultTextRequired:
+        return UnmarshalReportChatResultTextRequired(data)
+
+    case TypeReportChatResultMessagesRequired:
+        return UnmarshalReportChatResultMessagesRequired(data)
+
+    case TypeReportStoryResultOk:
+        return UnmarshalReportStoryResultOk(data)
+
+    case TypeReportStoryResultOptionRequired:
+        return UnmarshalReportStoryResultOptionRequired(data)
+
+    case TypeReportStoryResultTextRequired:
+        return UnmarshalReportStoryResultTextRequired(data)
 
     case TypeTargetChatCurrent:
         return UnmarshalTargetChatCurrent(data)
