@@ -828,6 +828,9 @@ func UnmarshalStarTransactionPartner(data json.RawMessage) (StarTransactionPartn
     case TypeStarTransactionPartnerTelegramAds:
         return UnmarshalStarTransactionPartnerTelegramAds(data)
 
+    case TypeStarTransactionPartnerTelegramApi:
+        return UnmarshalStarTransactionPartnerTelegramApi(data)
+
     case TypeStarTransactionPartnerBot:
         return UnmarshalStarTransactionPartnerBot(data)
 
@@ -1852,9 +1855,6 @@ func UnmarshalChatActionBar(data json.RawMessage) (ChatActionBar, error) {
     switch meta.Type {
     case TypeChatActionBarReportSpam:
         return UnmarshalChatActionBarReportSpam(data)
-
-    case TypeChatActionBarReportUnrelatedLocation:
-        return UnmarshalChatActionBarReportUnrelatedLocation(data)
 
     case TypeChatActionBarInviteMembers:
         return UnmarshalChatActionBarInviteMembers(data)
@@ -3490,6 +3490,9 @@ func UnmarshalMessageSchedulingState(data json.RawMessage) (MessageSchedulingSta
 
     case TypeMessageSchedulingStateSendWhenOnline:
         return UnmarshalMessageSchedulingStateSendWhenOnline(data)
+
+    case TypeMessageSchedulingStateSendWhenVideoProcessed:
+        return UnmarshalMessageSchedulingStateSendWhenVideoProcessed(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -5440,9 +5443,6 @@ func UnmarshalStorePaymentPurpose(data json.RawMessage) (StorePaymentPurpose, er
     switch meta.Type {
     case TypeStorePaymentPurposePremiumSubscription:
         return UnmarshalStorePaymentPurposePremiumSubscription(data)
-
-    case TypeStorePaymentPurposeGiftedPremium:
-        return UnmarshalStorePaymentPurposeGiftedPremium(data)
 
     case TypeStorePaymentPurposePremiumGiftCodes:
         return UnmarshalStorePaymentPurposePremiumGiftCodes(data)
@@ -7713,6 +7713,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateMessageLiveLocationViewed:
         return UnmarshalUpdateMessageLiveLocationViewed(data)
 
+    case TypeUpdateVideoPublished:
+        return UnmarshalUpdateVideoPublished(data)
+
     case TypeUpdateNewChat:
         return UnmarshalUpdateNewChat(data)
 
@@ -8000,9 +8003,6 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(data)
-
-    case TypeUpdateUsersNearby:
-        return UnmarshalUpdateUsersNearby(data)
 
     case TypeUpdateUnconfirmedSession:
         return UnmarshalUpdateUnconfirmedSession(data)
@@ -9532,6 +9532,14 @@ func UnmarshalStarTransactionPartnerTelegramAds(data json.RawMessage) (*StarTran
     return &resp, err
 }
 
+func UnmarshalStarTransactionPartnerTelegramApi(data json.RawMessage) (*StarTransactionPartnerTelegramApi, error) {
+    var resp StarTransactionPartnerTelegramApi
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStarTransactionPartnerBot(data json.RawMessage) (*StarTransactionPartnerBot, error) {
     var resp StarTransactionPartnerBot
 
@@ -11036,22 +11044,6 @@ func UnmarshalCreatedBasicGroupChat(data json.RawMessage) (*CreatedBasicGroupCha
     return &resp, err
 }
 
-func UnmarshalChatNearby(data json.RawMessage) (*ChatNearby, error) {
-    var resp ChatNearby
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalChatsNearby(data json.RawMessage) (*ChatsNearby, error) {
-    var resp ChatsNearby
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
 func UnmarshalPublicChatTypeHasUsername(data json.RawMessage) (*PublicChatTypeHasUsername, error) {
     var resp PublicChatTypeHasUsername
 
@@ -11070,14 +11062,6 @@ func UnmarshalPublicChatTypeIsLocationBased(data json.RawMessage) (*PublicChatTy
 
 func UnmarshalChatActionBarReportSpam(data json.RawMessage) (*ChatActionBarReportSpam, error) {
     var resp ChatActionBarReportSpam
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalChatActionBarReportUnrelatedLocation(data json.RawMessage) (*ChatActionBarReportUnrelatedLocation, error) {
-    var resp ChatActionBarReportUnrelatedLocation
 
     err := json.Unmarshal(data, &resp)
 
@@ -13894,6 +13878,14 @@ func UnmarshalMessageSchedulingStateSendAtDate(data json.RawMessage) (*MessageSc
 
 func UnmarshalMessageSchedulingStateSendWhenOnline(data json.RawMessage) (*MessageSchedulingStateSendWhenOnline, error) {
     var resp MessageSchedulingStateSendWhenOnline
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageSchedulingStateSendWhenVideoProcessed(data json.RawMessage) (*MessageSchedulingStateSendWhenVideoProcessed, error) {
+    var resp MessageSchedulingStateSendWhenVideoProcessed
 
     err := json.Unmarshal(data, &resp)
 
@@ -16902,14 +16894,6 @@ func UnmarshalPremiumState(data json.RawMessage) (*PremiumState, error) {
 
 func UnmarshalStorePaymentPurposePremiumSubscription(data json.RawMessage) (*StorePaymentPurposePremiumSubscription, error) {
     var resp StorePaymentPurposePremiumSubscription
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalStorePaymentPurposeGiftedPremium(data json.RawMessage) (*StorePaymentPurposeGiftedPremium, error) {
-    var resp StorePaymentPurposeGiftedPremium
 
     err := json.Unmarshal(data, &resp)
 
@@ -20036,6 +20020,14 @@ func UnmarshalUpdateMessageLiveLocationViewed(data json.RawMessage) (*UpdateMess
     return &resp, err
 }
 
+func UnmarshalUpdateVideoPublished(data json.RawMessage) (*UpdateVideoPublished, error) {
+    var resp UpdateVideoPublished
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateNewChat(data json.RawMessage) (*UpdateNewChat, error) {
     var resp UpdateNewChat
 
@@ -20798,14 +20790,6 @@ func UnmarshalUpdateConnectionState(data json.RawMessage) (*UpdateConnectionStat
 
 func UnmarshalUpdateTermsOfService(data json.RawMessage) (*UpdateTermsOfService, error) {
     var resp UpdateTermsOfService
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalUpdateUsersNearby(data json.RawMessage) (*UpdateUsersNearby, error) {
-    var resp UpdateUsersNearby
 
     err := json.Unmarshal(data, &resp)
 
@@ -21760,6 +21744,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarTransactionPartnerTelegramAds:
         return UnmarshalStarTransactionPartnerTelegramAds(data)
 
+    case TypeStarTransactionPartnerTelegramApi:
+        return UnmarshalStarTransactionPartnerTelegramApi(data)
+
     case TypeStarTransactionPartnerBot:
         return UnmarshalStarTransactionPartnerBot(data)
 
@@ -22324,12 +22311,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeCreatedBasicGroupChat:
         return UnmarshalCreatedBasicGroupChat(data)
 
-    case TypeChatNearby:
-        return UnmarshalChatNearby(data)
-
-    case TypeChatsNearby:
-        return UnmarshalChatsNearby(data)
-
     case TypePublicChatTypeHasUsername:
         return UnmarshalPublicChatTypeHasUsername(data)
 
@@ -22338,9 +22319,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeChatActionBarReportSpam:
         return UnmarshalChatActionBarReportSpam(data)
-
-    case TypeChatActionBarReportUnrelatedLocation:
-        return UnmarshalChatActionBarReportUnrelatedLocation(data)
 
     case TypeChatActionBarInviteMembers:
         return UnmarshalChatActionBarInviteMembers(data)
@@ -23397,6 +23375,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessageSchedulingStateSendWhenOnline:
         return UnmarshalMessageSchedulingStateSendWhenOnline(data)
+
+    case TypeMessageSchedulingStateSendWhenVideoProcessed:
+        return UnmarshalMessageSchedulingStateSendWhenVideoProcessed(data)
 
     case TypeMessageSelfDestructTypeTimer:
         return UnmarshalMessageSelfDestructTypeTimer(data)
@@ -24525,9 +24506,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeStorePaymentPurposePremiumSubscription:
         return UnmarshalStorePaymentPurposePremiumSubscription(data)
-
-    case TypeStorePaymentPurposeGiftedPremium:
-        return UnmarshalStorePaymentPurposeGiftedPremium(data)
 
     case TypeStorePaymentPurposePremiumGiftCodes:
         return UnmarshalStorePaymentPurposePremiumGiftCodes(data)
@@ -25699,6 +25677,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateMessageLiveLocationViewed:
         return UnmarshalUpdateMessageLiveLocationViewed(data)
 
+    case TypeUpdateVideoPublished:
+        return UnmarshalUpdateVideoPublished(data)
+
     case TypeUpdateNewChat:
         return UnmarshalUpdateNewChat(data)
 
@@ -25986,9 +25967,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(data)
-
-    case TypeUpdateUsersNearby:
-        return UnmarshalUpdateUsersNearby(data)
 
     case TypeUpdateUnconfirmedSession:
         return UnmarshalUpdateUnconfirmedSession(data)

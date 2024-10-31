@@ -1828,32 +1828,6 @@ func (client *Client) SearchChatsOnServer(req *SearchChatsOnServerRequest) (*Cha
     return UnmarshalChats(result.Data)
 }
 
-type SearchChatsNearbyRequest struct { 
-    // Current user location
-    Location *Location `json:"location"`
-}
-
-// Returns a list of users and location-based supergroups nearby. The method was disabled and returns an empty list of chats now
-func (client *Client) SearchChatsNearby(req *SearchChatsNearbyRequest) (*ChatsNearby, error) {
-    result, err := client.Send(Request{
-        meta: meta{
-            Type: "searchChatsNearby",
-        },
-        Data: map[string]interface{}{
-            "location": req.Location,
-        },
-    })
-    if err != nil {
-        return nil, err
-    }
-
-    if result.Type == "error" {
-        return nil, buildResponseError(result.Data)
-    }
-
-    return UnmarshalChatsNearby(result.Data)
-}
-
 // Returns a list of channel chats recommended to the current user
 func (client *Client) GetRecommendedChats() (*Chats, error) {
     result, err := client.Send(Request{
@@ -2939,6 +2913,8 @@ func (client *Client) SearchPublicMessagesByTag(req *SearchPublicMessagesByTagRe
 }
 
 type SearchPublicStoriesByTagRequest struct { 
+    // Identifier of the chat that posted the stories to search for; pass 0 to search stories in all chats
+    StorySenderChatId int64 `json:"story_sender_chat_id"`
     // Hashtag or cashtag to search for
     Tag string `json:"tag"`
     // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
@@ -2954,6 +2930,7 @@ func (client *Client) SearchPublicStoriesByTag(req *SearchPublicStoriesByTagRequ
             Type: "searchPublicStoriesByTag",
         },
         Data: map[string]interface{}{
+            "story_sender_chat_id": req.StorySenderChatId,
             "tag": req.Tag,
             "offset": req.Offset,
             "limit": req.Limit,
@@ -3379,7 +3356,7 @@ type GetChatSponsoredMessagesRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns sponsored messages to be shown in a chat; for channel chats only
+// Returns sponsored messages to be shown in a chat; for channel chats and chats with bots only
 func (client *Client) GetChatSponsoredMessages(req *GetChatSponsoredMessagesRequest) (*SponsoredMessages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3982,7 +3959,7 @@ type ForwardMessagesRequest struct {
     MessageIds []int64 `json:"message_ids"`
     // Options to be used to send the messages; pass null to use default options
     Options *MessageSendOptions `json:"options"`
-    // Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local
+    // Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local. Use messageProperties.can_be_saved and messageProperties.can_be_copied_to_secret_chat to check whether the message is suitable
     SendCopy bool `json:"send_copy"`
     // Pass true to remove media captions of message copies. Ignored if send_copy is false
     RemoveCaption bool `json:"remove_caption"`
@@ -4321,7 +4298,7 @@ func (client *Client) EditMessageLiveLocation(req *EditMessageLiveLocationReques
 type EditMessageMediaRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
-    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
+    // Identifier of the message. Use messageProperties.can_edit_media to check whether the message can be edited
     MessageId int64 `json:"message_id"`
     // The new message reply markup; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
@@ -4329,7 +4306,7 @@ type EditMessageMediaRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the content of a message with an animation, an audio, a document, a photo or a video, including message caption. If only the caption needs to be edited, use editMessageCaption instead. The media can't be edited if the message was set to self-destruct or to a self-destructing media. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa. Returns the edited message after the edit is completed on the server side
+// Edits the media content of a message, including message caption. If only the caption needs to be edited, use editMessageCaption instead. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa. Returns the edited message after the edit is completed on the server side
 func (client *Client) EditMessageMedia(req *EditMessageMediaRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4505,7 +4482,7 @@ type EditInlineMessageMediaRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the content of a message with an animation, an audio, a document, a photo or a video in an inline message sent via a bot; for bots only
+// Edits the media content of a message with a text, an animation, an audio, a document, a photo or a video in an inline message sent via a bot; for bots only
 func (client *Client) EditInlineMessageMedia(req *EditInlineMessageMediaRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4597,7 +4574,7 @@ type EditMessageSchedulingStateRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message. Use messageProperties.can_edit_scheduling_state to check whether the message is suitable
     MessageId int64 `json:"message_id"`
-    // The new message scheduling state; pass null to send the message immediately
+    // The new message scheduling state; pass null to send the message immediately. Must be null for messages in the state messageSchedulingStateSendWhenVideoProcessed
     SchedulingState MessageSchedulingState `json:"scheduling_state"`
 }
 
@@ -4845,7 +4822,7 @@ type EditBusinessMessageMediaRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the content of a message with an animation, an audio, a document, a photo or a video in a message sent on behalf of a business account; for bots only
+// Edits the media content of a message with a text, an animation, an audio, a document, a photo or a video in a message sent on behalf of a business account; for bots only
 func (client *Client) EditBusinessMessageMedia(req *EditBusinessMessageMediaRequest) (*BusinessMessage, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -5342,7 +5319,7 @@ type EditQuickReplyMessageRequest struct {
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Asynchronously edits the text, media or caption of a quick reply message. Use quickReplyMessage.can_be_edited to check whether a message can be edited. Text message can be edited only to a text message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
+// Asynchronously edits the text, media or caption of a quick reply message. Use quickReplyMessage.can_be_edited to check whether a message can be edited. Media message can be edited only to a media message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
 func (client *Client) EditQuickReplyMessage(req *EditQuickReplyMessageRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6035,7 +6012,7 @@ type SetMessageReactionsRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Types of the reaction to set
+    // Types of the reaction to set; pass an empty list to remove the reactions
     ReactionTypes []ReactionType `json:"reaction_types"`
     // Pass true if the reactions are added with a big animation
     IsBig bool `json:"is_big"`
@@ -14932,6 +14909,8 @@ func (client *Client) GetStickerSetName(req *GetStickerSetNameRequest) (*Text, e
 type SearchStickerSetRequest struct { 
     // Name of the sticker set
     Name string `json:"name"`
+    // Pass true to ignore local cache of sticker sets and always send a network request
+    IgnoreCache bool `json:"ignore_cache"`
 }
 
 // Searches for a sticker set by its name
@@ -14942,6 +14921,7 @@ func (client *Client) SearchStickerSet(req *SearchStickerSetRequest) (*StickerSe
         },
         Data: map[string]interface{}{
             "name": req.Name,
+            "ignore_cache": req.IgnoreCache,
         },
     })
     if err != nil {
@@ -16046,32 +16026,6 @@ func (client *Client) SetEmojiStatus(req *SetEmojiStatusRequest) (*Ok, error) {
         },
         Data: map[string]interface{}{
             "emoji_status": req.EmojiStatus,
-        },
-    })
-    if err != nil {
-        return nil, err
-    }
-
-    if result.Type == "error" {
-        return nil, buildResponseError(result.Data)
-    }
-
-    return UnmarshalOk(result.Data)
-}
-
-type SetLocationRequest struct { 
-    // The new location of the user
-    Location *Location `json:"location"`
-}
-
-// Changes the location of the current user. Needs to be called if getOption("is_location_visible") is true and location changes for more than 1 kilometer. Must not be called if the user has a business location
-func (client *Client) SetLocation(req *SetLocationRequest) (*Ok, error) {
-    result, err := client.Send(Request{
-        meta: meta{
-            Type: "setLocation",
-        },
-        Data: map[string]interface{}{
-            "location": req.Location,
         },
     })
     if err != nil {
@@ -18513,7 +18467,7 @@ type SendGiftRequest struct {
     IsPrivate bool `json:"is_private"`
 }
 
-// Send a gift to another user
+// Sends a gift to another user. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
 func (client *Client) SendGift(req *SendGiftRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19773,7 +19727,7 @@ type GetChatRevenueStatisticsRequest struct {
     IsDark bool `json:"is_dark"`
 }
 
-// Returns detailed revenue statistics about a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true
+// Returns detailed revenue statistics about a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true or bots if userFullInfo.bot_info.can_get_revenue_statistics == true
 func (client *Client) GetChatRevenueStatistics(req *GetChatRevenueStatisticsRequest) (*ChatRevenueStatistics, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19802,7 +19756,7 @@ type GetChatRevenueWithdrawalUrlRequest struct {
     Password string `json:"password"`
 }
 
-// Returns a URL for chat revenue withdrawal; requires owner privileges in the chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true and getOption("can_withdraw_chat_revenue")
+// Returns a URL for chat revenue withdrawal; requires owner privileges in the channel chat or the bot. Currently, this method can be used only if getOption("can_withdraw_chat_revenue") for channels with supergroupFullInfo.can_get_revenue_statistics == true or bots with userFullInfo.bot_info.can_get_revenue_statistics == true
 func (client *Client) GetChatRevenueWithdrawalUrl(req *GetChatRevenueWithdrawalUrlRequest) (*HttpUrl, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19833,7 +19787,7 @@ type GetChatRevenueTransactionsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns the list of revenue transactions for a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true
+// Returns the list of revenue transactions for a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true or bots if userFullInfo.bot_info.can_get_revenue_statistics == true
 func (client *Client) GetChatRevenueTransactions(req *GetChatRevenueTransactionsRequest) (*ChatRevenueTransactions, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -23331,6 +23285,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateMessageLiveLocationViewed:
         return UnmarshalUpdateMessageLiveLocationViewed(result.Data)
 
+    case TypeUpdateVideoPublished:
+        return UnmarshalUpdateVideoPublished(result.Data)
+
     case TypeUpdateNewChat:
         return UnmarshalUpdateNewChat(result.Data)
 
@@ -23618,9 +23575,6 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(result.Data)
-
-    case TypeUpdateUsersNearby:
-        return UnmarshalUpdateUsersNearby(result.Data)
 
     case TypeUpdateUnconfirmedSession:
         return UnmarshalUpdateUnconfirmedSession(result.Data)
