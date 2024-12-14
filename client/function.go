@@ -7084,7 +7084,7 @@ type GetPreparedInlineMessageRequest struct {
     PreparedMessageId string `json:"prepared_message_id"`
 }
 
-// Saves an inline message to be sent by the given user; for bots only
+// Saves an inline message to be sent by the given user
 func (client *Client) GetPreparedInlineMessage(req *GetPreparedInlineMessageRequest) (*PreparedInlineMessage, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8020,6 +8020,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeChangePhoneNumber:
         return UnmarshalInternalLinkTypeChangePhoneNumber(result.Data)
+
+    case TypeInternalLinkTypeChatAffiliateProgram:
+        return UnmarshalInternalLinkTypeChatAffiliateProgram(result.Data)
 
     case TypeInternalLinkTypeChatBoost:
         return UnmarshalInternalLinkTypeChatBoost(result.Data)
@@ -10897,7 +10900,7 @@ func (client *Client) EditStoryCover(req *EditStoryCoverRequest) (*Ok, error) {
 type SetStoryPrivacySettingsRequest struct { 
     // Identifier of the story
     StoryId int32 `json:"story_id"`
-    // The new privacy settigs for the story
+    // The new privacy settings for the story
     PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
 }
 
@@ -13393,7 +13396,7 @@ type CreateVideoChatRequest struct {
     Title string `json:"title"`
     // Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future
     StartDate int32 `json:"start_date"`
-    // Pass true to create an RTMP stream instead of an ordinary video chat; requires owner privileges
+    // Pass true to create an RTMP stream instead of an ordinary video chat
     IsRtmpStream bool `json:"is_rtmp_stream"`
 }
 
@@ -14861,8 +14864,14 @@ func (client *Client) GetAllStickerEmojis(req *GetAllStickerEmojisRequest) (*Emo
 type SearchStickersRequest struct { 
     // Type of the stickers to return
     StickerType StickerType `json:"sticker_type"`
-    // Space-separated list of emojis to search for; must be non-empty
+    // Space-separated list of emojis to search for
     Emojis string `json:"emojis"`
+    // Query to search for; may be empty to search for emoji only
+    Query string `json:"query"`
+    // List of possible IETF language tags of the user's input language; may be empty if unknown
+    InputLanguageCodes []string `json:"input_language_codes"`
+    // The offset from which to return the stickers; must be non-negative
+    Offset int32 `json:"offset"`
     // The maximum number of stickers to be returned; 0-100
     Limit int32 `json:"limit"`
 }
@@ -14876,6 +14885,9 @@ func (client *Client) SearchStickers(req *SearchStickersRequest) (*Stickers, err
         Data: map[string]interface{}{
             "sticker_type": req.StickerType,
             "emojis": req.Emojis,
+            "query": req.Query,
+            "input_language_codes": req.InputLanguageCodes,
+            "offset": req.Offset,
             "limit": req.Limit,
         },
     })
@@ -15782,6 +15794,25 @@ func (client *Client) GetRecentInlineBots() (*Users, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "getRecentInlineBots",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalUsers(result.Data)
+}
+
+// Returns the list of bots owned by the current user
+func (client *Client) GetOwnedBots() (*Users, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getOwnedBots",
         },
         Data: map[string]interface{}{},
     })
@@ -22228,6 +22259,218 @@ func (client *Client) ReuseStarSubscription(req *ReuseStarSubscriptionRequest) (
     }
 
     return UnmarshalOk(result.Data)
+}
+
+type SetChatAffiliateProgramRequest struct { 
+    // Identifier of the chat with an owned bot for which affiliate program is changed
+    ChatId int64 `json:"chat_id"`
+    // Parameters of the affiliate program; pass null to close the currently active program. If there is an active program, then commission and program duration can only be increased. If the active program is scheduled to be closed, then it can't be changed anymore
+    Parameters *AffiliateProgramParameters `json:"parameters"`
+}
+
+// Changes affiliate program for a bot
+func (client *Client) SetChatAffiliateProgram(req *SetChatAffiliateProgramRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setChatAffiliateProgram",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "parameters": req.Parameters,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SearchChatAffiliateProgramRequest struct { 
+    // Username of the chat
+    Username string `json:"username"`
+    // The referrer from an internalLinkTypeChatAffiliateProgram link
+    Referrer string `json:"referrer"`
+}
+
+// Searches a chat with an affiliate program. Returns the chat if found and the program is active
+func (client *Client) SearchChatAffiliateProgram(req *SearchChatAffiliateProgramRequest) (*Chat, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "searchChatAffiliateProgram",
+        },
+        Data: map[string]interface{}{
+            "username": req.Username,
+            "referrer": req.Referrer,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChat(result.Data)
+}
+
+type SearchAffiliateProgramsRequest struct { 
+    // Identifier of the chat for which affiliate programs are searched for. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+    ChatId int64 `json:"chat_id"`
+    // Sort order for the results
+    SortOrder AffiliateProgramSortOrder `json:"sort_order"`
+    // Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of affiliate programs to return
+    Limit int32 `json:"limit"`
+}
+
+// Searches affiliate programs that can be applied to the given chat
+func (client *Client) SearchAffiliatePrograms(req *SearchAffiliateProgramsRequest) (*FoundAffiliatePrograms, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "searchAffiliatePrograms",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "sort_order": req.SortOrder,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalFoundAffiliatePrograms(result.Data)
+}
+
+type ConnectChatAffiliateProgramRequest struct { 
+    // Identifier of the chat to which the affiliate program will be connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the bot, which affiliate program is connected
+    BotUserId int64 `json:"bot_user_id"`
+}
+
+// Connects an affiliate program to the given chat. Returns information about the connected affiliate program
+func (client *Client) ConnectChatAffiliateProgram(req *ConnectChatAffiliateProgramRequest) (*ChatAffiliateProgram, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "connectChatAffiliateProgram",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "bot_user_id": req.BotUserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatAffiliateProgram(result.Data)
+}
+
+type DisconnectChatAffiliateProgramRequest struct { 
+    // Identifier of the chat for which the affiliate program is connected
+    ChatId int64 `json:"chat_id"`
+    // The referral link of the affiliate program
+    Url string `json:"url"`
+}
+
+// Disconnects an affiliate program from the given chat and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
+func (client *Client) DisconnectChatAffiliateProgram(req *DisconnectChatAffiliateProgramRequest) (*ChatAffiliateProgram, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "disconnectChatAffiliateProgram",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "url": req.Url,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatAffiliateProgram(result.Data)
+}
+
+type GetChatAffiliateProgramRequest struct { 
+    // Identifier of the chat for which the affiliate program was connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the bot that created the program
+    BotUserId int64 `json:"bot_user_id"`
+}
+
+// Returns an affiliate program that were connected to the given chat by identifier of the bot that created the program
+func (client *Client) GetChatAffiliateProgram(req *GetChatAffiliateProgramRequest) (*ChatAffiliateProgram, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getChatAffiliateProgram",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "bot_user_id": req.BotUserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatAffiliateProgram(result.Data)
+}
+
+type GetChatAffiliateProgramsRequest struct { 
+    // Identifier of the chat for which the affiliate programs were connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+    ChatId int64 `json:"chat_id"`
+    // Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of affiliate programs to return
+    Limit int32 `json:"limit"`
+}
+
+// Returns affiliate programs that were connected to the given chat
+func (client *Client) GetChatAffiliatePrograms(req *GetChatAffiliateProgramsRequest) (*ChatAffiliatePrograms, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getChatAffiliatePrograms",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatAffiliatePrograms(result.Data)
 }
 
 type GetBusinessFeaturesRequest struct { 

@@ -24,11 +24,9 @@ const (
     ClassChatPhotoStickerType = "ChatPhotoStickerType"
     ClassInputChatPhoto = "InputChatPhoto"
     ClassStarSubscriptionType = "StarSubscriptionType"
+    ClassAffiliateProgramSortOrder = "AffiliateProgramSortOrder"
     ClassStarTransactionDirection = "StarTransactionDirection"
-    ClassBotTransactionPurpose = "BotTransactionPurpose"
-    ClassChatTransactionPurpose = "ChatTransactionPurpose"
-    ClassUserTransactionPurpose = "UserTransactionPurpose"
-    ClassStarTransactionPartner = "StarTransactionPartner"
+    ClassStarTransactionType = "StarTransactionType"
     ClassGiveawayParticipantStatus = "GiveawayParticipantStatus"
     ClassGiveawayInfo = "GiveawayInfo"
     ClassGiveawayPrize = "GiveawayPrize"
@@ -237,9 +235,17 @@ const (
     ClassChatPhotos = "ChatPhotos"
     ClassChatPermissions = "ChatPermissions"
     ClassChatAdministratorRights = "ChatAdministratorRights"
+    ClassStarAmount = "StarAmount"
     ClassStarSubscriptionPricing = "StarSubscriptionPricing"
     ClassStarSubscription = "StarSubscription"
     ClassStarSubscriptions = "StarSubscriptions"
+    ClassAffiliateProgramParameters = "AffiliateProgramParameters"
+    ClassAffiliateProgramInfo = "AffiliateProgramInfo"
+    ClassAffiliateInfo = "AffiliateInfo"
+    ClassFoundAffiliateProgram = "FoundAffiliateProgram"
+    ClassFoundAffiliatePrograms = "FoundAffiliatePrograms"
+    ClassChatAffiliateProgram = "ChatAffiliateProgram"
+    ClassChatAffiliatePrograms = "ChatAffiliatePrograms"
     ClassProductInfo = "ProductInfo"
     ClassPremiumPaymentOption = "PremiumPaymentOption"
     ClassPremiumStatePaymentOption = "PremiumStatePaymentOption"
@@ -713,11 +719,22 @@ const (
     TypeInputChatPhotoSticker = "inputChatPhotoSticker"
     TypeChatPermissions = "chatPermissions"
     TypeChatAdministratorRights = "chatAdministratorRights"
+    TypeStarAmount = "starAmount"
     TypeStarSubscriptionTypeChannel = "starSubscriptionTypeChannel"
     TypeStarSubscriptionTypeBot = "starSubscriptionTypeBot"
     TypeStarSubscriptionPricing = "starSubscriptionPricing"
     TypeStarSubscription = "starSubscription"
     TypeStarSubscriptions = "starSubscriptions"
+    TypeAffiliateProgramSortOrderProfitability = "affiliateProgramSortOrderProfitability"
+    TypeAffiliateProgramSortOrderCreationDate = "affiliateProgramSortOrderCreationDate"
+    TypeAffiliateProgramSortOrderRevenue = "affiliateProgramSortOrderRevenue"
+    TypeAffiliateProgramParameters = "affiliateProgramParameters"
+    TypeAffiliateProgramInfo = "affiliateProgramInfo"
+    TypeAffiliateInfo = "affiliateInfo"
+    TypeFoundAffiliateProgram = "foundAffiliateProgram"
+    TypeFoundAffiliatePrograms = "foundAffiliatePrograms"
+    TypeChatAffiliateProgram = "chatAffiliateProgram"
+    TypeChatAffiliatePrograms = "chatAffiliatePrograms"
     TypeProductInfo = "productInfo"
     TypePremiumPaymentOption = "premiumPaymentOption"
     TypePremiumStatePaymentOption = "premiumStatePaymentOption"
@@ -735,27 +752,31 @@ const (
     TypeUserGifts = "userGifts"
     TypeStarTransactionDirectionIncoming = "starTransactionDirectionIncoming"
     TypeStarTransactionDirectionOutgoing = "starTransactionDirectionOutgoing"
-    TypeBotTransactionPurposePaidMedia = "botTransactionPurposePaidMedia"
-    TypeBotTransactionPurposeInvoicePayment = "botTransactionPurposeInvoicePayment"
-    TypeBotTransactionPurposeSubscription = "botTransactionPurposeSubscription"
-    TypeChatTransactionPurposePaidMedia = "chatTransactionPurposePaidMedia"
-    TypeChatTransactionPurposeJoin = "chatTransactionPurposeJoin"
-    TypeChatTransactionPurposeReaction = "chatTransactionPurposeReaction"
-    TypeChatTransactionPurposeGiveaway = "chatTransactionPurposeGiveaway"
-    TypeUserTransactionPurposeGiftedStars = "userTransactionPurposeGiftedStars"
-    TypeUserTransactionPurposeGiftSell = "userTransactionPurposeGiftSell"
-    TypeUserTransactionPurposeGiftSend = "userTransactionPurposeGiftSend"
-    TypeStarTransactionPartnerTelegram = "starTransactionPartnerTelegram"
-    TypeStarTransactionPartnerAppStore = "starTransactionPartnerAppStore"
-    TypeStarTransactionPartnerGooglePlay = "starTransactionPartnerGooglePlay"
-    TypeStarTransactionPartnerFragment = "starTransactionPartnerFragment"
-    TypeStarTransactionPartnerTelegramAds = "starTransactionPartnerTelegramAds"
-    TypeStarTransactionPartnerTelegramApi = "starTransactionPartnerTelegramApi"
-    TypeStarTransactionPartnerBot = "starTransactionPartnerBot"
-    TypeStarTransactionPartnerBusiness = "starTransactionPartnerBusiness"
-    TypeStarTransactionPartnerChat = "starTransactionPartnerChat"
-    TypeStarTransactionPartnerUser = "starTransactionPartnerUser"
-    TypeStarTransactionPartnerUnsupported = "starTransactionPartnerUnsupported"
+    TypeStarTransactionTypePremiumBotDeposit = "starTransactionTypePremiumBotDeposit"
+    TypeStarTransactionTypeAppStoreDeposit = "starTransactionTypeAppStoreDeposit"
+    TypeStarTransactionTypeGooglePlayDeposit = "starTransactionTypeGooglePlayDeposit"
+    TypeStarTransactionTypeFragmentDeposit = "starTransactionTypeFragmentDeposit"
+    TypeStarTransactionTypeUserDeposit = "starTransactionTypeUserDeposit"
+    TypeStarTransactionTypeGiveawayDeposit = "starTransactionTypeGiveawayDeposit"
+    TypeStarTransactionTypeFragmentWithdrawal = "starTransactionTypeFragmentWithdrawal"
+    TypeStarTransactionTypeTelegramAdsWithdrawal = "starTransactionTypeTelegramAdsWithdrawal"
+    TypeStarTransactionTypeTelegramApiUsage = "starTransactionTypeTelegramApiUsage"
+    TypeStarTransactionTypeBotPaidMediaPurchase = "starTransactionTypeBotPaidMediaPurchase"
+    TypeStarTransactionTypeBotPaidMediaSale = "starTransactionTypeBotPaidMediaSale"
+    TypeStarTransactionTypeChannelPaidMediaPurchase = "starTransactionTypeChannelPaidMediaPurchase"
+    TypeStarTransactionTypeChannelPaidMediaSale = "starTransactionTypeChannelPaidMediaSale"
+    TypeStarTransactionTypeBotInvoicePurchase = "starTransactionTypeBotInvoicePurchase"
+    TypeStarTransactionTypeBotInvoiceSale = "starTransactionTypeBotInvoiceSale"
+    TypeStarTransactionTypeBotSubscriptionPurchase = "starTransactionTypeBotSubscriptionPurchase"
+    TypeStarTransactionTypeBotSubscriptionSale = "starTransactionTypeBotSubscriptionSale"
+    TypeStarTransactionTypeChannelSubscriptionPurchase = "starTransactionTypeChannelSubscriptionPurchase"
+    TypeStarTransactionTypeChannelSubscriptionSale = "starTransactionTypeChannelSubscriptionSale"
+    TypeStarTransactionTypeGiftPurchase = "starTransactionTypeGiftPurchase"
+    TypeStarTransactionTypeGiftSale = "starTransactionTypeGiftSale"
+    TypeStarTransactionTypeChannelPaidReactionSend = "starTransactionTypeChannelPaidReactionSend"
+    TypeStarTransactionTypeChannelPaidReactionReceive = "starTransactionTypeChannelPaidReactionReceive"
+    TypeStarTransactionTypeAffiliateProgramCommission = "starTransactionTypeAffiliateProgramCommission"
+    TypeStarTransactionTypeUnsupported = "starTransactionTypeUnsupported"
     TypeStarTransaction = "starTransaction"
     TypeStarTransactions = "starTransactions"
     TypeGiveawayParticipantStatusEligible = "giveawayParticipantStatusEligible"
@@ -1888,6 +1909,7 @@ const (
     TypeInternalLinkTypeBusinessChat = "internalLinkTypeBusinessChat"
     TypeInternalLinkTypeBuyStars = "internalLinkTypeBuyStars"
     TypeInternalLinkTypeChangePhoneNumber = "internalLinkTypeChangePhoneNumber"
+    TypeInternalLinkTypeChatAffiliateProgram = "internalLinkTypeChatAffiliateProgram"
     TypeInternalLinkTypeChatBoost = "internalLinkTypeChatBoost"
     TypeInternalLinkTypeChatFolderInvite = "internalLinkTypeChatFolderInvite"
     TypeInternalLinkTypeChatFolderSettings = "internalLinkTypeChatFolderSettings"
@@ -1941,6 +1963,10 @@ const (
     TypeFileTypeSecret = "fileTypeSecret"
     TypeFileTypeSecretThumbnail = "fileTypeSecretThumbnail"
     TypeFileTypeSecure = "fileTypeSecure"
+    TypeFileTypeSelfDestructingPhoto = "fileTypeSelfDestructingPhoto"
+    TypeFileTypeSelfDestructingVideo = "fileTypeSelfDestructingVideo"
+    TypeFileTypeSelfDestructingVideoNote = "fileTypeSelfDestructingVideoNote"
+    TypeFileTypeSelfDestructingVoiceNote = "fileTypeSelfDestructingVoiceNote"
     TypeFileTypeSticker = "fileTypeSticker"
     TypeFileTypeThumbnail = "fileTypeThumbnail"
     TypeFileTypeUnknown = "fileTypeUnknown"
@@ -2310,29 +2336,19 @@ type StarSubscriptionType interface {
     StarSubscriptionTypeType() string
 }
 
+// Describes the order of the found affiliate programs
+type AffiliateProgramSortOrder interface {
+    AffiliateProgramSortOrderType() string
+}
+
 // Describes direction of a transaction with Telegram Stars
 type StarTransactionDirection interface {
     StarTransactionDirectionType() string
 }
 
-// Describes purpose of a transaction with a bot
-type BotTransactionPurpose interface {
-    BotTransactionPurposeType() string
-}
-
-// Describes purpose of a transaction with a supergroup or a channel
-type ChatTransactionPurpose interface {
-    ChatTransactionPurposeType() string
-}
-
-// Describes purpose of a transaction with a user
-type UserTransactionPurpose interface {
-    UserTransactionPurposeType() string
-}
-
-// Describes source or recipient of a transaction with Telegram Stars
-type StarTransactionPartner interface {
-    StarTransactionPartnerType() string
+// Describes type of transaction with Telegram Stars
+type StarTransactionType interface {
+    StarTransactionTypeType() string
 }
 
 // Contains information about status of a user in a giveaway
@@ -7297,6 +7313,31 @@ func (*ChatAdministratorRights) GetType() string {
     return TypeChatAdministratorRights
 }
 
+// Describes a possibly non-integer amount of Telegram Stars
+type StarAmount struct {
+    meta
+    // The integer amount of Telegram Stars rounded to 0
+    StarCount int64 `json:"star_count"`
+    // The number of 1/1000000000 shares of Telegram Stars; from -999999999 to 999999999
+    NanostarCount int32 `json:"nanostar_count"`
+}
+
+func (entity *StarAmount) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarAmount
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarAmount) GetClass() string {
+    return ClassStarAmount
+}
+
+func (*StarAmount) GetType() string {
+    return TypeStarAmount
+}
+
 // Describes a subscription to a channel chat
 type StarSubscriptionTypeChannel struct {
     meta
@@ -7452,7 +7493,7 @@ func (starSubscription *StarSubscription) UnmarshalJSON(data []byte) error {
 type StarSubscriptions struct {
     meta
     // The amount of owned Telegram Stars
-    StarCount int64 `json:"star_count"`
+    StarAmount *StarAmount `json:"star_amount"`
     // List of subscriptions for Telegram Stars
     Subscriptions []*StarSubscription `json:"subscriptions"`
     // The number of Telegram Stars required to buy to extend subscriptions expiring soon
@@ -7475,6 +7516,274 @@ func (*StarSubscriptions) GetClass() string {
 
 func (*StarSubscriptions) GetType() string {
     return TypeStarSubscriptions
+}
+
+// The affiliate programs must be sorted by the profitability
+type AffiliateProgramSortOrderProfitability struct{
+    meta
+}
+
+func (entity *AffiliateProgramSortOrderProfitability) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateProgramSortOrderProfitability
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateProgramSortOrderProfitability) GetClass() string {
+    return ClassAffiliateProgramSortOrder
+}
+
+func (*AffiliateProgramSortOrderProfitability) GetType() string {
+    return TypeAffiliateProgramSortOrderProfitability
+}
+
+func (*AffiliateProgramSortOrderProfitability) AffiliateProgramSortOrderType() string {
+    return TypeAffiliateProgramSortOrderProfitability
+}
+
+// The affiliate programs must be sorted by creation date
+type AffiliateProgramSortOrderCreationDate struct{
+    meta
+}
+
+func (entity *AffiliateProgramSortOrderCreationDate) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateProgramSortOrderCreationDate
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateProgramSortOrderCreationDate) GetClass() string {
+    return ClassAffiliateProgramSortOrder
+}
+
+func (*AffiliateProgramSortOrderCreationDate) GetType() string {
+    return TypeAffiliateProgramSortOrderCreationDate
+}
+
+func (*AffiliateProgramSortOrderCreationDate) AffiliateProgramSortOrderType() string {
+    return TypeAffiliateProgramSortOrderCreationDate
+}
+
+// The affiliate programs must be sorted by the expected revenue
+type AffiliateProgramSortOrderRevenue struct{
+    meta
+}
+
+func (entity *AffiliateProgramSortOrderRevenue) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateProgramSortOrderRevenue
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateProgramSortOrderRevenue) GetClass() string {
+    return ClassAffiliateProgramSortOrder
+}
+
+func (*AffiliateProgramSortOrderRevenue) GetType() string {
+    return TypeAffiliateProgramSortOrderRevenue
+}
+
+func (*AffiliateProgramSortOrderRevenue) AffiliateProgramSortOrderType() string {
+    return TypeAffiliateProgramSortOrderRevenue
+}
+
+// Describes parameters of an affiliate program
+type AffiliateProgramParameters struct {
+    meta
+    // The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner; getOption("affiliate_program_commission_per_mille_min")-getOption("affiliate_program_commission_per_mille_max")
+    CommissionPerMille int32 `json:"commission_per_mille"`
+    // Number of months the program will be active; 0-36. If 0, then the program is eternal
+    MonthCount int32 `json:"month_count"`
+}
+
+func (entity *AffiliateProgramParameters) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateProgramParameters
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateProgramParameters) GetClass() string {
+    return ClassAffiliateProgramParameters
+}
+
+func (*AffiliateProgramParameters) GetType() string {
+    return TypeAffiliateProgramParameters
+}
+
+// Contains information about an active affiliate program
+type AffiliateProgramInfo struct {
+    meta
+    // Parameters of the affiliate program
+    Parameters *AffiliateProgramParameters `json:"parameters"`
+    // Point in time (Unix timestamp) when the affiliate program will be closed; 0 if the affiliate program isn't scheduled to be closed. If positive, then the program can't be connected using connectChatAffiliateProgram, but active connections will work until the date
+    EndDate int32 `json:"end_date"`
+    // The amount of daily revenue per user in Telegram Stars of the bot that created the affiliate program
+    DailyRevenuePerUserAmount *StarAmount `json:"daily_revenue_per_user_amount"`
+}
+
+func (entity *AffiliateProgramInfo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateProgramInfo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateProgramInfo) GetClass() string {
+    return ClassAffiliateProgramInfo
+}
+
+func (*AffiliateProgramInfo) GetType() string {
+    return TypeAffiliateProgramInfo
+}
+
+// Contains information about an affiliate that received commission from a Telegram Star transaction
+type AffiliateInfo struct {
+    meta
+    // The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner
+    CommissionPerMille int32 `json:"commission_per_mille"`
+    // Identifier of the chat which received the commission
+    AffiliateChatId int64 `json:"affiliate_chat_id"`
+    // The amount of Telegram Stars that were received by the affiliate; can be negative for refunds
+    StarAmount *StarAmount `json:"star_amount"`
+}
+
+func (entity *AffiliateInfo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AffiliateInfo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AffiliateInfo) GetClass() string {
+    return ClassAffiliateInfo
+}
+
+func (*AffiliateInfo) GetType() string {
+    return TypeAffiliateInfo
+}
+
+// Describes a found affiliate program
+type FoundAffiliateProgram struct {
+    meta
+    // User identifier of the bot created the program
+    BotUserId int64 `json:"bot_user_id"`
+    // Information about the affiliate program
+    Parameters *AffiliateProgramInfo `json:"parameters"`
+}
+
+func (entity *FoundAffiliateProgram) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FoundAffiliateProgram
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FoundAffiliateProgram) GetClass() string {
+    return ClassFoundAffiliateProgram
+}
+
+func (*FoundAffiliateProgram) GetType() string {
+    return TypeFoundAffiliateProgram
+}
+
+// Represents a list of found affiliate programs
+type FoundAffiliatePrograms struct {
+    meta
+    // The total number of found affiliate programs
+    TotalCount int32 `json:"total_count"`
+    // The list of affiliate programs
+    Programs []*FoundAffiliateProgram `json:"programs"`
+    // The offset for the next request. If empty, then there are no more results
+    NextOffset string `json:"next_offset"`
+}
+
+func (entity *FoundAffiliatePrograms) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FoundAffiliatePrograms
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FoundAffiliatePrograms) GetClass() string {
+    return ClassFoundAffiliatePrograms
+}
+
+func (*FoundAffiliatePrograms) GetType() string {
+    return TypeFoundAffiliatePrograms
+}
+
+// Describes an affiliate program that was connected to a chat
+type ChatAffiliateProgram struct {
+    meta
+    // The link that can be used to refer users if the program is still active
+    Url string `json:"url"`
+    // User identifier of the bot created the program
+    BotUserId int64 `json:"bot_user_id"`
+    // The parameters of the affiliate program
+    Parameters *AffiliateProgramParameters `json:"parameters"`
+    // Point in time (Unix timestamp) when the affiliate program was connected
+    ConnectionDate int32 `json:"connection_date"`
+    // True, if the program was canceled by the bot, or disconnected by the chat owner and isn't available anymore
+    IsDisconnected bool `json:"is_disconnected"`
+    // The number of users that used the affiliate program
+    UserCount JsonInt64 `json:"user_count"`
+    // The number of Telegram Stars that were earned by the affiliate program
+    RevenueStarCount JsonInt64 `json:"revenue_star_count"`
+}
+
+func (entity *ChatAffiliateProgram) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatAffiliateProgram
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatAffiliateProgram) GetClass() string {
+    return ClassChatAffiliateProgram
+}
+
+func (*ChatAffiliateProgram) GetType() string {
+    return TypeChatAffiliateProgram
+}
+
+// Represents a list of affiliate programs that were connected to a chat
+type ChatAffiliatePrograms struct {
+    meta
+    // The total number of affiliate programs that were connected to the chat
+    TotalCount int32 `json:"total_count"`
+    // The list of connected affiliate programs
+    Programs []*ChatAffiliateProgram `json:"programs"`
+    // The offset for the next request. If empty, then there are no more results
+    NextOffset string `json:"next_offset"`
+}
+
+func (entity *ChatAffiliatePrograms) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatAffiliatePrograms
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatAffiliatePrograms) GetClass() string {
+    return ClassChatAffiliatePrograms
+}
+
+func (*ChatAffiliatePrograms) GetType() string {
+    return TypeChatAffiliatePrograms
 }
 
 // Contains information about a product that can be paid with invoice
@@ -8034,427 +8343,192 @@ func (*StarTransactionDirectionOutgoing) StarTransactionDirectionType() string {
     return TypeStarTransactionDirectionOutgoing
 }
 
-// Paid media were bought
-type BotTransactionPurposePaidMedia struct {
+// The transaction is a deposit of Telegram Stars from the Premium bot; for regular users only
+type StarTransactionTypePremiumBotDeposit struct{
     meta
-    // The bought media if the transaction wasn't refunded
-    Media []PaidMedia `json:"media"`
-    // Bot-provided payload; for bots only
-    Payload string `json:"payload"`
 }
 
-func (entity *BotTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypePremiumBotDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub BotTransactionPurposePaidMedia
+    type stub StarTransactionTypePremiumBotDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*BotTransactionPurposePaidMedia) GetClass() string {
-    return ClassBotTransactionPurpose
+func (*StarTransactionTypePremiumBotDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*BotTransactionPurposePaidMedia) GetType() string {
-    return TypeBotTransactionPurposePaidMedia
+func (*StarTransactionTypePremiumBotDeposit) GetType() string {
+    return TypeStarTransactionTypePremiumBotDeposit
 }
 
-func (*BotTransactionPurposePaidMedia) BotTransactionPurposeType() string {
-    return TypeBotTransactionPurposePaidMedia
+func (*StarTransactionTypePremiumBotDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypePremiumBotDeposit
 }
 
-func (botTransactionPurposePaidMedia *BotTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
-    var tmp struct {
-        Media []json.RawMessage `json:"media"`
-        Payload string `json:"payload"`
-    }
-
-    err := json.Unmarshal(data, &tmp)
-    if err != nil {
-        return err
-    }
-
-    botTransactionPurposePaidMedia.Payload = tmp.Payload
-
-    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
-    botTransactionPurposePaidMedia.Media = fieldMedia
-
-    return nil
-}
-
-// User bought a product from the bot
-type BotTransactionPurposeInvoicePayment struct {
+// The transaction is a deposit of Telegram Stars from App Store; for regular users only
+type StarTransactionTypeAppStoreDeposit struct{
     meta
-    // Information about the bought product; may be null if not applicable
-    ProductInfo *ProductInfo `json:"product_info"`
-    // Invoice payload; for bots only
-    InvoicePayload []byte `json:"invoice_payload"`
 }
 
-func (entity *BotTransactionPurposeInvoicePayment) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeAppStoreDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub BotTransactionPurposeInvoicePayment
+    type stub StarTransactionTypeAppStoreDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*BotTransactionPurposeInvoicePayment) GetClass() string {
-    return ClassBotTransactionPurpose
+func (*StarTransactionTypeAppStoreDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*BotTransactionPurposeInvoicePayment) GetType() string {
-    return TypeBotTransactionPurposeInvoicePayment
+func (*StarTransactionTypeAppStoreDeposit) GetType() string {
+    return TypeStarTransactionTypeAppStoreDeposit
 }
 
-func (*BotTransactionPurposeInvoicePayment) BotTransactionPurposeType() string {
-    return TypeBotTransactionPurposeInvoicePayment
+func (*StarTransactionTypeAppStoreDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeAppStoreDeposit
 }
 
-// User bought a subscription in a bot or a business account
-type BotTransactionPurposeSubscription struct {
+// The transaction is a deposit of Telegram Stars from Google Play; for regular users only
+type StarTransactionTypeGooglePlayDeposit struct{
     meta
-    // The number of seconds between consecutive Telegram Star debiting
-    Period int32 `json:"period"`
-    // Information about the bought subscription; may be null if not applicable
-    ProductInfo *ProductInfo `json:"product_info"`
-    // Invoice payload; for bots only
-    InvoicePayload []byte `json:"invoice_payload"`
 }
 
-func (entity *BotTransactionPurposeSubscription) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeGooglePlayDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub BotTransactionPurposeSubscription
+    type stub StarTransactionTypeGooglePlayDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*BotTransactionPurposeSubscription) GetClass() string {
-    return ClassBotTransactionPurpose
+func (*StarTransactionTypeGooglePlayDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*BotTransactionPurposeSubscription) GetType() string {
-    return TypeBotTransactionPurposeSubscription
+func (*StarTransactionTypeGooglePlayDeposit) GetType() string {
+    return TypeStarTransactionTypeGooglePlayDeposit
 }
 
-func (*BotTransactionPurposeSubscription) BotTransactionPurposeType() string {
-    return TypeBotTransactionPurposeSubscription
+func (*StarTransactionTypeGooglePlayDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeGooglePlayDeposit
 }
 
-// Paid media were bought
-type ChatTransactionPurposePaidMedia struct {
+// The transaction is a deposit of Telegram Stars from Fragment; for regular users and bots only
+type StarTransactionTypeFragmentDeposit struct{
     meta
-    // Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
-    MessageId int64 `json:"message_id"`
-    // The bought media if the transaction wasn't refunded
-    Media []PaidMedia `json:"media"`
 }
 
-func (entity *ChatTransactionPurposePaidMedia) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeFragmentDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub ChatTransactionPurposePaidMedia
+    type stub StarTransactionTypeFragmentDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*ChatTransactionPurposePaidMedia) GetClass() string {
-    return ClassChatTransactionPurpose
+func (*StarTransactionTypeFragmentDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*ChatTransactionPurposePaidMedia) GetType() string {
-    return TypeChatTransactionPurposePaidMedia
+func (*StarTransactionTypeFragmentDeposit) GetType() string {
+    return TypeStarTransactionTypeFragmentDeposit
 }
 
-func (*ChatTransactionPurposePaidMedia) ChatTransactionPurposeType() string {
-    return TypeChatTransactionPurposePaidMedia
+func (*StarTransactionTypeFragmentDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeFragmentDeposit
 }
 
-func (chatTransactionPurposePaidMedia *ChatTransactionPurposePaidMedia) UnmarshalJSON(data []byte) error {
-    var tmp struct {
-        MessageId int64 `json:"message_id"`
-        Media []json.RawMessage `json:"media"`
-    }
-
-    err := json.Unmarshal(data, &tmp)
-    if err != nil {
-        return err
-    }
-
-    chatTransactionPurposePaidMedia.MessageId = tmp.MessageId
-
-    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
-    chatTransactionPurposePaidMedia.Media = fieldMedia
-
-    return nil
-}
-
-// User joined the channel and subscribed to regular payments in Telegram Stars
-type ChatTransactionPurposeJoin struct {
+// The transaction is a deposit of Telegram Stars by another user; for regular users only
+type StarTransactionTypeUserDeposit struct {
     meta
-    // The number of seconds between consecutive Telegram Star debiting
-    Period int32 `json:"period"`
-}
-
-func (entity *ChatTransactionPurposeJoin) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub ChatTransactionPurposeJoin
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*ChatTransactionPurposeJoin) GetClass() string {
-    return ClassChatTransactionPurpose
-}
-
-func (*ChatTransactionPurposeJoin) GetType() string {
-    return TypeChatTransactionPurposeJoin
-}
-
-func (*ChatTransactionPurposeJoin) ChatTransactionPurposeType() string {
-    return TypeChatTransactionPurposeJoin
-}
-
-// User paid for a reaction
-type ChatTransactionPurposeReaction struct {
-    meta
-    // Identifier of the reacted message; can be 0 or an identifier of a deleted message
-    MessageId int64 `json:"message_id"`
-}
-
-func (entity *ChatTransactionPurposeReaction) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub ChatTransactionPurposeReaction
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*ChatTransactionPurposeReaction) GetClass() string {
-    return ClassChatTransactionPurpose
-}
-
-func (*ChatTransactionPurposeReaction) GetType() string {
-    return TypeChatTransactionPurposeReaction
-}
-
-func (*ChatTransactionPurposeReaction) ChatTransactionPurposeType() string {
-    return TypeChatTransactionPurposeReaction
-}
-
-// User received Telegram Stars from a giveaway
-type ChatTransactionPurposeGiveaway struct {
-    meta
-    // Identifier of the message with giveaway; can be 0 or an identifier of a deleted message
-    GiveawayMessageId int64 `json:"giveaway_message_id"`
-}
-
-func (entity *ChatTransactionPurposeGiveaway) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub ChatTransactionPurposeGiveaway
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*ChatTransactionPurposeGiveaway) GetClass() string {
-    return ClassChatTransactionPurpose
-}
-
-func (*ChatTransactionPurposeGiveaway) GetType() string {
-    return TypeChatTransactionPurposeGiveaway
-}
-
-func (*ChatTransactionPurposeGiveaway) ChatTransactionPurposeType() string {
-    return TypeChatTransactionPurposeGiveaway
-}
-
-// A user gifted Telegram Stars
-type UserTransactionPurposeGiftedStars struct {
-    meta
-    // A sticker to be shown in the transaction information; may be null if unknown
+    // Identifier of the user that gifted Telegram Stars; 0 if the user was anonymous
+    UserId int64 `json:"user_id"`
+    // The sticker to be shown in the transaction information; may be null if unknown
     Sticker *Sticker `json:"sticker"`
 }
 
-func (entity *UserTransactionPurposeGiftedStars) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeUserDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub UserTransactionPurposeGiftedStars
+    type stub StarTransactionTypeUserDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*UserTransactionPurposeGiftedStars) GetClass() string {
-    return ClassUserTransactionPurpose
+func (*StarTransactionTypeUserDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*UserTransactionPurposeGiftedStars) GetType() string {
-    return TypeUserTransactionPurposeGiftedStars
+func (*StarTransactionTypeUserDeposit) GetType() string {
+    return TypeStarTransactionTypeUserDeposit
 }
 
-func (*UserTransactionPurposeGiftedStars) UserTransactionPurposeType() string {
-    return TypeUserTransactionPurposeGiftedStars
+func (*StarTransactionTypeUserDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeUserDeposit
 }
 
-// The user sold a gift received from another user or bot
-type UserTransactionPurposeGiftSell struct {
+// The transaction is a deposit of Telegram Stars from a giveaway; for regular users only
+type StarTransactionTypeGiveawayDeposit struct {
     meta
-    // The gift
-    Gift *Gift `json:"gift"`
+    // Identifier of a supergroup or a channel chat that created the giveaway
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message with the giveaway; can be 0 or an identifier of a deleted message
+    GiveawayMessageId int64 `json:"giveaway_message_id"`
 }
 
-func (entity *UserTransactionPurposeGiftSell) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeGiveawayDeposit) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub UserTransactionPurposeGiftSell
+    type stub StarTransactionTypeGiveawayDeposit
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*UserTransactionPurposeGiftSell) GetClass() string {
-    return ClassUserTransactionPurpose
+func (*StarTransactionTypeGiveawayDeposit) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*UserTransactionPurposeGiftSell) GetType() string {
-    return TypeUserTransactionPurposeGiftSell
+func (*StarTransactionTypeGiveawayDeposit) GetType() string {
+    return TypeStarTransactionTypeGiveawayDeposit
 }
 
-func (*UserTransactionPurposeGiftSell) UserTransactionPurposeType() string {
-    return TypeUserTransactionPurposeGiftSell
+func (*StarTransactionTypeGiveawayDeposit) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeGiveawayDeposit
 }
 
-// The user or the bot sent a gift to a user
-type UserTransactionPurposeGiftSend struct {
+// The transaction is a withdrawal of earned Telegram Stars to Fragment; for bots and channel chats only
+type StarTransactionTypeFragmentWithdrawal struct {
     meta
-    // The gift
-    Gift *Gift `json:"gift"`
-}
-
-func (entity *UserTransactionPurposeGiftSend) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub UserTransactionPurposeGiftSend
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*UserTransactionPurposeGiftSend) GetClass() string {
-    return ClassUserTransactionPurpose
-}
-
-func (*UserTransactionPurposeGiftSend) GetType() string {
-    return TypeUserTransactionPurposeGiftSend
-}
-
-func (*UserTransactionPurposeGiftSend) UserTransactionPurposeType() string {
-    return TypeUserTransactionPurposeGiftSend
-}
-
-// The transaction is a transaction with Telegram through a bot
-type StarTransactionPartnerTelegram struct{
-    meta
-}
-
-func (entity *StarTransactionPartnerTelegram) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub StarTransactionPartnerTelegram
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*StarTransactionPartnerTelegram) GetClass() string {
-    return ClassStarTransactionPartner
-}
-
-func (*StarTransactionPartnerTelegram) GetType() string {
-    return TypeStarTransactionPartnerTelegram
-}
-
-func (*StarTransactionPartnerTelegram) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerTelegram
-}
-
-// The transaction is a transaction with App Store
-type StarTransactionPartnerAppStore struct{
-    meta
-}
-
-func (entity *StarTransactionPartnerAppStore) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub StarTransactionPartnerAppStore
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*StarTransactionPartnerAppStore) GetClass() string {
-    return ClassStarTransactionPartner
-}
-
-func (*StarTransactionPartnerAppStore) GetType() string {
-    return TypeStarTransactionPartnerAppStore
-}
-
-func (*StarTransactionPartnerAppStore) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerAppStore
-}
-
-// The transaction is a transaction with Google Play
-type StarTransactionPartnerGooglePlay struct{
-    meta
-}
-
-func (entity *StarTransactionPartnerGooglePlay) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub StarTransactionPartnerGooglePlay
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*StarTransactionPartnerGooglePlay) GetClass() string {
-    return ClassStarTransactionPartner
-}
-
-func (*StarTransactionPartnerGooglePlay) GetType() string {
-    return TypeStarTransactionPartnerGooglePlay
-}
-
-func (*StarTransactionPartnerGooglePlay) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerGooglePlay
-}
-
-// The transaction is a transaction with Fragment
-type StarTransactionPartnerFragment struct {
-    meta
-    // State of the withdrawal; may be null for refunds from Fragment or for Telegram Stars bought on Fragment
+    // State of the withdrawal; may be null for refunds from Fragment
     WithdrawalState RevenueWithdrawalState `json:"withdrawal_state"`
 }
 
-func (entity *StarTransactionPartnerFragment) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeFragmentWithdrawal) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerFragment
+    type stub StarTransactionTypeFragmentWithdrawal
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerFragment) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeFragmentWithdrawal) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerFragment) GetType() string {
-    return TypeStarTransactionPartnerFragment
+func (*StarTransactionTypeFragmentWithdrawal) GetType() string {
+    return TypeStarTransactionTypeFragmentWithdrawal
 }
 
-func (*StarTransactionPartnerFragment) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerFragment
+func (*StarTransactionTypeFragmentWithdrawal) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeFragmentWithdrawal
 }
 
-func (starTransactionPartnerFragment *StarTransactionPartnerFragment) UnmarshalJSON(data []byte) error {
+func (starTransactionTypeFragmentWithdrawal *StarTransactionTypeFragmentWithdrawal) UnmarshalJSON(data []byte) error {
     var tmp struct {
         WithdrawalState json.RawMessage `json:"withdrawal_state"`
     }
@@ -8465,141 +8539,93 @@ func (starTransactionPartnerFragment *StarTransactionPartnerFragment) UnmarshalJ
     }
 
     fieldWithdrawalState, _ := UnmarshalRevenueWithdrawalState(tmp.WithdrawalState)
-    starTransactionPartnerFragment.WithdrawalState = fieldWithdrawalState
+    starTransactionTypeFragmentWithdrawal.WithdrawalState = fieldWithdrawalState
 
     return nil
 }
 
-// The transaction is a transaction with Telegram Ad platform
-type StarTransactionPartnerTelegramAds struct{
+// The transaction is a withdrawal of earned Telegram Stars to Telegram Ad platform; for bots and channel chats only
+type StarTransactionTypeTelegramAdsWithdrawal struct{
     meta
 }
 
-func (entity *StarTransactionPartnerTelegramAds) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeTelegramAdsWithdrawal) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerTelegramAds
+    type stub StarTransactionTypeTelegramAdsWithdrawal
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerTelegramAds) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeTelegramAdsWithdrawal) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerTelegramAds) GetType() string {
-    return TypeStarTransactionPartnerTelegramAds
+func (*StarTransactionTypeTelegramAdsWithdrawal) GetType() string {
+    return TypeStarTransactionTypeTelegramAdsWithdrawal
 }
 
-func (*StarTransactionPartnerTelegramAds) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerTelegramAds
+func (*StarTransactionTypeTelegramAdsWithdrawal) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeTelegramAdsWithdrawal
 }
 
-// The transaction is a transaction with Telegram for API usage
-type StarTransactionPartnerTelegramApi struct {
+// The transaction is a payment for Telegram API usage; for bots only
+type StarTransactionTypeTelegramApiUsage struct {
     meta
     // The number of billed requests
     RequestCount int32 `json:"request_count"`
 }
 
-func (entity *StarTransactionPartnerTelegramApi) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeTelegramApiUsage) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerTelegramApi
+    type stub StarTransactionTypeTelegramApiUsage
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerTelegramApi) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeTelegramApiUsage) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerTelegramApi) GetType() string {
-    return TypeStarTransactionPartnerTelegramApi
+func (*StarTransactionTypeTelegramApiUsage) GetType() string {
+    return TypeStarTransactionTypeTelegramApiUsage
 }
 
-func (*StarTransactionPartnerTelegramApi) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerTelegramApi
+func (*StarTransactionTypeTelegramApiUsage) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeTelegramApiUsage
 }
 
-// The transaction is a transaction with a bot
-type StarTransactionPartnerBot struct {
+// The transaction is a purchase of paid media from a bot or a business account by the current user; for regular users only
+type StarTransactionTypeBotPaidMediaPurchase struct {
     meta
-    // Identifier of the bot
-    UserId int64 `json:"user_id"`
-    // Purpose of the transaction
-    Purpose BotTransactionPurpose `json:"purpose"`
-}
-
-func (entity *StarTransactionPartnerBot) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub StarTransactionPartnerBot
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*StarTransactionPartnerBot) GetClass() string {
-    return ClassStarTransactionPartner
-}
-
-func (*StarTransactionPartnerBot) GetType() string {
-    return TypeStarTransactionPartnerBot
-}
-
-func (*StarTransactionPartnerBot) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerBot
-}
-
-func (starTransactionPartnerBot *StarTransactionPartnerBot) UnmarshalJSON(data []byte) error {
-    var tmp struct {
-        UserId int64 `json:"user_id"`
-        Purpose json.RawMessage `json:"purpose"`
-    }
-
-    err := json.Unmarshal(data, &tmp)
-    if err != nil {
-        return err
-    }
-
-    starTransactionPartnerBot.UserId = tmp.UserId
-
-    fieldPurpose, _ := UnmarshalBotTransactionPurpose(tmp.Purpose)
-    starTransactionPartnerBot.Purpose = fieldPurpose
-
-    return nil
-}
-
-// The transaction is a transaction with a business account
-type StarTransactionPartnerBusiness struct {
-    meta
-    // Identifier of the business account user
+    // Identifier of the bot or the business account user that sent the paid media
     UserId int64 `json:"user_id"`
     // The bought media if the transaction wasn't refunded
     Media []PaidMedia `json:"media"`
 }
 
-func (entity *StarTransactionPartnerBusiness) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeBotPaidMediaPurchase) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerBusiness
+    type stub StarTransactionTypeBotPaidMediaPurchase
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerBusiness) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeBotPaidMediaPurchase) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerBusiness) GetType() string {
-    return TypeStarTransactionPartnerBusiness
+func (*StarTransactionTypeBotPaidMediaPurchase) GetType() string {
+    return TypeStarTransactionTypeBotPaidMediaPurchase
 }
 
-func (*StarTransactionPartnerBusiness) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerBusiness
+func (*StarTransactionTypeBotPaidMediaPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotPaidMediaPurchase
 }
 
-func (starTransactionPartnerBusiness *StarTransactionPartnerBusiness) UnmarshalJSON(data []byte) error {
+func (starTransactionTypeBotPaidMediaPurchase *StarTransactionTypeBotPaidMediaPurchase) UnmarshalJSON(data []byte) error {
     var tmp struct {
         UserId int64 `json:"user_id"`
         Media []json.RawMessage `json:"media"`
@@ -8610,95 +8636,53 @@ func (starTransactionPartnerBusiness *StarTransactionPartnerBusiness) UnmarshalJ
         return err
     }
 
-    starTransactionPartnerBusiness.UserId = tmp.UserId
+    starTransactionTypeBotPaidMediaPurchase.UserId = tmp.UserId
 
     fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
-    starTransactionPartnerBusiness.Media = fieldMedia
+    starTransactionTypeBotPaidMediaPurchase.Media = fieldMedia
 
     return nil
 }
 
-// The transaction is a transaction with a supergroup or a channel chat
-type StarTransactionPartnerChat struct {
+// The transaction is a sale of paid media by the bot or a business account managed by the bot; for bots only
+type StarTransactionTypeBotPaidMediaSale struct {
     meta
-    // Identifier of the chat
-    ChatId int64 `json:"chat_id"`
-    // Purpose of the transaction
-    Purpose ChatTransactionPurpose `json:"purpose"`
-}
-
-func (entity *StarTransactionPartnerChat) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub StarTransactionPartnerChat
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*StarTransactionPartnerChat) GetClass() string {
-    return ClassStarTransactionPartner
-}
-
-func (*StarTransactionPartnerChat) GetType() string {
-    return TypeStarTransactionPartnerChat
-}
-
-func (*StarTransactionPartnerChat) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerChat
-}
-
-func (starTransactionPartnerChat *StarTransactionPartnerChat) UnmarshalJSON(data []byte) error {
-    var tmp struct {
-        ChatId int64 `json:"chat_id"`
-        Purpose json.RawMessage `json:"purpose"`
-    }
-
-    err := json.Unmarshal(data, &tmp)
-    if err != nil {
-        return err
-    }
-
-    starTransactionPartnerChat.ChatId = tmp.ChatId
-
-    fieldPurpose, _ := UnmarshalChatTransactionPurpose(tmp.Purpose)
-    starTransactionPartnerChat.Purpose = fieldPurpose
-
-    return nil
-}
-
-// The transaction is a transaction with another user
-type StarTransactionPartnerUser struct {
-    meta
-    // Identifier of the user; 0 if the user was anonymous
+    // Identifier of the user that bought the media
     UserId int64 `json:"user_id"`
-    // Purpose of the transaction
-    Purpose UserTransactionPurpose `json:"purpose"`
+    // The bought media
+    Media []PaidMedia `json:"media"`
+    // Bot-provided payload
+    Payload string `json:"payload"`
+    // Information about the affiliate which received commission from the transaction; may be null if none
+    Affiliate *AffiliateInfo `json:"affiliate"`
 }
 
-func (entity *StarTransactionPartnerUser) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeBotPaidMediaSale) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerUser
+    type stub StarTransactionTypeBotPaidMediaSale
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerUser) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeBotPaidMediaSale) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerUser) GetType() string {
-    return TypeStarTransactionPartnerUser
+func (*StarTransactionTypeBotPaidMediaSale) GetType() string {
+    return TypeStarTransactionTypeBotPaidMediaSale
 }
 
-func (*StarTransactionPartnerUser) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerUser
+func (*StarTransactionTypeBotPaidMediaSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotPaidMediaSale
 }
 
-func (starTransactionPartnerUser *StarTransactionPartnerUser) UnmarshalJSON(data []byte) error {
+func (starTransactionTypeBotPaidMediaSale *StarTransactionTypeBotPaidMediaSale) UnmarshalJSON(data []byte) error {
     var tmp struct {
         UserId int64 `json:"user_id"`
-        Purpose json.RawMessage `json:"purpose"`
+        Media []json.RawMessage `json:"media"`
+        Payload string `json:"payload"`
+        Affiliate *AffiliateInfo `json:"affiliate"`
     }
 
     err := json.Unmarshal(data, &tmp)
@@ -8706,37 +8690,474 @@ func (starTransactionPartnerUser *StarTransactionPartnerUser) UnmarshalJSON(data
         return err
     }
 
-    starTransactionPartnerUser.UserId = tmp.UserId
+    starTransactionTypeBotPaidMediaSale.UserId = tmp.UserId
+    starTransactionTypeBotPaidMediaSale.Payload = tmp.Payload
+    starTransactionTypeBotPaidMediaSale.Affiliate = tmp.Affiliate
 
-    fieldPurpose, _ := UnmarshalUserTransactionPurpose(tmp.Purpose)
-    starTransactionPartnerUser.Purpose = fieldPurpose
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    starTransactionTypeBotPaidMediaSale.Media = fieldMedia
 
     return nil
 }
 
-// The transaction is a transaction with unknown partner
-type StarTransactionPartnerUnsupported struct{
+// The transaction is a purchase of paid media from a channel by the current user; for regular users only
+type StarTransactionTypeChannelPaidMediaPurchase struct {
     meta
+    // Identifier of the channel chat that sent the paid media
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+    // The bought media if the transaction wasn't refunded
+    Media []PaidMedia `json:"media"`
 }
 
-func (entity *StarTransactionPartnerUnsupported) MarshalJSON() ([]byte, error) {
+func (entity *StarTransactionTypeChannelPaidMediaPurchase) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub StarTransactionPartnerUnsupported
+    type stub StarTransactionTypeChannelPaidMediaPurchase
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*StarTransactionPartnerUnsupported) GetClass() string {
-    return ClassStarTransactionPartner
+func (*StarTransactionTypeChannelPaidMediaPurchase) GetClass() string {
+    return ClassStarTransactionType
 }
 
-func (*StarTransactionPartnerUnsupported) GetType() string {
-    return TypeStarTransactionPartnerUnsupported
+func (*StarTransactionTypeChannelPaidMediaPurchase) GetType() string {
+    return TypeStarTransactionTypeChannelPaidMediaPurchase
 }
 
-func (*StarTransactionPartnerUnsupported) StarTransactionPartnerType() string {
-    return TypeStarTransactionPartnerUnsupported
+func (*StarTransactionTypeChannelPaidMediaPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelPaidMediaPurchase
+}
+
+func (starTransactionTypeChannelPaidMediaPurchase *StarTransactionTypeChannelPaidMediaPurchase) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        ChatId int64 `json:"chat_id"`
+        MessageId int64 `json:"message_id"`
+        Media []json.RawMessage `json:"media"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    starTransactionTypeChannelPaidMediaPurchase.ChatId = tmp.ChatId
+    starTransactionTypeChannelPaidMediaPurchase.MessageId = tmp.MessageId
+
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    starTransactionTypeChannelPaidMediaPurchase.Media = fieldMedia
+
+    return nil
+}
+
+// The transaction is a sale of paid media by the channel chat; for channel chats only
+type StarTransactionTypeChannelPaidMediaSale struct {
+    meta
+    // Identifier of the user that bought the media
+    UserId int64 `json:"user_id"`
+    // Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+    // The bought media
+    Media []PaidMedia `json:"media"`
+}
+
+func (entity *StarTransactionTypeChannelPaidMediaSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeChannelPaidMediaSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeChannelPaidMediaSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeChannelPaidMediaSale) GetType() string {
+    return TypeStarTransactionTypeChannelPaidMediaSale
+}
+
+func (*StarTransactionTypeChannelPaidMediaSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelPaidMediaSale
+}
+
+func (starTransactionTypeChannelPaidMediaSale *StarTransactionTypeChannelPaidMediaSale) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        UserId int64 `json:"user_id"`
+        MessageId int64 `json:"message_id"`
+        Media []json.RawMessage `json:"media"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    starTransactionTypeChannelPaidMediaSale.UserId = tmp.UserId
+    starTransactionTypeChannelPaidMediaSale.MessageId = tmp.MessageId
+
+    fieldMedia, _ := UnmarshalListOfPaidMedia(tmp.Media)
+    starTransactionTypeChannelPaidMediaSale.Media = fieldMedia
+
+    return nil
+}
+
+// The transaction is a purchase of a product from a bot or a business account by the current user; for regular users only
+type StarTransactionTypeBotInvoicePurchase struct {
+    meta
+    // Identifier of the bot or the business account user that created the invoice
+    UserId int64 `json:"user_id"`
+    // Information about the bought product
+    ProductInfo *ProductInfo `json:"product_info"`
+}
+
+func (entity *StarTransactionTypeBotInvoicePurchase) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeBotInvoicePurchase
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeBotInvoicePurchase) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeBotInvoicePurchase) GetType() string {
+    return TypeStarTransactionTypeBotInvoicePurchase
+}
+
+func (*StarTransactionTypeBotInvoicePurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotInvoicePurchase
+}
+
+// The transaction is a sale of a product by the bot; for bots only
+type StarTransactionTypeBotInvoiceSale struct {
+    meta
+    // Identifier of the user that bought the product
+    UserId int64 `json:"user_id"`
+    // Information about the bought product
+    ProductInfo *ProductInfo `json:"product_info"`
+    // Invoice payload
+    InvoicePayload []byte `json:"invoice_payload"`
+    // Information about the affiliate which received commission from the transaction; may be null if none
+    Affiliate *AffiliateInfo `json:"affiliate"`
+}
+
+func (entity *StarTransactionTypeBotInvoiceSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeBotInvoiceSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeBotInvoiceSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeBotInvoiceSale) GetType() string {
+    return TypeStarTransactionTypeBotInvoiceSale
+}
+
+func (*StarTransactionTypeBotInvoiceSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotInvoiceSale
+}
+
+// The transaction is a purchase of a subscription from a bot or a business account by the current user; for regular users only
+type StarTransactionTypeBotSubscriptionPurchase struct {
+    meta
+    // Identifier of the bot or the business account user that created the subscription link
+    UserId int64 `json:"user_id"`
+    // The number of seconds between consecutive Telegram Star debitings
+    SubscriptionPeriod int32 `json:"subscription_period"`
+    // Information about the bought subscription
+    ProductInfo *ProductInfo `json:"product_info"`
+}
+
+func (entity *StarTransactionTypeBotSubscriptionPurchase) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeBotSubscriptionPurchase
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeBotSubscriptionPurchase) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeBotSubscriptionPurchase) GetType() string {
+    return TypeStarTransactionTypeBotSubscriptionPurchase
+}
+
+func (*StarTransactionTypeBotSubscriptionPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotSubscriptionPurchase
+}
+
+// The transaction is a sale of a subscription by the bot; for bots only
+type StarTransactionTypeBotSubscriptionSale struct {
+    meta
+    // Identifier of the user that bought the subscription
+    UserId int64 `json:"user_id"`
+    // The number of seconds between consecutive Telegram Star debitings
+    SubscriptionPeriod int32 `json:"subscription_period"`
+    // Information about the bought subscription
+    ProductInfo *ProductInfo `json:"product_info"`
+    // Invoice payload
+    InvoicePayload []byte `json:"invoice_payload"`
+    // Information about the affiliate which received commission from the transaction; may be null if none
+    Affiliate *AffiliateInfo `json:"affiliate"`
+}
+
+func (entity *StarTransactionTypeBotSubscriptionSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeBotSubscriptionSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeBotSubscriptionSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeBotSubscriptionSale) GetType() string {
+    return TypeStarTransactionTypeBotSubscriptionSale
+}
+
+func (*StarTransactionTypeBotSubscriptionSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeBotSubscriptionSale
+}
+
+// The transaction is a purchase of a subscription to a channel chat by the current user; for regular users only
+type StarTransactionTypeChannelSubscriptionPurchase struct {
+    meta
+    // Identifier of the channel chat that created the subscription
+    ChatId int64 `json:"chat_id"`
+    // The number of seconds between consecutive Telegram Star debitings
+    SubscriptionPeriod int32 `json:"subscription_period"`
+}
+
+func (entity *StarTransactionTypeChannelSubscriptionPurchase) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeChannelSubscriptionPurchase
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeChannelSubscriptionPurchase) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeChannelSubscriptionPurchase) GetType() string {
+    return TypeStarTransactionTypeChannelSubscriptionPurchase
+}
+
+func (*StarTransactionTypeChannelSubscriptionPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelSubscriptionPurchase
+}
+
+// The transaction is a sale of a subscription by the channel chat; for channel chats only
+type StarTransactionTypeChannelSubscriptionSale struct {
+    meta
+    // Identifier of the user that bought the subscription
+    UserId int64 `json:"user_id"`
+    // The number of seconds between consecutive Telegram Star debitings
+    SubscriptionPeriod int32 `json:"subscription_period"`
+}
+
+func (entity *StarTransactionTypeChannelSubscriptionSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeChannelSubscriptionSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeChannelSubscriptionSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeChannelSubscriptionSale) GetType() string {
+    return TypeStarTransactionTypeChannelSubscriptionSale
+}
+
+func (*StarTransactionTypeChannelSubscriptionSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelSubscriptionSale
+}
+
+// The transaction is a purchase of a gift to another user; for regular users and bots only
+type StarTransactionTypeGiftPurchase struct {
+    meta
+    // Identifier of the user that received the gift
+    UserId int64 `json:"user_id"`
+    // The gift
+    Gift *Gift `json:"gift"`
+}
+
+func (entity *StarTransactionTypeGiftPurchase) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeGiftPurchase
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeGiftPurchase) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeGiftPurchase) GetType() string {
+    return TypeStarTransactionTypeGiftPurchase
+}
+
+func (*StarTransactionTypeGiftPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeGiftPurchase
+}
+
+// The transaction is a sale of a gift received from another user or bot; for regular users only
+type StarTransactionTypeGiftSale struct {
+    meta
+    // Identifier of the user that sent the gift
+    UserId int64 `json:"user_id"`
+    // The gift
+    Gift *Gift `json:"gift"`
+}
+
+func (entity *StarTransactionTypeGiftSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeGiftSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeGiftSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeGiftSale) GetType() string {
+    return TypeStarTransactionTypeGiftSale
+}
+
+func (*StarTransactionTypeGiftSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeGiftSale
+}
+
+// The transaction is a sending of a paid reaction to a message in a channel chat by the current user; for regular users only
+type StarTransactionTypeChannelPaidReactionSend struct {
+    meta
+    // Identifier of the channel chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the reacted message; can be 0 or an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+}
+
+func (entity *StarTransactionTypeChannelPaidReactionSend) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeChannelPaidReactionSend
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeChannelPaidReactionSend) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeChannelPaidReactionSend) GetType() string {
+    return TypeStarTransactionTypeChannelPaidReactionSend
+}
+
+func (*StarTransactionTypeChannelPaidReactionSend) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelPaidReactionSend
+}
+
+// The transaction is a receiving of a paid reaction to a message by the channel chat; for channel chats only
+type StarTransactionTypeChannelPaidReactionReceive struct {
+    meta
+    // Identifier of the user that added the paid reaction
+    UserId int64 `json:"user_id"`
+    // Identifier of the reacted message; can be 0 or an identifier of a deleted message
+    MessageId int64 `json:"message_id"`
+}
+
+func (entity *StarTransactionTypeChannelPaidReactionReceive) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeChannelPaidReactionReceive
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeChannelPaidReactionReceive) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeChannelPaidReactionReceive) GetType() string {
+    return TypeStarTransactionTypeChannelPaidReactionReceive
+}
+
+func (*StarTransactionTypeChannelPaidReactionReceive) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeChannelPaidReactionReceive
+}
+
+// The transaction is a receiving of a commission from an affiliate program; for regular users, bots and channel chats only
+type StarTransactionTypeAffiliateProgramCommission struct {
+    meta
+    // Identifier of the chat that created the affiliate program
+    ChatId int64 `json:"chat_id"`
+    // The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner
+    CommissionPerMille int32 `json:"commission_per_mille"`
+}
+
+func (entity *StarTransactionTypeAffiliateProgramCommission) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeAffiliateProgramCommission
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeAffiliateProgramCommission) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeAffiliateProgramCommission) GetType() string {
+    return TypeStarTransactionTypeAffiliateProgramCommission
+}
+
+func (*StarTransactionTypeAffiliateProgramCommission) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeAffiliateProgramCommission
+}
+
+// The transaction is a transaction of an unsupported type
+type StarTransactionTypeUnsupported struct{
+    meta
+}
+
+func (entity *StarTransactionTypeUnsupported) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeUnsupported
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeUnsupported) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeUnsupported) GetType() string {
+    return TypeStarTransactionTypeUnsupported
+}
+
+func (*StarTransactionTypeUnsupported) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeUnsupported
 }
 
 // Represents a transaction changing the amount of owned Telegram Stars
@@ -8745,13 +9166,13 @@ type StarTransaction struct {
     // Unique identifier of the transaction
     Id string `json:"id"`
     // The amount of added owned Telegram Stars; negative for outgoing transactions
-    StarCount int64 `json:"star_count"`
+    StarAmount *StarAmount `json:"star_amount"`
     // True, if the transaction is a refund of a previous transaction
     IsRefund bool `json:"is_refund"`
     // Point in time (Unix timestamp) when the transaction was completed
     Date int32 `json:"date"`
-    // Source of the incoming transaction, or its recipient for outgoing transactions
-    Partner StarTransactionPartner `json:"partner"`
+    // Type of the transaction
+    Type StarTransactionType `json:"type"`
 }
 
 func (entity *StarTransaction) MarshalJSON() ([]byte, error) {
@@ -8773,10 +9194,10 @@ func (*StarTransaction) GetType() string {
 func (starTransaction *StarTransaction) UnmarshalJSON(data []byte) error {
     var tmp struct {
         Id string `json:"id"`
-        StarCount int64 `json:"star_count"`
+        StarAmount *StarAmount `json:"star_amount"`
         IsRefund bool `json:"is_refund"`
         Date int32 `json:"date"`
-        Partner json.RawMessage `json:"partner"`
+        Type json.RawMessage `json:"type"`
     }
 
     err := json.Unmarshal(data, &tmp)
@@ -8785,12 +9206,12 @@ func (starTransaction *StarTransaction) UnmarshalJSON(data []byte) error {
     }
 
     starTransaction.Id = tmp.Id
-    starTransaction.StarCount = tmp.StarCount
+    starTransaction.StarAmount = tmp.StarAmount
     starTransaction.IsRefund = tmp.IsRefund
     starTransaction.Date = tmp.Date
 
-    fieldPartner, _ := UnmarshalStarTransactionPartner(tmp.Partner)
-    starTransaction.Partner = fieldPartner
+    fieldType, _ := UnmarshalStarTransactionType(tmp.Type)
+    starTransaction.Type = fieldType
 
     return nil
 }
@@ -8799,7 +9220,7 @@ func (starTransaction *StarTransaction) UnmarshalJSON(data []byte) error {
 type StarTransactions struct {
     meta
     // The amount of owned Telegram Stars
-    StarCount int64 `json:"star_count"`
+    StarAmount *StarAmount `json:"star_amount"`
     // List of transactions with Telegram Stars
     Transactions []*StarTransaction `json:"transactions"`
     // The offset for the next request. If empty, then there are no more results
@@ -9283,15 +9704,15 @@ type User struct {
     Status UserStatus `json:"status"`
     // Profile photo of the user; may be null
     ProfilePhoto *ProfilePhoto `json:"profile_photo"`
-    // Identifier of the accent color for name, and backgrounds of profile photo, reply header, and link preview. For Telegram Premium users only
+    // Identifier of the accent color for name, and backgrounds of profile photo, reply header, and link preview
     AccentColorId int32 `json:"accent_color_id"`
-    // Identifier of a custom emoji to be shown on the reply header and link preview background; 0 if none. For Telegram Premium users only
+    // Identifier of a custom emoji to be shown on the reply header and link preview background; 0 if none
     BackgroundCustomEmojiId JsonInt64 `json:"background_custom_emoji_id"`
-    // Identifier of the accent color for the user's profile; -1 if none. For Telegram Premium users only
+    // Identifier of the accent color for the user's profile; -1 if none
     ProfileAccentColorId int32 `json:"profile_accent_color_id"`
-    // Identifier of a custom emoji to be shown on the background of the user's profile; 0 if none. For Telegram Premium users only
+    // Identifier of a custom emoji to be shown on the background of the user's profile; 0 if none
     ProfileBackgroundCustomEmojiId JsonInt64 `json:"profile_background_custom_emoji_id"`
-    // Emoji status to be shown instead of the default Telegram Premium badge; may be null. For Telegram Premium users only
+    // Emoji status to be shown instead of the default Telegram Premium badge; may be null
     EmojiStatus *EmojiStatus `json:"emoji_status"`
     // The user is a contact of the current user
     IsContact bool `json:"is_contact"`
@@ -9439,6 +9860,8 @@ type BotInfo struct {
     DefaultGroupAdministratorRights *ChatAdministratorRights `json:"default_group_administrator_rights"`
     // Default administrator rights for adding the bot to channels; may be null
     DefaultChannelAdministratorRights *ChatAdministratorRights `json:"default_channel_administrator_rights"`
+    // Information about the affiliate program of the bot; may be null if none
+    AffiliateProgram *AffiliateProgramInfo `json:"affiliate_program"`
     // Default light background color for bot Web Apps; -1 if not specified
     WebAppBackgroundLightColor int32 `json:"web_app_background_light_color"`
     // Default dark background color for bot Web Apps; -1 if not specified
@@ -9490,6 +9913,7 @@ func (botInfo *BotInfo) UnmarshalJSON(data []byte) error {
         PrivacyPolicyUrl string `json:"privacy_policy_url"`
         DefaultGroupAdministratorRights *ChatAdministratorRights `json:"default_group_administrator_rights"`
         DefaultChannelAdministratorRights *ChatAdministratorRights `json:"default_channel_administrator_rights"`
+        AffiliateProgram *AffiliateProgramInfo `json:"affiliate_program"`
         WebAppBackgroundLightColor int32 `json:"web_app_background_light_color"`
         WebAppBackgroundDarkColor int32 `json:"web_app_background_dark_color"`
         WebAppHeaderLightColor int32 `json:"web_app_header_light_color"`
@@ -9517,6 +9941,7 @@ func (botInfo *BotInfo) UnmarshalJSON(data []byte) error {
     botInfo.PrivacyPolicyUrl = tmp.PrivacyPolicyUrl
     botInfo.DefaultGroupAdministratorRights = tmp.DefaultGroupAdministratorRights
     botInfo.DefaultChannelAdministratorRights = tmp.DefaultChannelAdministratorRights
+    botInfo.AffiliateProgram = tmp.AffiliateProgram
     botInfo.WebAppBackgroundLightColor = tmp.WebAppBackgroundLightColor
     botInfo.WebAppBackgroundDarkColor = tmp.WebAppBackgroundDarkColor
     botInfo.WebAppHeaderLightColor = tmp.WebAppHeaderLightColor
@@ -34198,7 +34623,7 @@ func (*TargetChatTypes) GetType() string {
     return TypeTargetChatTypes
 }
 
-// The currently opened chat needs to be kept
+// The currently opened chat and forum topic must be kept
 type TargetChatCurrent struct{
     meta
 }
@@ -45817,6 +46242,35 @@ func (*InternalLinkTypeChangePhoneNumber) InternalLinkTypeType() string {
     return TypeInternalLinkTypeChangePhoneNumber
 }
 
+// The link is an affiliate program link. Call searchChatAffiliateProgram with the given username and referrer to process the link
+type InternalLinkTypeChatAffiliateProgram struct {
+    meta
+    // Username to be passed to searchChatAffiliateProgram
+    Username string `json:"username"`
+    // Referrer to be passed to searchChatAffiliateProgram
+    Referrer string `json:"referrer"`
+}
+
+func (entity *InternalLinkTypeChatAffiliateProgram) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InternalLinkTypeChatAffiliateProgram
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InternalLinkTypeChatAffiliateProgram) GetClass() string {
+    return ClassInternalLinkType
+}
+
+func (*InternalLinkTypeChatAffiliateProgram) GetType() string {
+    return TypeInternalLinkTypeChatAffiliateProgram
+}
+
+func (*InternalLinkTypeChatAffiliateProgram) InternalLinkTypeType() string {
+    return TypeInternalLinkTypeChatAffiliateProgram
+}
+
 // The link is a link to boost a Telegram chat. Call getChatBoostLinkInfo with the given URL to process the link. If the chat is found, then call getChatBoostStatus and getAvailableChatBoostSlots to get the current boost status and check whether the chat can be boosted. If the user wants to boost the chat and the chat can be boosted, then call boostChat
 type InternalLinkTypeChatBoost struct {
     meta
@@ -47307,6 +47761,106 @@ func (*FileTypeSecure) GetType() string {
 
 func (*FileTypeSecure) FileTypeType() string {
     return TypeFileTypeSecure
+}
+
+// The file is a self-destructing photo in a private chat
+type FileTypeSelfDestructingPhoto struct{
+    meta
+}
+
+func (entity *FileTypeSelfDestructingPhoto) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FileTypeSelfDestructingPhoto
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FileTypeSelfDestructingPhoto) GetClass() string {
+    return ClassFileType
+}
+
+func (*FileTypeSelfDestructingPhoto) GetType() string {
+    return TypeFileTypeSelfDestructingPhoto
+}
+
+func (*FileTypeSelfDestructingPhoto) FileTypeType() string {
+    return TypeFileTypeSelfDestructingPhoto
+}
+
+// The file is a self-destructing video in a private chat
+type FileTypeSelfDestructingVideo struct{
+    meta
+}
+
+func (entity *FileTypeSelfDestructingVideo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FileTypeSelfDestructingVideo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FileTypeSelfDestructingVideo) GetClass() string {
+    return ClassFileType
+}
+
+func (*FileTypeSelfDestructingVideo) GetType() string {
+    return TypeFileTypeSelfDestructingVideo
+}
+
+func (*FileTypeSelfDestructingVideo) FileTypeType() string {
+    return TypeFileTypeSelfDestructingVideo
+}
+
+// The file is a self-destructing video note in a private chat
+type FileTypeSelfDestructingVideoNote struct{
+    meta
+}
+
+func (entity *FileTypeSelfDestructingVideoNote) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FileTypeSelfDestructingVideoNote
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FileTypeSelfDestructingVideoNote) GetClass() string {
+    return ClassFileType
+}
+
+func (*FileTypeSelfDestructingVideoNote) GetType() string {
+    return TypeFileTypeSelfDestructingVideoNote
+}
+
+func (*FileTypeSelfDestructingVideoNote) FileTypeType() string {
+    return TypeFileTypeSelfDestructingVideoNote
+}
+
+// The file is a self-destructing voice note in a private chat
+type FileTypeSelfDestructingVoiceNote struct{
+    meta
+}
+
+func (entity *FileTypeSelfDestructingVoiceNote) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub FileTypeSelfDestructingVoiceNote
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*FileTypeSelfDestructingVoiceNote) GetClass() string {
+    return ClassFileType
+}
+
+func (*FileTypeSelfDestructingVoiceNote) GetType() string {
+    return TypeFileTypeSelfDestructingVoiceNote
+}
+
+func (*FileTypeSelfDestructingVoiceNote) FileTypeType() string {
+    return TypeFileTypeSelfDestructingVoiceNote
 }
 
 // The file is a sticker
@@ -50505,12 +51059,12 @@ func (*ChatRevenueTransactions) GetType() string {
 // Contains information about Telegram Stars earned by a bot or a chat
 type StarRevenueStatus struct {
     meta
-    // Total number of Telegram Stars earned
-    TotalCount int64 `json:"total_count"`
-    // The number of Telegram Stars that aren't withdrawn yet
-    CurrentCount int64 `json:"current_count"`
-    // The number of Telegram Stars that are available for withdrawal
-    AvailableCount int64 `json:"available_count"`
+    // Total amount of Telegram Stars earned
+    TotalAmount *StarAmount `json:"total_amount"`
+    // The amount of Telegram Stars that aren't withdrawn yet
+    CurrentAmount *StarAmount `json:"current_amount"`
+    // The amount of Telegram Stars that are available for withdrawal
+    AvailableAmount *StarAmount `json:"available_amount"`
     // True, if Telegram Stars can be withdrawn now or later
     WithdrawalEnabled bool `json:"withdrawal_enabled"`
     // Time left before the next withdrawal can be started, in seconds; 0 if withdrawal can be started now
@@ -54482,7 +55036,7 @@ type UpdateAccentColors struct {
     meta
     // Information about supported colors; colors with identifiers 0 (red), 1 (orange), 2 (purple/violet), 3 (green), 4 (cyan), 5 (blue), 6 (pink) must always be supported and aren't included in the list. The exact colors for the accent colors with identifiers 0-6 must be taken from the app theme
     Colors []*AccentColor `json:"colors"`
-    // The list of accent color identifiers, which can be set through setAccentColor and setChatAccentColor. The colors must be shown in the specififed order
+    // The list of accent color identifiers, which can be set through setAccentColor and setChatAccentColor. The colors must be shown in the specified order
     AvailableAccentColorIds []int32 `json:"available_accent_color_ids"`
 }
 
@@ -54511,7 +55065,7 @@ type UpdateProfileAccentColors struct {
     meta
     // Information about supported colors
     Colors []*ProfileAccentColor `json:"colors"`
-    // The list of accent color identifiers, which can be set through setProfileAccentColor and setChatProfileAccentColor. The colors must be shown in the specififed order
+    // The list of accent color identifiers, which can be set through setProfileAccentColor and setChatProfileAccentColor. The colors must be shown in the specified order
     AvailableAccentColorIds []int32 `json:"available_accent_color_ids"`
 }
 
@@ -54877,8 +55431,8 @@ func (*UpdateActiveLiveLocationMessages) UpdateType() string {
 // The number of Telegram Stars owned by the current user has changed
 type UpdateOwnedStarCount struct {
     meta
-    // The new number of Telegram Stars owned
-    StarCount int64 `json:"star_count"`
+    // The new amount of owned Telegram Stars
+    StarAmount *StarAmount `json:"star_amount"`
 }
 
 func (entity *UpdateOwnedStarCount) MarshalJSON() ([]byte, error) {
