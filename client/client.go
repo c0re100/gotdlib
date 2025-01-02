@@ -86,14 +86,14 @@ func NewClient(authorizationStateHandler AuthorizationStateHandler, options ...O
 	client.extraGenerator = UuidV4Generator()
 	client.catchTimeout = 60 * time.Second
 
-	for _, option := range options {
-		option(client)
-	}
-
 	tdlibInstance.addClient(client)
 
 	go client.processPendingResponse()
 	go client.receiver()
+
+	for _, option := range options {
+		go option(client)
+	}
 
 	err := Authorize(client, authorizationStateHandler)
 	if err != nil {
@@ -154,6 +154,10 @@ func (client *Client) processResponse(response *Response) {
 	}
 	if needGc {
 		client.listenerStore.gc()
+	}
+
+	if typ.GetType() == TypeUpdateAuthorizationState && typ.(*UpdateAuthorizationState).AuthorizationState.AuthorizationStateType() == TypeAuthorizationStateClosed {
+		close(client.responses)
 	}
 }
 
@@ -256,8 +260,4 @@ func (client *Client) AddEventReceiver(msgType Type, channelCapacity int) *Liste
 	client.listenerStore.Add(listener)
 
 	return listener
-}
-
-func (client *Client) Stop() {
-	client.Destroy()
 }
