@@ -1055,6 +1055,40 @@ func UnmarshalListOfGiveawayPrize(dataList []json.RawMessage) ([]GiveawayPrize, 
     return list, nil
 }
 
+func UnmarshalEmojiStatusType(data json.RawMessage) (EmojiStatusType, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeEmojiStatusTypeCustomEmoji:
+        return UnmarshalEmojiStatusTypeCustomEmoji(data)
+
+    case TypeEmojiStatusTypeUpgradedGift:
+        return UnmarshalEmojiStatusTypeUpgradedGift(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfEmojiStatusType(dataList []json.RawMessage) ([]EmojiStatusType, error) {
+    list := []EmojiStatusType{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalEmojiStatusType(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalChatMemberStatus(data json.RawMessage) (ChatMemberStatus, error) {
     var meta meta
 
@@ -2610,6 +2644,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
     case TypeLinkPreviewTypeUnsupported:
         return UnmarshalLinkPreviewTypeUnsupported(data)
 
+    case TypeLinkPreviewTypeUpgradedGift:
+        return UnmarshalLinkPreviewTypeUpgradedGift(data)
+
     case TypeLinkPreviewTypeUser:
         return UnmarshalLinkPreviewTypeUser(data)
 
@@ -4093,6 +4130,9 @@ func UnmarshalStoryAreaType(data json.RawMessage) (StoryAreaType, error) {
     case TypeStoryAreaTypeWeather:
         return UnmarshalStoryAreaTypeWeather(data)
 
+    case TypeStoryAreaTypeUpgradedGift:
+        return UnmarshalStoryAreaTypeUpgradedGift(data)
+
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
@@ -4141,6 +4181,9 @@ func UnmarshalInputStoryAreaType(data json.RawMessage) (InputStoryAreaType, erro
 
     case TypeInputStoryAreaTypeWeather:
         return UnmarshalInputStoryAreaTypeWeather(data)
+
+    case TypeInputStoryAreaTypeUpgradedGift:
+        return UnmarshalInputStoryAreaTypeUpgradedGift(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -7003,6 +7046,9 @@ func UnmarshalInternalLinkType(data json.RawMessage) (InternalLinkType, error) {
     case TypeInternalLinkTypeUnsupportedProxy:
         return UnmarshalInternalLinkTypeUnsupportedProxy(data)
 
+    case TypeInternalLinkTypeUpgradedGift:
+        return UnmarshalInternalLinkTypeUpgradedGift(data)
+
     case TypeInternalLinkTypeUserPhoneNumber:
         return UnmarshalInternalLinkTypeUserPhoneNumber(data)
 
@@ -9743,6 +9789,14 @@ func UnmarshalUpgradedGiftSymbol(data json.RawMessage) (*UpgradedGiftSymbol, err
     return &resp, err
 }
 
+func UnmarshalUpgradedGiftBackdropColors(data json.RawMessage) (*UpgradedGiftBackdropColors, error) {
+    var resp UpgradedGiftBackdropColors
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpgradedGiftBackdrop(data json.RawMessage) (*UpgradedGiftBackdrop, error) {
     var resp UpgradedGiftBackdrop
 
@@ -9807,16 +9861,16 @@ func UnmarshalSentGiftUpgraded(data json.RawMessage) (*SentGiftUpgraded, error) 
     return &resp, err
 }
 
-func UnmarshalUserGift(data json.RawMessage) (*UserGift, error) {
-    var resp UserGift
+func UnmarshalReceivedGift(data json.RawMessage) (*ReceivedGift, error) {
+    var resp ReceivedGift
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalUserGifts(data json.RawMessage) (*UserGifts, error) {
-    var resp UserGifts
+func UnmarshalReceivedGifts(data json.RawMessage) (*ReceivedGifts, error) {
+    var resp ReceivedGifts
 
     err := json.Unmarshal(data, &resp)
 
@@ -10175,6 +10229,22 @@ func UnmarshalProfileAccentColor(data json.RawMessage) (*ProfileAccentColor, err
     return &resp, err
 }
 
+func UnmarshalEmojiStatusTypeCustomEmoji(data json.RawMessage) (*EmojiStatusTypeCustomEmoji, error) {
+    var resp EmojiStatusTypeCustomEmoji
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalEmojiStatusTypeUpgradedGift(data json.RawMessage) (*EmojiStatusTypeUpgradedGift, error) {
+    var resp EmojiStatusTypeUpgradedGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalEmojiStatus(data json.RawMessage) (*EmojiStatus, error) {
     var resp EmojiStatus
 
@@ -10185,6 +10255,14 @@ func UnmarshalEmojiStatus(data json.RawMessage) (*EmojiStatus, error) {
 
 func UnmarshalEmojiStatuses(data json.RawMessage) (*EmojiStatuses, error) {
     var resp EmojiStatuses
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalEmojiStatusCustomEmojis(data json.RawMessage) (*EmojiStatusCustomEmojis, error) {
+    var resp EmojiStatusCustomEmojis
 
     err := json.Unmarshal(data, &resp)
 
@@ -12633,6 +12711,14 @@ func UnmarshalLinkPreviewTypeTheme(data json.RawMessage) (*LinkPreviewTypeTheme,
 
 func UnmarshalLinkPreviewTypeUnsupported(data json.RawMessage) (*LinkPreviewTypeUnsupported, error) {
     var resp LinkPreviewTypeUnsupported
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalLinkPreviewTypeUpgradedGift(data json.RawMessage) (*LinkPreviewTypeUpgradedGift, error) {
+    var resp LinkPreviewTypeUpgradedGift
 
     err := json.Unmarshal(data, &resp)
 
@@ -15151,6 +15237,14 @@ func UnmarshalStoryAreaTypeWeather(data json.RawMessage) (*StoryAreaTypeWeather,
     return &resp, err
 }
 
+func UnmarshalStoryAreaTypeUpgradedGift(data json.RawMessage) (*StoryAreaTypeUpgradedGift, error) {
+    var resp StoryAreaTypeUpgradedGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStoryArea(data json.RawMessage) (*StoryArea, error) {
     var resp StoryArea
 
@@ -15209,6 +15303,14 @@ func UnmarshalInputStoryAreaTypeLink(data json.RawMessage) (*InputStoryAreaTypeL
 
 func UnmarshalInputStoryAreaTypeWeather(data json.RawMessage) (*InputStoryAreaTypeWeather, error) {
     var resp InputStoryAreaTypeWeather
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputStoryAreaTypeUpgradedGift(data json.RawMessage) (*InputStoryAreaTypeUpgradedGift, error) {
+    var resp InputStoryAreaTypeUpgradedGift
 
     err := json.Unmarshal(data, &resp)
 
@@ -19439,6 +19541,14 @@ func UnmarshalInternalLinkTypeUnsupportedProxy(data json.RawMessage) (*InternalL
     return &resp, err
 }
 
+func UnmarshalInternalLinkTypeUpgradedGift(data json.RawMessage) (*InternalLinkTypeUpgradedGift, error) {
+    var resp InternalLinkTypeUpgradedGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalInternalLinkTypeUserPhoneNumber(data json.RawMessage) (*InternalLinkTypeUserPhoneNumber, error) {
     var resp InternalLinkTypeUserPhoneNumber
 
@@ -22433,6 +22543,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpgradedGiftSymbol:
         return UnmarshalUpgradedGiftSymbol(data)
 
+    case TypeUpgradedGiftBackdropColors:
+        return UnmarshalUpgradedGiftBackdropColors(data)
+
     case TypeUpgradedGiftBackdrop:
         return UnmarshalUpgradedGiftBackdrop(data)
 
@@ -22457,11 +22570,11 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeSentGiftUpgraded:
         return UnmarshalSentGiftUpgraded(data)
 
-    case TypeUserGift:
-        return UnmarshalUserGift(data)
+    case TypeReceivedGift:
+        return UnmarshalReceivedGift(data)
 
-    case TypeUserGifts:
-        return UnmarshalUserGifts(data)
+    case TypeReceivedGifts:
+        return UnmarshalReceivedGifts(data)
 
     case TypeGiftUpgradePreview:
         return UnmarshalGiftUpgradePreview(data)
@@ -22595,11 +22708,20 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeProfileAccentColor:
         return UnmarshalProfileAccentColor(data)
 
+    case TypeEmojiStatusTypeCustomEmoji:
+        return UnmarshalEmojiStatusTypeCustomEmoji(data)
+
+    case TypeEmojiStatusTypeUpgradedGift:
+        return UnmarshalEmojiStatusTypeUpgradedGift(data)
+
     case TypeEmojiStatus:
         return UnmarshalEmojiStatus(data)
 
     case TypeEmojiStatuses:
         return UnmarshalEmojiStatuses(data)
+
+    case TypeEmojiStatusCustomEmojis:
+        return UnmarshalEmojiStatusCustomEmojis(data)
 
     case TypeUsernames:
         return UnmarshalUsernames(data)
@@ -23518,6 +23640,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeLinkPreviewTypeUnsupported:
         return UnmarshalLinkPreviewTypeUnsupported(data)
+
+    case TypeLinkPreviewTypeUpgradedGift:
+        return UnmarshalLinkPreviewTypeUpgradedGift(data)
 
     case TypeLinkPreviewTypeUser:
         return UnmarshalLinkPreviewTypeUser(data)
@@ -24461,6 +24586,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStoryAreaTypeWeather:
         return UnmarshalStoryAreaTypeWeather(data)
 
+    case TypeStoryAreaTypeUpgradedGift:
+        return UnmarshalStoryAreaTypeUpgradedGift(data)
+
     case TypeStoryArea:
         return UnmarshalStoryArea(data)
 
@@ -24484,6 +24612,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInputStoryAreaTypeWeather:
         return UnmarshalInputStoryAreaTypeWeather(data)
+
+    case TypeInputStoryAreaTypeUpgradedGift:
+        return UnmarshalInputStoryAreaTypeUpgradedGift(data)
 
     case TypeInputStoryArea:
         return UnmarshalInputStoryArea(data)
@@ -26068,6 +26199,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInternalLinkTypeUnsupportedProxy:
         return UnmarshalInternalLinkTypeUnsupportedProxy(data)
+
+    case TypeInternalLinkTypeUpgradedGift:
+        return UnmarshalInternalLinkTypeUpgradedGift(data)
 
     case TypeInternalLinkTypeUserPhoneNumber:
         return UnmarshalInternalLinkTypeUserPhoneNumber(data)
