@@ -1464,6 +1464,43 @@ func UnmarshalListOfReactionType(dataList []json.RawMessage) ([]ReactionType, er
     return list, nil
 }
 
+func UnmarshalPaidReactionType(data json.RawMessage) (PaidReactionType, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypePaidReactionTypeRegular:
+        return UnmarshalPaidReactionTypeRegular(data)
+
+    case TypePaidReactionTypeAnonymous:
+        return UnmarshalPaidReactionTypeAnonymous(data)
+
+    case TypePaidReactionTypeChat:
+        return UnmarshalPaidReactionTypeChat(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfPaidReactionType(dataList []json.RawMessage) ([]PaidReactionType, error) {
+    list := []PaidReactionType{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalPaidReactionType(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalMessageEffectType(data json.RawMessage) (MessageEffectType, error) {
     var meta meta
 
@@ -8158,6 +8195,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateApplicationVerificationRequired:
         return UnmarshalUpdateApplicationVerificationRequired(data)
 
+    case TypeUpdateApplicationRecaptchaVerificationRequired:
+        return UnmarshalUpdateApplicationRecaptchaVerificationRequired(data)
+
     case TypeUpdateCall:
         return UnmarshalUpdateCall(data)
 
@@ -8262,6 +8302,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
 
     case TypeUpdateDefaultReactionType:
         return UnmarshalUpdateDefaultReactionType(data)
+
+    case TypeUpdateDefaultPaidReactionType:
+        return UnmarshalUpdateDefaultPaidReactionType(data)
 
     case TypeUpdateSavedMessagesTags:
         return UnmarshalUpdateSavedMessagesTags(data)
@@ -10847,6 +10890,30 @@ func UnmarshalReactionTypeCustomEmoji(data json.RawMessage) (*ReactionTypeCustom
 
 func UnmarshalReactionTypePaid(data json.RawMessage) (*ReactionTypePaid, error) {
     var resp ReactionTypePaid
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPaidReactionTypeRegular(data json.RawMessage) (*PaidReactionTypeRegular, error) {
+    var resp PaidReactionTypeRegular
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPaidReactionTypeAnonymous(data json.RawMessage) (*PaidReactionTypeAnonymous, error) {
+    var resp PaidReactionTypeAnonymous
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPaidReactionTypeChat(data json.RawMessage) (*PaidReactionTypeChat, error) {
+    var resp PaidReactionTypeChat
 
     err := json.Unmarshal(data, &resp)
 
@@ -21357,6 +21424,14 @@ func UnmarshalUpdateApplicationVerificationRequired(data json.RawMessage) (*Upda
     return &resp, err
 }
 
+func UnmarshalUpdateApplicationRecaptchaVerificationRequired(data json.RawMessage) (*UpdateApplicationRecaptchaVerificationRequired, error) {
+    var resp UpdateApplicationRecaptchaVerificationRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateCall(data json.RawMessage) (*UpdateCall, error) {
     var resp UpdateCall
 
@@ -21631,6 +21706,14 @@ func UnmarshalUpdateAvailableMessageEffects(data json.RawMessage) (*UpdateAvaila
 
 func UnmarshalUpdateDefaultReactionType(data json.RawMessage) (*UpdateDefaultReactionType, error) {
     var resp UpdateDefaultReactionType
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateDefaultPaidReactionType(data json.RawMessage) (*UpdateDefaultPaidReactionType, error) {
+    var resp UpdateDefaultPaidReactionType
 
     err := json.Unmarshal(data, &resp)
 
@@ -22941,6 +23024,15 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeReactionTypePaid:
         return UnmarshalReactionTypePaid(data)
+
+    case TypePaidReactionTypeRegular:
+        return UnmarshalPaidReactionTypeRegular(data)
+
+    case TypePaidReactionTypeAnonymous:
+        return UnmarshalPaidReactionTypeAnonymous(data)
+
+    case TypePaidReactionTypeChat:
+        return UnmarshalPaidReactionTypeChat(data)
 
     case TypePaidReactor:
         return UnmarshalPaidReactor(data)
@@ -26881,6 +26973,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateApplicationVerificationRequired:
         return UnmarshalUpdateApplicationVerificationRequired(data)
 
+    case TypeUpdateApplicationRecaptchaVerificationRequired:
+        return UnmarshalUpdateApplicationRecaptchaVerificationRequired(data)
+
     case TypeUpdateCall:
         return UnmarshalUpdateCall(data)
 
@@ -26985,6 +27080,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateDefaultReactionType:
         return UnmarshalUpdateDefaultReactionType(data)
+
+    case TypeUpdateDefaultPaidReactionType:
+        return UnmarshalUpdateDefaultPaidReactionType(data)
 
     case TypeUpdateSavedMessagesTags:
         return UnmarshalUpdateSavedMessagesTags(data)

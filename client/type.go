@@ -42,6 +42,7 @@ const (
     ClassMessageReadDate = "MessageReadDate"
     ClassMessageOrigin = "MessageOrigin"
     ClassReactionType = "ReactionType"
+    ClassPaidReactionType = "PaidReactionType"
     ClassMessageEffectType = "MessageEffectType"
     ClassMessageSendingState = "MessageSendingState"
     ClassMessageReplyTo = "MessageReplyTo"
@@ -904,6 +905,9 @@ const (
     TypeReactionTypeEmoji = "reactionTypeEmoji"
     TypeReactionTypeCustomEmoji = "reactionTypeCustomEmoji"
     TypeReactionTypePaid = "reactionTypePaid"
+    TypePaidReactionTypeRegular = "paidReactionTypeRegular"
+    TypePaidReactionTypeAnonymous = "paidReactionTypeAnonymous"
+    TypePaidReactionTypeChat = "paidReactionTypeChat"
     TypePaidReactor = "paidReactor"
     TypeMessageForwardInfo = "messageForwardInfo"
     TypeMessageImportInfo = "messageImportInfo"
@@ -2217,6 +2221,7 @@ const (
     TypeUpdateFileDownload = "updateFileDownload"
     TypeUpdateFileRemovedFromDownloads = "updateFileRemovedFromDownloads"
     TypeUpdateApplicationVerificationRequired = "updateApplicationVerificationRequired"
+    TypeUpdateApplicationRecaptchaVerificationRequired = "updateApplicationRecaptchaVerificationRequired"
     TypeUpdateCall = "updateCall"
     TypeUpdateGroupCall = "updateGroupCall"
     TypeUpdateGroupCallParticipant = "updateGroupCallParticipant"
@@ -2252,6 +2257,7 @@ const (
     TypeUpdateActiveEmojiReactions = "updateActiveEmojiReactions"
     TypeUpdateAvailableMessageEffects = "updateAvailableMessageEffects"
     TypeUpdateDefaultReactionType = "updateDefaultReactionType"
+    TypeUpdateDefaultPaidReactionType = "updateDefaultPaidReactionType"
     TypeUpdateSavedMessagesTags = "updateSavedMessagesTags"
     TypeUpdateActiveLiveLocationMessages = "updateActiveLiveLocationMessages"
     TypeUpdateOwnedStarCount = "updateOwnedStarCount"
@@ -2475,6 +2481,11 @@ type MessageOrigin interface {
 // Describes type of message reaction
 type ReactionType interface {
     ReactionTypeType() string
+}
+
+// Describes type of paid message reaction
+type PaidReactionType interface {
+    PaidReactionTypeType() string
 }
 
 // Describes type of emoji effect
@@ -8651,6 +8662,8 @@ type UpgradedGift struct {
     OwnerAddress string `json:"owner_address"`
     // Name of the owner for the case when owner identifier and address aren't known
     OwnerName string `json:"owner_name"`
+    // Address of the gift NFT in TON blockchain; may be empty if none
+    GiftAddress string `json:"gift_address"`
     // Model of the upgraded gift
     Model *UpgradedGiftModel `json:"model"`
     // Symbol of the upgraded gift
@@ -8688,6 +8701,7 @@ func (upgradedGift *UpgradedGift) UnmarshalJSON(data []byte) error {
         OwnerId json.RawMessage `json:"owner_id"`
         OwnerAddress string `json:"owner_address"`
         OwnerName string `json:"owner_name"`
+        GiftAddress string `json:"gift_address"`
         Model *UpgradedGiftModel `json:"model"`
         Symbol *UpgradedGiftSymbol `json:"symbol"`
         Backdrop *UpgradedGiftBackdrop `json:"backdrop"`
@@ -8707,6 +8721,7 @@ func (upgradedGift *UpgradedGift) UnmarshalJSON(data []byte) error {
     upgradedGift.MaxUpgradedCount = tmp.MaxUpgradedCount
     upgradedGift.OwnerAddress = tmp.OwnerAddress
     upgradedGift.OwnerName = tmp.OwnerName
+    upgradedGift.GiftAddress = tmp.GiftAddress
     upgradedGift.Model = tmp.Model
     upgradedGift.Symbol = tmp.Symbol
     upgradedGift.Backdrop = tmp.Backdrop
@@ -13164,6 +13179,83 @@ func (*ReactionTypePaid) GetType() string {
 
 func (*ReactionTypePaid) ReactionTypeType() string {
     return TypeReactionTypePaid
+}
+
+// A paid reaction on behalf of the current user
+type PaidReactionTypeRegular struct{
+    meta
+}
+
+func (entity *PaidReactionTypeRegular) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PaidReactionTypeRegular
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PaidReactionTypeRegular) GetClass() string {
+    return ClassPaidReactionType
+}
+
+func (*PaidReactionTypeRegular) GetType() string {
+    return TypePaidReactionTypeRegular
+}
+
+func (*PaidReactionTypeRegular) PaidReactionTypeType() string {
+    return TypePaidReactionTypeRegular
+}
+
+// An anonymous paid reaction
+type PaidReactionTypeAnonymous struct{
+    meta
+}
+
+func (entity *PaidReactionTypeAnonymous) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PaidReactionTypeAnonymous
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PaidReactionTypeAnonymous) GetClass() string {
+    return ClassPaidReactionType
+}
+
+func (*PaidReactionTypeAnonymous) GetType() string {
+    return TypePaidReactionTypeAnonymous
+}
+
+func (*PaidReactionTypeAnonymous) PaidReactionTypeType() string {
+    return TypePaidReactionTypeAnonymous
+}
+
+// A paid reaction on behalf of an owned chat
+type PaidReactionTypeChat struct {
+    meta
+    // Identifier of the chat
+    ChatId int64 `json:"chat_id"`
+}
+
+func (entity *PaidReactionTypeChat) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PaidReactionTypeChat
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PaidReactionTypeChat) GetClass() string {
+    return ClassPaidReactionType
+}
+
+func (*PaidReactionTypeChat) GetType() string {
+    return TypePaidReactionTypeChat
+}
+
+func (*PaidReactionTypeChat) PaidReactionTypeType() string {
+    return TypePaidReactionTypeChat
 }
 
 // Contains information about a user that added paid reactions
@@ -21459,6 +21551,10 @@ type LinkPreviewTypeVideo struct {
     meta
     // The video description
     Video *Video `json:"video"`
+    // Cover of the video; may be null if none
+    Cover *Photo `json:"cover"`
+    // Timestamp from which the video playing must start, in seconds
+    StartTimestamp int32 `json:"start_timestamp"`
 }
 
 func (entity *LinkPreviewTypeVideo) MarshalJSON() ([]byte, error) {
@@ -48591,7 +48687,7 @@ func (*InternalLinkTypeVideoChat) InternalLinkTypeType() string {
     return TypeInternalLinkTypeVideoChat
 }
 
-// The link is a link to a Web App. Call searchPublicChat with the given bot username, check that the user is a bot, then call searchWebApp with the received bot and the given web_app_short_name. Process received foundWebApp by showing a confirmation dialog if needed. If the bot can be added to attachment or side menu, but isn't added yet, then show a disclaimer about Mini Apps being third-party applications instead of the dialog and ask the user to accept their Terms of service. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. Then, call getWebAppLinkUrl and open the returned URL as a Web App
+// The link is a link to a Web App. Call searchPublicChat with the given bot username, check that the user is a bot. If the bot is restricted for the current user, then show an error message. Otherwise, call searchWebApp with the received bot and the given web_app_short_name. Process received foundWebApp by showing a confirmation dialog if needed. If the bot can be added to attachment or side menu, but isn't added yet, then show a disclaimer about Mini Apps being third-party applications instead of the dialog and ask the user to accept their Terms of service. If the user accept the terms and confirms adding, then use toggleBotIsAddedToAttachmentMenu to add the bot. Then, call getWebAppLinkUrl and open the returned URL as a Web App
 type InternalLinkTypeWebApp struct {
     meta
     // Username of the bot that owns the Web App
@@ -55542,6 +55638,37 @@ func (*UpdateApplicationVerificationRequired) UpdateType() string {
     return TypeUpdateApplicationVerificationRequired
 }
 
+// A request can't be completed unless reCAPTCHA verification is performed; for official mobile applications only. The method setApplicationVerificationToken must be called once the verification is completed or failed
+type UpdateApplicationRecaptchaVerificationRequired struct {
+    meta
+    // Unique identifier for the verification process
+    VerificationId int64 `json:"verification_id"`
+    // The action for the check
+    Action string `json:"action"`
+    // Identifier of the reCAPTCHA key
+    RecaptchaKeyId string `json:"recaptcha_key_id"`
+}
+
+func (entity *UpdateApplicationRecaptchaVerificationRequired) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdateApplicationRecaptchaVerificationRequired
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdateApplicationRecaptchaVerificationRequired) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdateApplicationRecaptchaVerificationRequired) GetType() string {
+    return TypeUpdateApplicationRecaptchaVerificationRequired
+}
+
+func (*UpdateApplicationRecaptchaVerificationRequired) UpdateType() string {
+    return TypeUpdateApplicationRecaptchaVerificationRequired
+}
+
 // New call was created or information about a call was updated
 type UpdateCall struct {
     meta
@@ -56733,6 +56860,49 @@ func (updateDefaultReactionType *UpdateDefaultReactionType) UnmarshalJSON(data [
 
     fieldReactionType, _ := UnmarshalReactionType(tmp.ReactionType)
     updateDefaultReactionType.ReactionType = fieldReactionType
+
+    return nil
+}
+
+// The type of default paid reaction has changed
+type UpdateDefaultPaidReactionType struct {
+    meta
+    // The new type of the default paid reaction
+    Type PaidReactionType `json:"type"`
+}
+
+func (entity *UpdateDefaultPaidReactionType) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdateDefaultPaidReactionType
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdateDefaultPaidReactionType) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdateDefaultPaidReactionType) GetType() string {
+    return TypeUpdateDefaultPaidReactionType
+}
+
+func (*UpdateDefaultPaidReactionType) UpdateType() string {
+    return TypeUpdateDefaultPaidReactionType
+}
+
+func (updateDefaultPaidReactionType *UpdateDefaultPaidReactionType) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        Type json.RawMessage `json:"type"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    fieldType, _ := UnmarshalPaidReactionType(tmp.Type)
+    updateDefaultPaidReactionType.Type = fieldType
 
     return nil
 }

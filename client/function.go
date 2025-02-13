@@ -5963,6 +5963,32 @@ func (client *Client) RemoveMessageReaction(req *RemoveMessageReactionRequest) (
     return UnmarshalOk(result.Data)
 }
 
+type GetChatAvailablePaidMessageReactionSendersRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+}
+
+// Returns the list of message sender identifiers, which can be used to send a paid reaction in a chat
+func (client *Client) GetChatAvailablePaidMessageReactionSenders(req *GetChatAvailablePaidMessageReactionSendersRequest) (*MessageSenders, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getChatAvailablePaidMessageReactionSenders",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessageSenders(result.Data)
+}
+
 type AddPendingPaidMessageReactionRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
@@ -5970,10 +5996,8 @@ type AddPendingPaidMessageReactionRequest struct {
     MessageId int64 `json:"message_id"`
     // Number of Telegram Stars to be used for the reaction. The total number of pending paid reactions must not exceed getOption("paid_reaction_star_count_max")
     StarCount int64 `json:"star_count"`
-    // Pass true if the user didn't choose anonymity explicitly, for example, the reaction is set from the message bubble
-    UseDefaultIsAnonymous bool `json:"use_default_is_anonymous"`
-    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors. Ignored if use_default_is_anonymous == true
-    IsAnonymous bool `json:"is_anonymous"`
+    // Type of the paid reaction; pass null if the user didn't choose reaction type explicitly, for example, the reaction is set from the message bubble
+    Type PaidReactionType `json:"type"`
 }
 
 // Adds the paid message reaction to a message. Use getMessageAvailableReactions to check whether the reaction is available for the message
@@ -5986,8 +6010,7 @@ func (client *Client) AddPendingPaidMessageReaction(req *AddPendingPaidMessageRe
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "star_count": req.StarCount,
-            "use_default_is_anonymous": req.UseDefaultIsAnonymous,
-            "is_anonymous": req.IsAnonymous,
+            "type": req.Type,
         },
     })
     if err != nil {
@@ -6059,25 +6082,25 @@ func (client *Client) RemovePendingPaidMessageReactions(req *RemovePendingPaidMe
     return UnmarshalOk(result.Data)
 }
 
-type TogglePaidMessageReactionIsAnonymousRequest struct { 
+type SetPaidMessageReactionTypeRequest struct { 
     // Identifier of the chat to which the message belongs
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Pass true to make paid reaction of the user on the message anonymous; pass false to make the user's profile visible among top reactors
-    IsAnonymous bool `json:"is_anonymous"`
+    // New type of the paid reaction
+    Type PaidReactionType `json:"type"`
 }
 
-// Changes whether the paid message reaction of the user to a message is anonymous. The message must have paid reaction added by the user
-func (client *Client) TogglePaidMessageReactionIsAnonymous(req *TogglePaidMessageReactionIsAnonymousRequest) (*Ok, error) {
+// Changes type of paid message reaction of the current user on a message. The message must have paid reaction added by the current user
+func (client *Client) SetPaidMessageReactionType(req *SetPaidMessageReactionTypeRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "togglePaidMessageReactionIsAnonymous",
+            Type: "setPaidMessageReactionType",
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
-            "is_anonymous": req.IsAnonymous,
+            "type": req.Type,
         },
     })
     if err != nil {
@@ -7318,7 +7341,7 @@ func (client *Client) GetWebAppLinkUrl(req *GetWebAppLinkUrlRequest) (*HttpUrl, 
 type GetMainWebAppRequest struct { 
     // Identifier of the chat in which the Web App is opened; pass 0 if none
     ChatId int64 `json:"chat_id"`
-    // Identifier of the target bot
+    // Identifier of the target bot. If the bot is restricted for the current user, then show an error instead of calling the method
     BotUserId int64 `json:"bot_user_id"`
     // Start parameter from internalLinkTypeMainWebApp
     StartParameter string `json:"start_parameter"`
@@ -7351,7 +7374,7 @@ func (client *Client) GetMainWebApp(req *GetMainWebAppRequest) (*MainWebApp, err
 }
 
 type GetWebAppUrlRequest struct { 
-    // Identifier of the target bot
+    // Identifier of the target bot. If the bot is restricted for the current user, then show an error instead of calling the method
     BotUserId int64 `json:"bot_user_id"`
     // The URL from a keyboardButtonTypeWebApp button, inlineQueryResultsButtonTypeWebApp button, or an empty string when the bot is opened from the side menu
     Url string `json:"url"`
@@ -7417,7 +7440,7 @@ func (client *Client) SendWebAppData(req *SendWebAppDataRequest) (*Ok, error) {
 type OpenWebAppRequest struct { 
     // Identifier of the chat in which the Web App is opened. The Web App can't be opened in secret chats
     ChatId int64 `json:"chat_id"`
-    // Identifier of the bot, providing the Web App
+    // Identifier of the bot, providing the Web App. If the bot is restricted for the current user, then show an error instead of calling the method
     BotUserId int64 `json:"bot_user_id"`
     // The URL from an inlineKeyboardButtonTypeWebApp button, a botMenuButton button, an internalLinkTypeAttachmentMenuBot link, or an empty string otherwise
     Url string `json:"url"`
@@ -12551,13 +12574,13 @@ func (client *Client) SearchFileDownloads(req *SearchFileDownloadsRequest) (*Fou
 }
 
 type SetApplicationVerificationTokenRequest struct { 
-    // Unique identifier for the verification process as received from updateApplicationVerificationRequired
+    // Unique identifier for the verification process as received from updateApplicationVerificationRequired or updateApplicationRecaptchaVerificationRequired
     VerificationId int64 `json:"verification_id"`
-    // Play Integrity API token for the Android application, or secret from push notification for the iOS application; pass an empty string to abort verification and receive error VERIFICATION_FAILED for the request
+    // Play Integrity API token for the Android application, or secret from push notification for the iOS application for application verification, or reCAPTCHA token for reCAPTCHA verifications; pass an empty string to abort verification and receive error VERIFICATION_FAILED for the request
     Token string `json:"token"`
 }
 
-// Application verification has been completed. Can be called before authorization
+// Application or reCAPTCHA verification has been completed. Can be called before authorization
 func (client *Client) SetApplicationVerificationToken(req *SetApplicationVerificationTokenRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19097,15 +19120,15 @@ type GetReceivedGiftsRequest struct {
     OwnerId MessageSender `json:"owner_id"`
     // Pass true to exclude gifts that aren't saved to the chat's profile page. Always true for gifts received by other users and channel chats without can_post_messages administrator right
     ExcludeUnsaved bool `json:"exclude_unsaved"`
-    // Pass true to exclude gifts that are saved to the chat's profile page; for channel chats with can_post_messages administrator right only
+    // Pass true to exclude gifts that are saved to the chat's profile page. Always false for gifts received by other users and channel chats without can_post_messages administrator right
     ExcludeSaved bool `json:"exclude_saved"`
-    // Pass true to exclude gifts that can be purchased unlimited number of times; for channel chats with can_post_messages administrator right only
+    // Pass true to exclude gifts that can be purchased unlimited number of times
     ExcludeUnlimited bool `json:"exclude_unlimited"`
-    // Pass true to exclude gifts that can be purchased limited number of times; for channel chats with can_post_messages administrator right only
+    // Pass true to exclude gifts that can be purchased limited number of times
     ExcludeLimited bool `json:"exclude_limited"`
-    // Pass true to exclude upgraded gifts; for channel chats with can_post_messages administrator right only
+    // Pass true to exclude upgraded gifts
     ExcludeUpgraded bool `json:"exclude_upgraded"`
-    // Pass true to sort results by gift price instead of send date; for channel chats with can_post_messages administrator right only
+    // Pass true to sort results by gift price instead of send date
     SortByPrice bool `json:"sort_by_price"`
     // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
     Offset string `json:"offset"`
@@ -24375,6 +24398,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateApplicationVerificationRequired:
         return UnmarshalUpdateApplicationVerificationRequired(result.Data)
 
+    case TypeUpdateApplicationRecaptchaVerificationRequired:
+        return UnmarshalUpdateApplicationRecaptchaVerificationRequired(result.Data)
+
     case TypeUpdateCall:
         return UnmarshalUpdateCall(result.Data)
 
@@ -24479,6 +24505,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateDefaultReactionType:
         return UnmarshalUpdateDefaultReactionType(result.Data)
+
+    case TypeUpdateDefaultPaidReactionType:
+        return UnmarshalUpdateDefaultPaidReactionType(result.Data)
 
     case TypeUpdateSavedMessagesTags:
         return UnmarshalUpdateSavedMessagesTags(result.Data)
