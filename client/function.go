@@ -4085,7 +4085,7 @@ type SendQuickReplyShortcutMessagesRequest struct {
     SendingId int32 `json:"sending_id"`
 }
 
-// Sends messages from a quick reply shortcut. Requires Telegram Business subscription
+// Sends messages from a quick reply shortcut. Requires Telegram Business subscription. Can't be used to send paid messages
 func (client *Client) SendQuickReplyShortcutMessages(req *SendQuickReplyShortcutMessagesRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4115,6 +4115,8 @@ type ResendMessagesRequest struct {
     MessageIds []int64 `json:"message_ids"`
     // New manually chosen quote from the message to be replied; pass null if none. Ignored if more than one message is re-sent, or if messageSendingStateFailed.need_another_reply_quote == false
     Quote *InputTextQuote `json:"quote"`
+    // The number of Telegram Stars the user agreed to pay to send the messages. Ignored if messageSendingStateFailed.required_paid_message_star_count == 0
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
 }
 
 // Resends messages which failed to send. Can be called only for messages for which messageSendingStateFailed.can_retry is true and after specified in messageSendingStateFailed.retry_after time passed. If a message is re-sent, the corresponding failed to send message is deleted. Returns the sent messages in the same order as the message identifiers passed in message_ids. If a message can't be re-sent, null will be returned instead of the message
@@ -4127,6 +4129,7 @@ func (client *Client) ResendMessages(req *ResendMessagesRequest) (*Messages, err
             "chat_id": req.ChatId,
             "message_ids": req.MessageIds,
             "quote": req.Quote,
+            "paid_message_star_count": req.PaidMessageStarCount,
         },
     })
     if err != nil {
@@ -13249,7 +13252,7 @@ type CreateCallRequest struct {
     Protocol *CallProtocol `json:"protocol"`
     // Pass true to create a video call
     IsVideo bool `json:"is_video"`
-    // Identifier of the group call to which the user will be added after exchanging private key via the call; pass 0 if none; currently, ignored
+    // Identifier of the group call to which the user will be added after exchanging private key via the call; pass 0 if none
     GroupCallId int32 `json:"group_call_id"`
 }
 
@@ -13730,6 +13733,8 @@ type JoinGroupCallRequest struct {
     IsMyVideoEnabled bool `json:"is_my_video_enabled"`
     // If non-empty, invite hash to be used to join the group call without being muted by administrators
     InviteHash string `json:"invite_hash"`
+    // Fingerprint of the encryption key for E2E group calls not bound to a chat; pass 0 for voice chats
+    KeyFingerprint JsonInt64 `json:"key_fingerprint"`
 }
 
 // Joins an active group call. Returns join response payload for tgcalls
@@ -13746,6 +13751,7 @@ func (client *Client) JoinGroupCall(req *JoinGroupCallRequest) (*Text, error) {
             "is_muted": req.IsMuted,
             "is_my_video_enabled": req.IsMyVideoEnabled,
             "invite_hash": req.InviteHash,
+            "key_fingerprint": req.KeyFingerprint,
         },
     })
     if err != nil {
@@ -14750,7 +14756,7 @@ type SuggestUserProfilePhotoRequest struct {
     Photo InputChatPhoto `json:"photo"`
 }
 
-// Suggests a profile photo to another regular user with common messages
+// Suggests a profile photo to another regular user with common messages and allowing non-paid messages
 func (client *Client) SuggestUserProfilePhoto(req *SuggestUserProfilePhotoRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16072,11 +16078,11 @@ func (client *Client) GetLinkPreview(req *GetLinkPreviewRequest) (*LinkPreview, 
 type GetWebPageInstantViewRequest struct { 
     // The web page URL
     Url string `json:"url"`
-    // Pass true to get full instant view for the web page
-    ForceFull bool `json:"force_full"`
+    // Pass true to get only locally available information without sending network requests
+    OnlyLocal bool `json:"only_local"`
 }
 
-// Returns an instant view version of a web page if available. Returns a 404 error if the web page has no instant view page
+// Returns an instant view version of a web page if available. This is an offline request if only_local is true. Returns a 404 error if the web page has no instant view page
 func (client *Client) GetWebPageInstantView(req *GetWebPageInstantViewRequest) (*WebPageInstantView, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16084,7 +16090,7 @@ func (client *Client) GetWebPageInstantView(req *GetWebPageInstantViewRequest) (
         },
         Data: map[string]interface{}{
             "url": req.Url,
-            "force_full": req.ForceFull,
+            "only_local": req.OnlyLocal,
         },
     })
     if err != nil {
@@ -18908,7 +18914,7 @@ type SendGiftRequest struct {
     GiftId JsonInt64 `json:"gift_id"`
     // Identifier of the user or the channel chat that will receive the gift
     OwnerId MessageSender `json:"owner_id"`
-    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed. Must be empty if the receiver enabled paid messages
     Text *FormattedText `json:"text"`
     // Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
     IsPrivate bool `json:"is_private"`
@@ -18974,7 +18980,7 @@ type ToggleGiftIsSavedRequest struct {
     IsSaved bool `json:"is_saved"`
 }
 
-// Toggles whether a gift is shown on the current user's or the channel's profile page; requires can_post_messages administrator right in the chat
+// Toggles whether a gift is shown on the current user's or the channel's profile page; requires can_post_messages administrator right in the channel chat
 func (client *Client) ToggleGiftIsSaved(req *ToggleGiftIsSavedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -18983,6 +18989,35 @@ func (client *Client) ToggleGiftIsSaved(req *ToggleGiftIsSavedRequest) (*Ok, err
         Data: map[string]interface{}{
             "received_gift_id": req.ReceivedGiftId,
             "is_saved": req.IsSaved,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetPinnedGiftsRequest struct { 
+    // Identifier of the user or the channel chat that received the gifts
+    OwnerId MessageSender `json:"owner_id"`
+    // New list of pinned gifts. All gifts must be upgraded and saved on the profile page first. There can be up to getOption("pinned_gift_count_max") pinned gifts
+    ReceivedGiftIds []string `json:"received_gift_ids"`
+}
+
+// Changes the list of pinned gifts on the current user's or the channel's profile page; requires can_post_messages administrator right in the channel chat
+func (client *Client) SetPinnedGifts(req *SetPinnedGiftsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setPinnedGifts",
+        },
+        Data: map[string]interface{}{
+            "owner_id": req.OwnerId,
+            "received_gift_ids": req.ReceivedGiftIds,
         },
     })
     if err != nil {
@@ -20007,6 +20042,90 @@ func (client *Client) GetNewChatPrivacySettings() (*NewChatPrivacySettings, erro
     return UnmarshalNewChatPrivacySettings(result.Data)
 }
 
+type GetPaidMessageRevenueRequest struct { 
+    // Identifier of the user
+    UserId int64 `json:"user_id"`
+}
+
+// Returns the total number of Telegram Stars received by the current user for paid messages from the given user
+func (client *Client) GetPaidMessageRevenue(req *GetPaidMessageRevenueRequest) (*StarCount, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPaidMessageRevenue",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarCount(result.Data)
+}
+
+type AllowUnpaidMessagesFromUserRequest struct { 
+    // Identifier of the user
+    UserId int64 `json:"user_id"`
+    // Pass true to refund the user previously paid messages
+    RefundPayments bool `json:"refund_payments"`
+}
+
+// Allows the specified user to send unpaid private messages to the current user by adding a rule to userPrivacySettingAllowUnpaidMessages
+func (client *Client) AllowUnpaidMessagesFromUser(req *AllowUnpaidMessagesFromUserRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "allowUnpaidMessagesFromUser",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+            "refund_payments": req.RefundPayments,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetChatPaidMessageStarCountRequest struct { 
+    // Identifier of the supergroup chat
+    ChatId int64 `json:"chat_id"`
+    // The new number of Telegram Stars that must be paid for each message that is sent to the supergroup chat unless the sender is an administrator of the chat; 0-getOption("paid_message_star_count_max"). The supergroup will receive getOption("paid_message_earnings_per_mille") Telegram Stars for each 1000 Telegram Stars paid for message sending
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
+}
+
+// Changes the amount of Telegram Stars that must be paid to send a message to a supergroup chat; requires can_restrict_members administrator right and supergroupFullInfo.can_enable_paid_messages
+func (client *Client) SetChatPaidMessageStarCount(req *SetChatPaidMessageStarCountRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setChatPaidMessageStarCount",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "paid_message_star_count": req.PaidMessageStarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type CanSendMessageToUserRequest struct { 
     // Identifier of the other user
     UserId int64 `json:"user_id"`
@@ -20036,6 +20155,9 @@ func (client *Client) CanSendMessageToUser(req *CanSendMessageToUserRequest) (Ca
     switch result.Type {
     case TypeCanSendMessageToUserResultOk:
         return UnmarshalCanSendMessageToUserResultOk(result.Data)
+
+    case TypeCanSendMessageToUserResultUserHasPaidMessages:
+        return UnmarshalCanSendMessageToUserResultUserHasPaidMessages(result.Data)
 
     case TypeCanSendMessageToUserResultUserIsDeleted:
         return UnmarshalCanSendMessageToUserResultUserIsDeleted(result.Data)
@@ -20476,7 +20598,7 @@ func (client *Client) GetChatRevenueTransactions(req *GetChatRevenueTransactions
 }
 
 type GetStarRevenueStatisticsRequest struct { 
-    // Identifier of the owner of the Telegram Stars; can be identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
+    // Identifier of the owner of the Telegram Stars; can be identifier of the current user, an owned bot, or a supergroup or a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
     OwnerId MessageSender `json:"owner_id"`
     // Pass true if a dark theme is used by the application
     IsDark bool `json:"is_dark"`
@@ -20505,7 +20627,7 @@ func (client *Client) GetStarRevenueStatistics(req *GetStarRevenueStatisticsRequ
 }
 
 type GetStarWithdrawalUrlRequest struct { 
-    // Identifier of the owner of the Telegram Stars; can be identifier of an owned bot, or identifier of an owned channel chat
+    // Identifier of the owner of the Telegram Stars; can be identifier of the current user, an owned bot, or an owned supergroup or channel chat
     OwnerId MessageSender `json:"owner_id"`
     // The number of Telegram Stars to withdraw. Must be at least getOption("star_withdrawal_count_min")
     StarCount int64 `json:"star_count"`
@@ -22236,16 +22358,35 @@ func (client *Client) GetPremiumState() (*PremiumState, error) {
     return UnmarshalPremiumState(result.Data)
 }
 
-type GetPremiumGiftCodePaymentOptionsRequest struct { 
-    // Identifier of the supergroup or channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user; 0 if none
+// Returns available options for gifting Telegram Premium to a user
+func (client *Client) GetPremiumGiftPaymentOptions() (*PremiumGiftPaymentOptions, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPremiumGiftPaymentOptions",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalPremiumGiftPaymentOptions(result.Data)
+}
+
+type GetPremiumGiveawayPaymentOptionsRequest struct { 
+    // Identifier of the supergroup or channel chat, which will be automatically boosted by receivers of the gift codes and which is administered by the user
     BoostedChatId int64 `json:"boosted_chat_id"`
 }
 
-// Returns available options for Telegram Premium gift code or Telegram Premium giveaway creation
-func (client *Client) GetPremiumGiftCodePaymentOptions(req *GetPremiumGiftCodePaymentOptionsRequest) (*PremiumGiftCodePaymentOptions, error) {
+// Returns available options for creating of Telegram Premium giveaway or manual distribution of Telegram Premium among chat members
+func (client *Client) GetPremiumGiveawayPaymentOptions(req *GetPremiumGiveawayPaymentOptionsRequest) (*PremiumGiveawayPaymentOptions, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getPremiumGiftCodePaymentOptions",
+            Type: "getPremiumGiveawayPaymentOptions",
         },
         Data: map[string]interface{}{
             "boosted_chat_id": req.BoostedChatId,
@@ -22259,7 +22400,7 @@ func (client *Client) GetPremiumGiftCodePaymentOptions(req *GetPremiumGiftCodePa
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalPremiumGiftCodePaymentOptions(result.Data)
+    return UnmarshalPremiumGiveawayPaymentOptions(result.Data)
 }
 
 type CheckPremiumGiftCodeRequest struct { 
@@ -22452,7 +22593,7 @@ func (client *Client) GetStarGiveawayPaymentOptions() (*StarGiveawayPaymentOptio
 }
 
 type GetStarTransactionsRequest struct { 
-    // Identifier of the owner of the Telegram Stars; can be the identifier of the current user, identifier of an owned bot, or identifier of a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
+    // Identifier of the owner of the Telegram Stars; can be the identifier of the current user, identifier of an owned bot, or identifier of a supergroup or a channel chat with supergroupFullInfo.can_get_star_revenue_statistics == true
     OwnerId MessageSender `json:"owner_id"`
     // If non-empty, only transactions related to the Star Subscription will be returned
     SubscriptionId string `json:"subscription_id"`
