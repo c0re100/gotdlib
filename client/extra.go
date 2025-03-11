@@ -25,15 +25,15 @@ func IsCommand(text string) bool {
 
 func CheckCommand(text string, entities []*TextEntity) string {
 	if IsCommand(text) {
-		// e.g.: ["/hello@world_bot", "/hello@", "/hello@123"]
-		// Result: "/hello"
-		if i := strings.Index(text, "@"); i != -1 {
-			return text[:i]
-		}
-
 		// e.g. ["/hello 123", "/hell o 123"]
 		// Result: "/hello", "/hell"
 		if i := strings.Index(text, " "); i != -1 {
+			return text[:i]
+		}
+
+		// e.g.: ["/hello@world_bot", "/hello@", "/hello@123"]
+		// Result: "/hello"
+		if i := strings.Index(text, "@"); i != -1 {
 			return text[:i]
 		}
 
