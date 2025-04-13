@@ -6,7 +6,7 @@ import (
     "errors"
 )
 
-// Returns the current authorization state; this is an offline request. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
+// Returns the current authorization state. This is an offline method. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
 func (client *Client) GetAuthorizationState() (AuthorizationState, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -28,6 +28,9 @@ func (client *Client) GetAuthorizationState() (AuthorizationState, error) {
 
     case TypeAuthorizationStateWaitPhoneNumber:
         return UnmarshalAuthorizationStateWaitPhoneNumber(result.Data)
+
+    case TypeAuthorizationStateWaitPremiumPurchase:
+        return UnmarshalAuthorizationStateWaitPremiumPurchase(result.Data)
 
     case TypeAuthorizationStateWaitEmailAddress:
         return UnmarshalAuthorizationStateWaitEmailAddress(result.Data)
@@ -136,7 +139,7 @@ type SetAuthenticationPhoneNumberRequest struct {
     Settings *PhoneNumberAuthenticationSettings `json:"settings"`
 }
 
-// Sets the phone number of the user and sends an authentication code to the user. Works only when the current authorization state is authorizationStateWaitPhoneNumber, or if there is no pending authentication query and the current authorization state is authorizationStateWaitEmailAddress, authorizationStateWaitEmailCode, authorizationStateWaitCode, authorizationStateWaitRegistration, or authorizationStateWaitPassword
+// Sets the phone number of the user and sends an authentication code to the user. Works only when the current authorization state is authorizationStateWaitPhoneNumber, or if there is no pending authentication query and the current authorization state is authorizationStateWaitPremiumPurchase, authorizationStateWaitEmailAddress, authorizationStateWaitEmailCode, authorizationStateWaitCode, authorizationStateWaitRegistration, or authorizationStateWaitPassword
 func (client *Client) SetAuthenticationPhoneNumber(req *SetAuthenticationPhoneNumberRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -145,6 +148,70 @@ func (client *Client) SetAuthenticationPhoneNumber(req *SetAuthenticationPhoneNu
         Data: map[string]interface{}{
             "phone_number": req.PhoneNumber,
             "settings": req.Settings,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type CheckAuthenticationPremiumPurchaseRequest struct { 
+    // ISO 4217 currency code of the payment currency
+    Currency string `json:"currency"`
+    // Paid amount, in the smallest units of the currency
+    Amount int64 `json:"amount"`
+}
+
+// Checks whether an in-store purchase of Telegram Premium is possible before authorization. Works only when the current authorization state is authorizationStateWaitPremiumPurchase
+func (client *Client) CheckAuthenticationPremiumPurchase(req *CheckAuthenticationPremiumPurchaseRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "checkAuthenticationPremiumPurchase",
+        },
+        Data: map[string]interface{}{
+            "currency": req.Currency,
+            "amount": req.Amount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetAuthenticationPremiumPurchaseTransactionRequest struct { 
+    // Information about the transaction
+    Transaction StoreTransaction `json:"transaction"`
+    // Pass true if this is a restore of a Telegram Premium purchase; only for App Store
+    IsRestore bool `json:"is_restore"`
+    // ISO 4217 currency code of the payment currency
+    Currency string `json:"currency"`
+    // Paid amount, in the smallest units of the currency
+    Amount int64 `json:"amount"`
+}
+
+// Informs server about an in-store purchase of Telegram Premium before authorization. Works only when the current authorization state is authorizationStateWaitPremiumPurchase
+func (client *Client) SetAuthenticationPremiumPurchaseTransaction(req *SetAuthenticationPremiumPurchaseTransactionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setAuthenticationPremiumPurchaseTransaction",
+        },
+        Data: map[string]interface{}{
+            "transaction": req.Transaction,
+            "is_restore": req.IsRestore,
+            "currency": req.Currency,
+            "amount": req.Amount,
         },
     })
     if err != nil {
@@ -267,7 +334,7 @@ type RequestQrCodeAuthenticationRequest struct {
     OtherUserIds []int64 `json:"other_user_ids"`
 }
 
-// Requests QR code authentication by scanning a QR code on another logged in device. Works only when the current authorization state is authorizationStateWaitPhoneNumber, or if there is no pending authentication query and the current authorization state is authorizationStateWaitEmailAddress, authorizationStateWaitEmailCode, authorizationStateWaitCode, authorizationStateWaitRegistration, or authorizationStateWaitPassword
+// Requests QR code authentication by scanning a QR code on another logged in device. Works only when the current authorization state is authorizationStateWaitPhoneNumber, or if there is no pending authentication query and the current authorization state is authorizationStateWaitPremiumPurchase, authorizationStateWaitEmailAddress, authorizationStateWaitEmailCode, authorizationStateWaitCode, authorizationStateWaitRegistration, or authorizationStateWaitPassword
 func (client *Client) RequestQrCodeAuthentication(req *RequestQrCodeAuthenticationRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1094,7 +1161,7 @@ type GetUserRequest struct {
     UserId int64 `json:"user_id"`
 }
 
-// Returns information about a user by their identifier. This is an offline request if the current user is not a bot
+// Returns information about a user by their identifier. This is an offline method if the current user is not a bot
 func (client *Client) GetUser(req *GetUserRequest) (*User, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1146,7 +1213,7 @@ type GetBasicGroupRequest struct {
     BasicGroupId int64 `json:"basic_group_id"`
 }
 
-// Returns information about a basic group by its identifier. This is an offline request if the current user is not a bot
+// Returns information about a basic group by its identifier. This is an offline method if the current user is not a bot
 func (client *Client) GetBasicGroup(req *GetBasicGroupRequest) (*BasicGroup, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1198,7 +1265,7 @@ type GetSupergroupRequest struct {
     SupergroupId int64 `json:"supergroup_id"`
 }
 
-// Returns information about a supergroup or a channel by its identifier. This is an offline request if the current user is not a bot
+// Returns information about a supergroup or a channel by its identifier. This is an offline method if the current user is not a bot
 func (client *Client) GetSupergroup(req *GetSupergroupRequest) (*Supergroup, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1250,7 +1317,7 @@ type GetSecretChatRequest struct {
     SecretChatId int32 `json:"secret_chat_id"`
 }
 
-// Returns information about a secret chat by its identifier. This is an offline request
+// Returns information about a secret chat by its identifier. This is an offline method
 func (client *Client) GetSecretChat(req *GetSecretChatRequest) (*SecretChat, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1276,7 +1343,7 @@ type GetChatRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns information about a chat by its identifier; this is an offline request if the current user is not a bot
+// Returns information about a chat by its identifier. This is an offline method if the current user is not a bot
 func (client *Client) GetChat(req *GetChatRequest) (*Chat, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1333,7 +1400,7 @@ type GetMessageLocallyRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a message, if it is available without sending network request. Returns a 404 error if message isn't available locally. This is an offline request
+// Returns information about a message, if it is available without sending network request. Returns a 404 error if message isn't available locally. This is an offline method
 func (client *Client) GetMessageLocally(req *GetMessageLocallyRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1478,7 +1545,7 @@ type GetMessagePropertiesRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns properties of a message; this is an offline request
+// Returns properties of a message. This is an offline method
 func (client *Client) GetMessageProperties(req *GetMessagePropertiesRequest) (*MessageProperties, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1610,7 +1677,7 @@ type GetFileRequest struct {
     FileId int32 `json:"file_id"`
 }
 
-// Returns information about a file; this is an offline request
+// Returns information about a file. This is an offline method
 func (client *Client) GetFile(req *GetFileRequest) (*File, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1638,7 +1705,7 @@ type GetRemoteFileRequest struct {
     FileType FileType `json:"file_type"`
 }
 
-// Returns information about a file by its remote identifier; this is an offline request. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application
+// Returns information about a file by its remote identifier. This is an offline method. Can be used to register a URL as a file for further uploading, or sending as a message. Even the request succeeds, the file can be used only if it is still accessible to the user. For example, if the file is from a message, then the message must be not deleted and accessible to the user. If the file database is disabled, then the corresponding object with the file must be preloaded by the application
 func (client *Client) GetRemoteFile(req *GetRemoteFileRequest) (*File, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1777,7 +1844,7 @@ type SearchChatsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Searches for the specified query in the title and username of already known chats; this is an offline request. Returns chats in the order seen in the main chat list
+// Searches for the specified query in the title and username of already known chats. This is an offline method. Returns chats in the order seen in the main chat list
 func (client *Client) SearchChats(req *SearchChatsRequest) (*Chats, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2080,7 +2147,7 @@ type SearchRecentlyFoundChatsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Searches for the specified query in the title and username of up to 50 recently found chats; this is an offline request
+// Searches for the specified query in the title and username of up to 50 recently found chats. This is an offline method
 func (client *Client) SearchRecentlyFoundChats(req *SearchRecentlyFoundChatsRequest) (*Chats, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2178,7 +2245,7 @@ type GetRecentlyOpenedChatsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns recently opened chats; this is an offline request. Returns chats in the order of last opening
+// Returns recently opened chats. This is an offline method. Returns chats in the order of last opening
 func (client *Client) GetRecentlyOpenedChats(req *GetRecentlyOpenedChatsRequest) (*Chats, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2606,7 +2673,7 @@ type GetChatHistoryRequest struct {
     OnlyLocal bool `json:"only_local"`
 }
 
-// Returns messages in a chat. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib. This is an offline request if only_local is true
+// Returns messages in a chat. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id). For optimal performance, the number of returned messages is chosen by TDLib. This is an offline method if only_local is true
 func (client *Client) GetChatHistory(req *GetChatHistoryRequest) (*Messages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3506,7 +3573,7 @@ type ReportChatSponsoredMessageRequest struct {
 }
 
 // Reports a sponsored message to Telegram moderators
-func (client *Client) ReportChatSponsoredMessage(req *ReportChatSponsoredMessageRequest) (ReportChatSponsoredMessageResult, error) {
+func (client *Client) ReportChatSponsoredMessage(req *ReportChatSponsoredMessageRequest) (ReportSponsoredResult, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "reportChatSponsoredMessage",
@@ -3526,20 +3593,145 @@ func (client *Client) ReportChatSponsoredMessage(req *ReportChatSponsoredMessage
     }
 
     switch result.Type {
-    case TypeReportChatSponsoredMessageResultOk:
-        return UnmarshalReportChatSponsoredMessageResultOk(result.Data)
+    case TypeReportSponsoredResultOk:
+        return UnmarshalReportSponsoredResultOk(result.Data)
 
-    case TypeReportChatSponsoredMessageResultFailed:
-        return UnmarshalReportChatSponsoredMessageResultFailed(result.Data)
+    case TypeReportSponsoredResultFailed:
+        return UnmarshalReportSponsoredResultFailed(result.Data)
 
-    case TypeReportChatSponsoredMessageResultOptionRequired:
-        return UnmarshalReportChatSponsoredMessageResultOptionRequired(result.Data)
+    case TypeReportSponsoredResultOptionRequired:
+        return UnmarshalReportSponsoredResultOptionRequired(result.Data)
 
-    case TypeReportChatSponsoredMessageResultAdsHidden:
-        return UnmarshalReportChatSponsoredMessageResultAdsHidden(result.Data)
+    case TypeReportSponsoredResultAdsHidden:
+        return UnmarshalReportSponsoredResultAdsHidden(result.Data)
 
-    case TypeReportChatSponsoredMessageResultPremiumRequired:
-        return UnmarshalReportChatSponsoredMessageResultPremiumRequired(result.Data)
+    case TypeReportSponsoredResultPremiumRequired:
+        return UnmarshalReportSponsoredResultPremiumRequired(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
+}
+
+type GetSearchSponsoredChatsRequest struct { 
+    // Query the user searches for
+    Query string `json:"query"`
+}
+
+// Returns sponsored chats to be shown in the search results
+func (client *Client) GetSearchSponsoredChats(req *GetSearchSponsoredChatsRequest) (*SponsoredChats, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getSearchSponsoredChats",
+        },
+        Data: map[string]interface{}{
+            "query": req.Query,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalSponsoredChats(result.Data)
+}
+
+type ViewSponsoredChatRequest struct { 
+    // Unique identifier of the sponsored chat
+    SponsoredChatUniqueId int64 `json:"sponsored_chat_unique_id"`
+}
+
+// Informs TDLib that the user fully viewed a sponsored chat
+func (client *Client) ViewSponsoredChat(req *ViewSponsoredChatRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "viewSponsoredChat",
+        },
+        Data: map[string]interface{}{
+            "sponsored_chat_unique_id": req.SponsoredChatUniqueId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type OpenSponsoredChatRequest struct { 
+    // Unique identifier of the sponsored chat
+    SponsoredChatUniqueId int64 `json:"sponsored_chat_unique_id"`
+}
+
+// Informs TDLib that the user opened a sponsored chat
+func (client *Client) OpenSponsoredChat(req *OpenSponsoredChatRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "openSponsoredChat",
+        },
+        Data: map[string]interface{}{
+            "sponsored_chat_unique_id": req.SponsoredChatUniqueId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ReportSponsoredChatRequest struct { 
+    // Unique identifier of the sponsored chat
+    SponsoredChatUniqueId int64 `json:"sponsored_chat_unique_id"`
+    // Option identifier chosen by the user; leave empty for the initial request
+    OptionId []byte `json:"option_id"`
+}
+
+// Reports a sponsored chat to Telegram moderators
+func (client *Client) ReportSponsoredChat(req *ReportSponsoredChatRequest) (ReportSponsoredResult, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "reportSponsoredChat",
+        },
+        Data: map[string]interface{}{
+            "sponsored_chat_unique_id": req.SponsoredChatUniqueId,
+            "option_id": req.OptionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    switch result.Type {
+    case TypeReportSponsoredResultOk:
+        return UnmarshalReportSponsoredResultOk(result.Data)
+
+    case TypeReportSponsoredResultFailed:
+        return UnmarshalReportSponsoredResultFailed(result.Data)
+
+    case TypeReportSponsoredResultOptionRequired:
+        return UnmarshalReportSponsoredResultOptionRequired(result.Data)
+
+    case TypeReportSponsoredResultAdsHidden:
+        return UnmarshalReportSponsoredResultAdsHidden(result.Data)
+
+    case TypeReportSponsoredResultPremiumRequired:
+        return UnmarshalReportSponsoredResultPremiumRequired(result.Data)
 
     default:
         return nil, errors.New("invalid type")
@@ -3617,7 +3809,7 @@ type GetMessageLinkRequest struct {
     InMessageThread bool `json:"in_message_thread"`
 }
 
-// Returns an HTTPS link to a message in a chat. Available only if messageProperties.can_get_link, or if messageProperties.can_get_media_timestamp_links and a media timestamp link is generated. This is an offline request
+// Returns an HTTPS link to a message in a chat. Available only if messageProperties.can_get_link, or if messageProperties.can_get_media_timestamp_links and a media timestamp link is generated. This is an offline method
 func (client *Client) GetMessageLink(req *GetMessageLinkRequest) (*MessageLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -5080,6 +5272,343 @@ func (client *Client) SetBusinessMessageIsPinned(req *SetBusinessMessageIsPinned
     return UnmarshalOk(result.Data)
 }
 
+type ReadBusinessMessageRequest struct { 
+    // Unique identifier of business connection through which the message was received
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Reads a message on behalf of a business account; for bots only
+func (client *Client) ReadBusinessMessage(req *ReadBusinessMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "readBusinessMessage",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteBusinessMessagesRequest struct { 
+    // Unique identifier of business connection through which the messages were received
+    BusinessConnectionId string `json:"business_connection_id"`
+    // Identifier of the messages
+    MessageIds []int64 `json:"message_ids"`
+}
+
+// Deletes messages on behalf of a business account; for bots only
+func (client *Client) DeleteBusinessMessages(req *DeleteBusinessMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteBusinessMessages",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "message_ids": req.MessageIds,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditBusinessStoryRequest struct { 
+    // Identifier of the chat that posted the story
+    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    // Identifier of the story to edit
+    StoryId int32 `json:"story_id"`
+    // New content of the story
+    Content InputStoryContent `json:"content"`
+    // New clickable rectangle areas to be shown on the story media
+    Areas *InputStoryAreas `json:"areas"`
+    // New story caption
+    Caption *FormattedText `json:"caption"`
+    // The new privacy settings for the story
+    PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
+}
+
+// Changes a story sent by the bot on behalf of a business account; for bots only
+func (client *Client) EditBusinessStory(req *EditBusinessStoryRequest) (*Story, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editBusinessStory",
+        },
+        Data: map[string]interface{}{
+            "story_sender_chat_id": req.StorySenderChatId,
+            "story_id": req.StoryId,
+            "content": req.Content,
+            "areas": req.Areas,
+            "caption": req.Caption,
+            "privacy_settings": req.PrivacySettings,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStory(result.Data)
+}
+
+type DeleteBusinessStoryRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // Identifier of the story to delete
+    StoryId int32 `json:"story_id"`
+}
+
+// Deletes a story sent by the bot on behalf of a business account; for bots only
+func (client *Client) DeleteBusinessStory(req *DeleteBusinessStoryRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteBusinessStory",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "story_id": req.StoryId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetBusinessAccountNameRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The new value of the first name for the business account; 1-64 characters
+    FirstName string `json:"first_name"`
+    // The new value of the optional last name for the business account; 0-64 characters
+    LastName string `json:"last_name"`
+}
+
+// Changes the first and last name of a business account; for bots only
+func (client *Client) SetBusinessAccountName(req *SetBusinessAccountNameRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessAccountName",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "first_name": req.FirstName,
+            "last_name": req.LastName,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetBusinessAccountBioRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The new value of the bio; 0-getOption("bio_length_max") characters without line feeds
+    Bio string `json:"bio"`
+}
+
+// Changes the bio of a business account; for bots only
+func (client *Client) SetBusinessAccountBio(req *SetBusinessAccountBioRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessAccountBio",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "bio": req.Bio,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetBusinessAccountProfilePhotoRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // Profile photo to set; pass null to remove the photo
+    Photo InputChatPhoto `json:"photo"`
+    // Pass true to set the public photo, which will be visible even the main photo is hidden by privacy settings
+    IsPublic bool `json:"is_public"`
+}
+
+// Changes a profile photo of a business account; for bots only
+func (client *Client) SetBusinessAccountProfilePhoto(req *SetBusinessAccountProfilePhotoRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessAccountProfilePhoto",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "photo": req.Photo,
+            "is_public": req.IsPublic,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetBusinessAccountUsernameRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The new value of the username
+    Username string `json:"username"`
+}
+
+// Changes the editable username of a business account; for bots only
+func (client *Client) SetBusinessAccountUsername(req *SetBusinessAccountUsernameRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessAccountUsername",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "username": req.Username,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetBusinessAccountGiftSettingsRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The new settings
+    Settings *GiftSettings `json:"settings"`
+}
+
+// Changes settings for gift receiving of a business account; for bots only
+func (client *Client) SetBusinessAccountGiftSettings(req *SetBusinessAccountGiftSettingsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setBusinessAccountGiftSettings",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "settings": req.Settings,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type GetBusinessAccountStarAmountRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+}
+
+// Returns the amount of Telegram Stars owned by a business account; for bots only
+func (client *Client) GetBusinessAccountStarAmount(req *GetBusinessAccountStarAmountRequest) (*StarAmount, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getBusinessAccountStarAmount",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarAmount(result.Data)
+}
+
+type TransferBusinessAccountStarsRequest struct { 
+    // Unique identifier of business connection
+    BusinessConnectionId string `json:"business_connection_id"`
+    // Number of Telegram Stars to transfer
+    StarCount int64 `json:"star_count"`
+}
+
+// Transfer Telegram Stars from the business account to the business bot; for bots only
+func (client *Client) TransferBusinessAccountStars(req *TransferBusinessAccountStarsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "transferBusinessAccountStars",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "star_count": req.StarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type CheckQuickReplyShortcutNameRequest struct { 
     // The name of the shortcut; 1-32 characters
     Name string `json:"name"`
@@ -5554,7 +6083,7 @@ type GetForumTopicLinkRequest struct {
     MessageThreadId int64 `json:"message_thread_id"`
 }
 
-// Returns an HTTPS link to a topic in a forum chat. This is an offline request
+// Returns an HTTPS link to a topic in a forum chat. This is an offline method
 func (client *Client) GetForumTopicLink(req *GetForumTopicLinkRequest) (*MessageLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7279,7 +7808,7 @@ type GetWebAppPlaceholderRequest struct {
     BotUserId int64 `json:"bot_user_id"`
 }
 
-// Returns a default placeholder for Web Apps of a bot; this is an offline request. Returns a 404 error if the placeholder isn't known
+// Returns a default placeholder for Web Apps of a bot. This is an offline method. Returns a 404 error if the placeholder isn't known
 func (client *Client) GetWebAppPlaceholder(req *GetWebAppPlaceholderRequest) (*Outline, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8667,7 +9196,7 @@ type GetChatListsToAddChatRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns chat lists to which the chat can be added. This is an offline request
+// Returns chat lists to which the chat can be added. This is an offline method
 func (client *Client) GetChatListsToAddChat(req *GetChatListsToAddChatRequest) (*ChatLists, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -11605,7 +12134,7 @@ type GetChatBoostLevelFeaturesRequest struct {
     Level int32 `json:"level"`
 }
 
-// Returns the list of features available on the specific chat boost level; this is an offline request
+// Returns the list of features available on the specific chat boost level. This is an offline method
 func (client *Client) GetChatBoostLevelFeatures(req *GetChatBoostLevelFeaturesRequest) (*ChatBoostLevelFeatures, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -11632,7 +12161,7 @@ type GetChatBoostFeaturesRequest struct {
     IsChannel bool `json:"is_channel"`
 }
 
-// Returns the list of features available for different chat boost levels; this is an offline request
+// Returns the list of features available for different chat boost levels. This is an offline method
 func (client *Client) GetChatBoostFeatures(req *GetChatBoostFeaturesRequest) (*ChatBoostFeatures, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -14932,7 +15461,7 @@ type GetStickerOutlineRequest struct {
     ForClickedAnimatedEmojiMessage bool `json:"for_clicked_animated_emoji_message"`
 }
 
-// Returns outline of a sticker; this is an offline request. Returns a 404 error if the outline isn't known
+// Returns outline of a sticker. This is an offline method. Returns a 404 error if the outline isn't known
 func (client *Client) GetStickerOutline(req *GetStickerOutlineRequest) (*Outline, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16082,7 +16611,7 @@ type GetWebPageInstantViewRequest struct {
     OnlyLocal bool `json:"only_local"`
 }
 
-// Returns an instant view version of a web page if available. This is an offline request if only_local is true. Returns a 404 error if the web page has no instant view page
+// Returns an instant view version of a web page if available. This is an offline method if only_local is true. Returns a 404 error if the web page has no instant view page
 func (client *Client) GetWebPageInstantView(req *GetWebPageInstantViewRequest) (*WebPageInstantView, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16107,7 +16636,7 @@ func (client *Client) GetWebPageInstantView(req *GetWebPageInstantViewRequest) (
 type SetProfilePhotoRequest struct { 
     // Profile photo to set
     Photo InputChatPhoto `json:"photo"`
-    // Pass true to set a public photo, which will be visible even the main photo is hidden by privacy settings
+    // Pass true to set the public photo, which will be visible even the main photo is hidden by privacy settings
     IsPublic bool `json:"is_public"`
 }
 
@@ -18890,6 +19419,32 @@ func (client *Client) DeleteSavedCredentials() (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+type SetGiftSettingsRequest struct { 
+    // The new settings
+    Settings *GiftSettings `json:"settings"`
+}
+
+// Changes settings for gift receiving for the current user
+func (client *Client) SetGiftSettings(req *SetGiftSettingsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setGiftSettings",
+        },
+        Data: map[string]interface{}{
+            "settings": req.Settings,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 // Returns gifts that can be sent to other users and channel chats
 func (client *Client) GetAvailableGifts() (*Gifts, error) {
     result, err := client.Send(Request{
@@ -18948,6 +19503,8 @@ func (client *Client) SendGift(req *SendGiftRequest) (*Ok, error) {
 }
 
 type SellGiftRequest struct { 
+    // Unique identifier of business connection on behalf of which to send the request; for bots only
+    BusinessConnectionId string `json:"business_connection_id"`
     // Identifier of the gift
     ReceivedGiftId string `json:"received_gift_id"`
 }
@@ -18959,6 +19516,7 @@ func (client *Client) SellGift(req *SellGiftRequest) (*Ok, error) {
             Type: "sellGift",
         },
         Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
             "received_gift_id": req.ReceivedGiftId,
         },
     })
@@ -19087,6 +19645,8 @@ func (client *Client) GetGiftUpgradePreview(req *GetGiftUpgradePreviewRequest) (
 }
 
 type UpgradeGiftRequest struct { 
+    // Unique identifier of business connection on behalf of which to send the request; for bots only
+    BusinessConnectionId string `json:"business_connection_id"`
     // Identifier of the gift
     ReceivedGiftId string `json:"received_gift_id"`
     // Pass true to keep the original gift text, sender and receiver in the upgraded gift
@@ -19102,6 +19662,7 @@ func (client *Client) UpgradeGift(req *UpgradeGiftRequest) (*UpgradeGiftResult, 
             Type: "upgradeGift",
         },
         Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
             "received_gift_id": req.ReceivedGiftId,
             "keep_original_details": req.KeepOriginalDetails,
             "star_count": req.StarCount,
@@ -19119,6 +19680,8 @@ func (client *Client) UpgradeGift(req *UpgradeGiftRequest) (*UpgradeGiftResult, 
 }
 
 type TransferGiftRequest struct { 
+    // Unique identifier of business connection on behalf of which to send the request; for bots only
+    BusinessConnectionId string `json:"business_connection_id"`
     // Identifier of the gift
     ReceivedGiftId string `json:"received_gift_id"`
     // Identifier of the user or the channel chat that will receive the gift
@@ -19134,6 +19697,7 @@ func (client *Client) TransferGift(req *TransferGiftRequest) (*Ok, error) {
             Type: "transferGift",
         },
         Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
             "received_gift_id": req.ReceivedGiftId,
             "new_owner_id": req.NewOwnerId,
             "star_count": req.StarCount,
@@ -19151,6 +19715,8 @@ func (client *Client) TransferGift(req *TransferGiftRequest) (*Ok, error) {
 }
 
 type GetReceivedGiftsRequest struct { 
+    // Unique identifier of business connection on behalf of which to send the request; for bots only
+    BusinessConnectionId string `json:"business_connection_id"`
     // Identifier of the gift receiver
     OwnerId MessageSender `json:"owner_id"`
     // Pass true to exclude gifts that aren't saved to the chat's profile page. Always true for gifts received by other users and channel chats without can_post_messages administrator right
@@ -19178,6 +19744,7 @@ func (client *Client) GetReceivedGifts(req *GetReceivedGiftsRequest) (*ReceivedG
             Type: "getReceivedGifts",
         },
         Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
             "owner_id": req.OwnerId,
             "exclude_unsaved": req.ExcludeUnsaved,
             "exclude_saved": req.ExcludeSaved,
@@ -19547,7 +20114,7 @@ type GetLocalizationTargetInfoRequest struct {
     OnlyLocal bool `json:"only_local"`
 }
 
-// Returns information about the current localization target. This is an offline request if only_local is true. Can be called before authorization
+// Returns information about the current localization target. This is an offline method if only_local is true. Can be called before authorization
 func (client *Client) GetLocalizationTargetInfo(req *GetLocalizationTargetInfoRequest) (*LocalizationTargetInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -22455,6 +23022,41 @@ func (client *Client) ApplyPremiumGiftCode(req *ApplyPremiumGiftCodeRequest) (*O
     return UnmarshalOk(result.Data)
 }
 
+type GiftPremiumWithStarsRequest struct { 
+    // Identifier of the user which will receive Telegram Premium
+    UserId int64 `json:"user_id"`
+    // The number of Telegram Stars to pay for subscription
+    StarCount int64 `json:"star_count"`
+    // Number of months the Telegram Premium subscription will be active for the user
+    MonthCount int32 `json:"month_count"`
+    // Text to show to the user receiving Telegram Premium; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
+    Text *FormattedText `json:"text"`
+}
+
+// Allows to buy a Telegram Premium subscription for another user with payment in Telegram Stars; for bots only
+func (client *Client) GiftPremiumWithStars(req *GiftPremiumWithStarsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "giftPremiumWithStars",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+            "star_count": req.StarCount,
+            "month_count": req.MonthCount,
+            "text": req.Text,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type LaunchPrepaidGiveawayRequest struct { 
     // Unique identifier of the prepaid giveaway
     GiveawayId JsonInt64 `json:"giveaway_id"`
@@ -22664,7 +23266,7 @@ type CanPurchaseFromStoreRequest struct {
     Purpose StorePaymentPurpose `json:"purpose"`
 }
 
-// Checks whether an in-store purchase is possible. Must be called before any in-store purchase
+// Checks whether an in-store purchase is possible. Must be called before any in-store purchase. For official applications only
 func (client *Client) CanPurchaseFromStore(req *CanPurchaseFromStoreRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -22685,56 +23287,21 @@ func (client *Client) CanPurchaseFromStore(req *CanPurchaseFromStoreRequest) (*O
     return UnmarshalOk(result.Data)
 }
 
-type AssignAppStoreTransactionRequest struct { 
-    // App Store receipt
-    Receipt []byte `json:"receipt"`
+type AssignStoreTransactionRequest struct { 
+    // Information about the transaction
+    Transaction StoreTransaction `json:"transaction"`
     // Transaction purpose
     Purpose StorePaymentPurpose `json:"purpose"`
 }
 
-// Informs server about a purchase through App Store. For official applications only
-func (client *Client) AssignAppStoreTransaction(req *AssignAppStoreTransactionRequest) (*Ok, error) {
+// Informs server about an in-store purchase. For official applications only
+func (client *Client) AssignStoreTransaction(req *AssignStoreTransactionRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "assignAppStoreTransaction",
+            Type: "assignStoreTransaction",
         },
         Data: map[string]interface{}{
-            "receipt": req.Receipt,
-            "purpose": req.Purpose,
-        },
-    })
-    if err != nil {
-        return nil, err
-    }
-
-    if result.Type == "error" {
-        return nil, buildResponseError(result.Data)
-    }
-
-    return UnmarshalOk(result.Data)
-}
-
-type AssignGooglePlayTransactionRequest struct { 
-    // Application package name
-    PackageName string `json:"package_name"`
-    // Identifier of the purchased store product
-    StoreProductId string `json:"store_product_id"`
-    // Google Play purchase token
-    PurchaseToken string `json:"purchase_token"`
-    // Transaction purpose
-    Purpose StorePaymentPurpose `json:"purpose"`
-}
-
-// Informs server about a purchase through Google Play. For official applications only
-func (client *Client) AssignGooglePlayTransaction(req *AssignGooglePlayTransactionRequest) (*Ok, error) {
-    result, err := client.Send(Request{
-        meta: meta{
-            Type: "assignGooglePlayTransaction",
-        },
-        Data: map[string]interface{}{
-            "package_name": req.PackageName,
-            "store_product_id": req.StoreProductId,
-            "purchase_token": req.PurchaseToken,
+            "transaction": req.Transaction,
             "purpose": req.Purpose,
         },
     })
@@ -24464,6 +25031,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateForumTopicInfo:
         return UnmarshalUpdateForumTopicInfo(result.Data)
 
+    case TypeUpdateForumTopic:
+        return UnmarshalUpdateForumTopic(result.Data)
+
     case TypeUpdateScopeNotificationSettings:
         return UnmarshalUpdateScopeNotificationSettings(result.Data)
 
@@ -24625,6 +25195,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateConnectionState:
         return UnmarshalUpdateConnectionState(result.Data)
+
+    case TypeUpdateFreezeState:
+        return UnmarshalUpdateFreezeState(result.Data)
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(result.Data)
