@@ -15,33 +15,29 @@ func UuidV4Generator() ExtraGenerator {
 }
 
 func IsCommand(text string) bool {
-	if text != "" {
-		if text[0] == '/' {
-			return true
-		}
+	if i := strings.Index(text, "/"); i == 0 {
+		return true
 	}
 	return false
 }
 
 func CheckCommand(text string, entities []*TextEntity) string {
 	if IsCommand(text) {
+		var cmd string
+
 		// e.g. ["/hello 123", "/hell o 123"]
 		// Result: "/hello", "/hell"
 		if i := strings.Index(text, " "); i != -1 {
-			// Fallback: remove @bot
-			if i2 := strings.Index(text, "@"); i2 != -1 {
-				return text[:i2]
-			}
-			return text[:i]
+			cmd = text[:i]
 		}
 
 		// e.g.: ["/hello@world_bot", "/hello@", "/hello@123"]
 		// Result: "/hello"
 		if i := strings.Index(text, "@"); i != -1 {
-			return text[:i]
+			cmd = text[:i]
 		}
 
-		return text
+		return cmd
 	}
 	return ""
 }
