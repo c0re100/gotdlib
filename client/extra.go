@@ -37,6 +37,10 @@ func CheckCommand(text string, entities []*TextEntity) string {
 			cmd = text[:i]
 		}
 
+		if cmd == "" {
+			return text
+		}
+
 		return cmd
 	}
 	return ""
