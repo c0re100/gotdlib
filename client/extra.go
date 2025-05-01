@@ -28,6 +28,10 @@ func CheckCommand(text string, entities []*TextEntity) string {
 		// e.g. ["/hello 123", "/hell o 123"]
 		// Result: "/hello", "/hell"
 		if i := strings.Index(text, " "); i != -1 {
+			// Fallback: remove @bot
+			if i2 := strings.Index(text, "@"); i2 != -1 {
+				return text[:i2]
+			}
 			return text[:i]
 		}
 
