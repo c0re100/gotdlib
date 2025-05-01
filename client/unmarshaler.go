@@ -2666,6 +2666,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
     case TypeLinkPreviewTypeExternalVideo:
         return UnmarshalLinkPreviewTypeExternalVideo(data)
 
+    case TypeLinkPreviewTypeGroupCall:
+        return UnmarshalLinkPreviewTypeGroupCall(data)
+
     case TypeLinkPreviewTypeInvoice:
         return UnmarshalLinkPreviewTypeInvoice(data)
 
@@ -3389,6 +3392,9 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
 
     case TypeMessageCall:
         return UnmarshalMessageCall(data)
+
+    case TypeMessageGroupCall:
+        return UnmarshalMessageGroupCall(data)
 
     case TypeMessageVideoChatScheduled:
         return UnmarshalMessageVideoChatScheduled(data)
@@ -4570,8 +4576,8 @@ func UnmarshalCallDiscardReason(data json.RawMessage) (CallDiscardReason, error)
     case TypeCallDiscardReasonHungUp:
         return UnmarshalCallDiscardReasonHungUp(data)
 
-    case TypeCallDiscardReasonAllowGroupCall:
-        return UnmarshalCallDiscardReasonAllowGroupCall(data)
+    case TypeCallDiscardReasonUpgradeToGroupCall:
+        return UnmarshalCallDiscardReasonUpgradeToGroupCall(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -4700,6 +4706,114 @@ func UnmarshalListOfGroupCallVideoQuality(dataList []json.RawMessage) ([]GroupCa
 
     for _, data := range dataList {
         entity, err := UnmarshalGroupCallVideoQuality(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalInviteGroupCallParticipantResult(data json.RawMessage) (InviteGroupCallParticipantResult, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeInviteGroupCallParticipantResultUserPrivacyRestricted:
+        return UnmarshalInviteGroupCallParticipantResultUserPrivacyRestricted(data)
+
+    case TypeInviteGroupCallParticipantResultUserAlreadyParticipant:
+        return UnmarshalInviteGroupCallParticipantResultUserAlreadyParticipant(data)
+
+    case TypeInviteGroupCallParticipantResultUserWasBanned:
+        return UnmarshalInviteGroupCallParticipantResultUserWasBanned(data)
+
+    case TypeInviteGroupCallParticipantResultSuccess:
+        return UnmarshalInviteGroupCallParticipantResultSuccess(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfInviteGroupCallParticipantResult(dataList []json.RawMessage) ([]InviteGroupCallParticipantResult, error) {
+    list := []InviteGroupCallParticipantResult{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalInviteGroupCallParticipantResult(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalGroupCallDataChannel(data json.RawMessage) (GroupCallDataChannel, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeGroupCallDataChannelMain:
+        return UnmarshalGroupCallDataChannelMain(data)
+
+    case TypeGroupCallDataChannelScreenSharing:
+        return UnmarshalGroupCallDataChannelScreenSharing(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfGroupCallDataChannel(dataList []json.RawMessage) ([]GroupCallDataChannel, error) {
+    list := []GroupCallDataChannel{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalGroupCallDataChannel(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalInputGroupCall(data json.RawMessage) (InputGroupCall, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeInputGroupCallLink:
+        return UnmarshalInputGroupCallLink(data)
+
+    case TypeInputGroupCallMessage:
+        return UnmarshalInputGroupCallMessage(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfInputGroupCall(dataList []json.RawMessage) ([]InputGroupCall, error) {
+    list := []InputGroupCall{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalInputGroupCall(data)
         if err != nil {
             return nil, err
         }
@@ -5448,11 +5562,11 @@ func UnmarshalPremiumLimitType(data json.RawMessage) (PremiumLimitType, error) {
     case TypePremiumLimitTypeActiveStoryCount:
         return UnmarshalPremiumLimitTypeActiveStoryCount(data)
 
-    case TypePremiumLimitTypeWeeklySentStoryCount:
-        return UnmarshalPremiumLimitTypeWeeklySentStoryCount(data)
+    case TypePremiumLimitTypeWeeklyPostedStoryCount:
+        return UnmarshalPremiumLimitTypeWeeklyPostedStoryCount(data)
 
-    case TypePremiumLimitTypeMonthlySentStoryCount:
-        return UnmarshalPremiumLimitTypeMonthlySentStoryCount(data)
+    case TypePremiumLimitTypeMonthlyPostedStoryCount:
+        return UnmarshalPremiumLimitTypeMonthlyPostedStoryCount(data)
 
     case TypePremiumLimitTypeStoryCaptionLength:
         return UnmarshalPremiumLimitTypeStoryCaptionLength(data)
@@ -6048,7 +6162,7 @@ func UnmarshalListOfInputBackground(dataList []json.RawMessage) ([]InputBackgrou
     return list, nil
 }
 
-func UnmarshalCanSendStoryResult(data json.RawMessage) (CanSendStoryResult, error) {
+func UnmarshalCanPostStoryResult(data json.RawMessage) (CanPostStoryResult, error) {
     var meta meta
 
     err := json.Unmarshal(data, &meta)
@@ -6057,34 +6171,34 @@ func UnmarshalCanSendStoryResult(data json.RawMessage) (CanSendStoryResult, erro
     }
 
     switch meta.Type {
-    case TypeCanSendStoryResultOk:
-        return UnmarshalCanSendStoryResultOk(data)
+    case TypeCanPostStoryResultOk:
+        return UnmarshalCanPostStoryResultOk(data)
 
-    case TypeCanSendStoryResultPremiumNeeded:
-        return UnmarshalCanSendStoryResultPremiumNeeded(data)
+    case TypeCanPostStoryResultPremiumNeeded:
+        return UnmarshalCanPostStoryResultPremiumNeeded(data)
 
-    case TypeCanSendStoryResultBoostNeeded:
-        return UnmarshalCanSendStoryResultBoostNeeded(data)
+    case TypeCanPostStoryResultBoostNeeded:
+        return UnmarshalCanPostStoryResultBoostNeeded(data)
 
-    case TypeCanSendStoryResultActiveStoryLimitExceeded:
-        return UnmarshalCanSendStoryResultActiveStoryLimitExceeded(data)
+    case TypeCanPostStoryResultActiveStoryLimitExceeded:
+        return UnmarshalCanPostStoryResultActiveStoryLimitExceeded(data)
 
-    case TypeCanSendStoryResultWeeklyLimitExceeded:
-        return UnmarshalCanSendStoryResultWeeklyLimitExceeded(data)
+    case TypeCanPostStoryResultWeeklyLimitExceeded:
+        return UnmarshalCanPostStoryResultWeeklyLimitExceeded(data)
 
-    case TypeCanSendStoryResultMonthlyLimitExceeded:
-        return UnmarshalCanSendStoryResultMonthlyLimitExceeded(data)
+    case TypeCanPostStoryResultMonthlyLimitExceeded:
+        return UnmarshalCanPostStoryResultMonthlyLimitExceeded(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
 }
 
-func UnmarshalListOfCanSendStoryResult(dataList []json.RawMessage) ([]CanSendStoryResult, error) {
-    list := []CanSendStoryResult{}
+func UnmarshalListOfCanPostStoryResult(dataList []json.RawMessage) ([]CanPostStoryResult, error) {
+    list := []CanPostStoryResult{}
 
     for _, data := range dataList {
-        entity, err := UnmarshalCanSendStoryResult(data)
+        entity, err := UnmarshalCanPostStoryResult(data)
         if err != nil {
             return nil, err
         }
@@ -7092,6 +7206,9 @@ func UnmarshalInternalLinkType(data json.RawMessage) (InternalLinkType, error) {
 
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(data)
+
+    case TypeInternalLinkTypeGroupCall:
+        return UnmarshalInternalLinkTypeGroupCall(data)
 
     case TypeInternalLinkTypeInstantView:
         return UnmarshalInternalLinkTypeInstantView(data)
@@ -8292,6 +8409,12 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateGroupCallParticipant:
         return UnmarshalUpdateGroupCallParticipant(data)
 
+    case TypeUpdateGroupCallParticipants:
+        return UnmarshalUpdateGroupCallParticipants(data)
+
+    case TypeUpdateGroupCallVerificationState:
+        return UnmarshalUpdateGroupCallVerificationState(data)
+
     case TypeUpdateNewCallSignalingData:
         return UnmarshalUpdateNewCallSignalingData(data)
 
@@ -8310,11 +8433,11 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateStoryDeleted:
         return UnmarshalUpdateStoryDeleted(data)
 
-    case TypeUpdateStorySendSucceeded:
-        return UnmarshalUpdateStorySendSucceeded(data)
+    case TypeUpdateStoryPostSucceeded:
+        return UnmarshalUpdateStoryPostSucceeded(data)
 
-    case TypeUpdateStorySendFailed:
-        return UnmarshalUpdateStorySendFailed(data)
+    case TypeUpdateStoryPostFailed:
+        return UnmarshalUpdateStoryPostFailed(data)
 
     case TypeUpdateChatActiveStories:
         return UnmarshalUpdateChatActiveStories(data)
@@ -12896,6 +13019,14 @@ func UnmarshalLinkPreviewTypeExternalVideo(data json.RawMessage) (*LinkPreviewTy
     return &resp, err
 }
 
+func UnmarshalLinkPreviewTypeGroupCall(data json.RawMessage) (*LinkPreviewTypeGroupCall, error) {
+    var resp LinkPreviewTypeGroupCall
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalLinkPreviewTypeInvoice(data json.RawMessage) (*LinkPreviewTypeInvoice, error) {
     var resp LinkPreviewTypeInvoice
 
@@ -14138,6 +14269,14 @@ func UnmarshalMessageInvoice(data json.RawMessage) (*MessageInvoice, error) {
 
 func UnmarshalMessageCall(data json.RawMessage) (*MessageCall, error) {
     var resp MessageCall
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageGroupCall(data json.RawMessage) (*MessageGroupCall, error) {
+    var resp MessageGroupCall
 
     err := json.Unmarshal(data, &resp)
 
@@ -16016,8 +16155,8 @@ func UnmarshalCallDiscardReasonHungUp(data json.RawMessage) (*CallDiscardReasonH
     return &resp, err
 }
 
-func UnmarshalCallDiscardReasonAllowGroupCall(data json.RawMessage) (*CallDiscardReasonAllowGroupCall, error) {
-    var resp CallDiscardReasonAllowGroupCall
+func UnmarshalCallDiscardReasonUpgradeToGroupCall(data json.RawMessage) (*CallDiscardReasonUpgradeToGroupCall, error) {
+    var resp CallDiscardReasonUpgradeToGroupCall
 
     err := json.Unmarshal(data, &resp)
 
@@ -16120,6 +16259,14 @@ func UnmarshalCallStateError(data json.RawMessage) (*CallStateError, error) {
     return &resp, err
 }
 
+func UnmarshalGroupCallJoinParameters(data json.RawMessage) (*GroupCallJoinParameters, error) {
+    var resp GroupCallJoinParameters
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalGroupCallVideoQualityThumbnail(data json.RawMessage) (*GroupCallVideoQualityThumbnail, error) {
     var resp GroupCallVideoQualityThumbnail
 
@@ -16144,16 +16291,16 @@ func UnmarshalGroupCallVideoQualityFull(data json.RawMessage) (*GroupCallVideoQu
     return &resp, err
 }
 
-func UnmarshalGroupCallStream(data json.RawMessage) (*GroupCallStream, error) {
-    var resp GroupCallStream
+func UnmarshalVideoChatStream(data json.RawMessage) (*VideoChatStream, error) {
+    var resp VideoChatStream
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalGroupCallStreams(data json.RawMessage) (*GroupCallStreams, error) {
-    var resp GroupCallStreams
+func UnmarshalVideoChatStreams(data json.RawMessage) (*VideoChatStreams, error) {
+    var resp VideoChatStreams
 
     err := json.Unmarshal(data, &resp)
 
@@ -16202,6 +16349,86 @@ func UnmarshalGroupCallParticipantVideoInfo(data json.RawMessage) (*GroupCallPar
 
 func UnmarshalGroupCallParticipant(data json.RawMessage) (*GroupCallParticipant, error) {
     var resp GroupCallParticipant
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGroupCallParticipants(data json.RawMessage) (*GroupCallParticipants, error) {
+    var resp GroupCallParticipants
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGroupCallInfo(data json.RawMessage) (*GroupCallInfo, error) {
+    var resp GroupCallInfo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInviteGroupCallParticipantResultUserPrivacyRestricted(data json.RawMessage) (*InviteGroupCallParticipantResultUserPrivacyRestricted, error) {
+    var resp InviteGroupCallParticipantResultUserPrivacyRestricted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInviteGroupCallParticipantResultUserAlreadyParticipant(data json.RawMessage) (*InviteGroupCallParticipantResultUserAlreadyParticipant, error) {
+    var resp InviteGroupCallParticipantResultUserAlreadyParticipant
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInviteGroupCallParticipantResultUserWasBanned(data json.RawMessage) (*InviteGroupCallParticipantResultUserWasBanned, error) {
+    var resp InviteGroupCallParticipantResultUserWasBanned
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInviteGroupCallParticipantResultSuccess(data json.RawMessage) (*InviteGroupCallParticipantResultSuccess, error) {
+    var resp InviteGroupCallParticipantResultSuccess
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGroupCallDataChannelMain(data json.RawMessage) (*GroupCallDataChannelMain, error) {
+    var resp GroupCallDataChannelMain
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGroupCallDataChannelScreenSharing(data json.RawMessage) (*GroupCallDataChannelScreenSharing, error) {
+    var resp GroupCallDataChannelScreenSharing
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputGroupCallLink(data json.RawMessage) (*InputGroupCallLink, error) {
+    var resp InputGroupCallLink
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputGroupCallMessage(data json.RawMessage) (*InputGroupCallMessage, error) {
+    var resp InputGroupCallMessage
 
     err := json.Unmarshal(data, &resp)
 
@@ -17432,16 +17659,16 @@ func UnmarshalPremiumLimitTypeActiveStoryCount(data json.RawMessage) (*PremiumLi
     return &resp, err
 }
 
-func UnmarshalPremiumLimitTypeWeeklySentStoryCount(data json.RawMessage) (*PremiumLimitTypeWeeklySentStoryCount, error) {
-    var resp PremiumLimitTypeWeeklySentStoryCount
+func UnmarshalPremiumLimitTypeWeeklyPostedStoryCount(data json.RawMessage) (*PremiumLimitTypeWeeklyPostedStoryCount, error) {
+    var resp PremiumLimitTypeWeeklyPostedStoryCount
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalPremiumLimitTypeMonthlySentStoryCount(data json.RawMessage) (*PremiumLimitTypeMonthlySentStoryCount, error) {
-    var resp PremiumLimitTypeMonthlySentStoryCount
+func UnmarshalPremiumLimitTypeMonthlyPostedStoryCount(data json.RawMessage) (*PremiumLimitTypeMonthlyPostedStoryCount, error) {
+    var resp PremiumLimitTypeMonthlyPostedStoryCount
 
     err := json.Unmarshal(data, &resp)
 
@@ -18248,48 +18475,48 @@ func UnmarshalHashtags(data json.RawMessage) (*Hashtags, error) {
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultOk(data json.RawMessage) (*CanSendStoryResultOk, error) {
-    var resp CanSendStoryResultOk
+func UnmarshalCanPostStoryResultOk(data json.RawMessage) (*CanPostStoryResultOk, error) {
+    var resp CanPostStoryResultOk
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultPremiumNeeded(data json.RawMessage) (*CanSendStoryResultPremiumNeeded, error) {
-    var resp CanSendStoryResultPremiumNeeded
+func UnmarshalCanPostStoryResultPremiumNeeded(data json.RawMessage) (*CanPostStoryResultPremiumNeeded, error) {
+    var resp CanPostStoryResultPremiumNeeded
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultBoostNeeded(data json.RawMessage) (*CanSendStoryResultBoostNeeded, error) {
-    var resp CanSendStoryResultBoostNeeded
+func UnmarshalCanPostStoryResultBoostNeeded(data json.RawMessage) (*CanPostStoryResultBoostNeeded, error) {
+    var resp CanPostStoryResultBoostNeeded
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultActiveStoryLimitExceeded(data json.RawMessage) (*CanSendStoryResultActiveStoryLimitExceeded, error) {
-    var resp CanSendStoryResultActiveStoryLimitExceeded
+func UnmarshalCanPostStoryResultActiveStoryLimitExceeded(data json.RawMessage) (*CanPostStoryResultActiveStoryLimitExceeded, error) {
+    var resp CanPostStoryResultActiveStoryLimitExceeded
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultWeeklyLimitExceeded(data json.RawMessage) (*CanSendStoryResultWeeklyLimitExceeded, error) {
-    var resp CanSendStoryResultWeeklyLimitExceeded
+func UnmarshalCanPostStoryResultWeeklyLimitExceeded(data json.RawMessage) (*CanPostStoryResultWeeklyLimitExceeded, error) {
+    var resp CanPostStoryResultWeeklyLimitExceeded
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalCanSendStoryResultMonthlyLimitExceeded(data json.RawMessage) (*CanSendStoryResultMonthlyLimitExceeded, error) {
-    var resp CanSendStoryResultMonthlyLimitExceeded
+func UnmarshalCanPostStoryResultMonthlyLimitExceeded(data json.RawMessage) (*CanPostStoryResultMonthlyLimitExceeded, error) {
+    var resp CanPostStoryResultMonthlyLimitExceeded
 
     err := json.Unmarshal(data, &resp)
 
@@ -19712,6 +19939,14 @@ func UnmarshalInternalLinkTypeGame(data json.RawMessage) (*InternalLinkTypeGame,
     return &resp, err
 }
 
+func UnmarshalInternalLinkTypeGroupCall(data json.RawMessage) (*InternalLinkTypeGroupCall, error) {
+    var resp InternalLinkTypeGroupCall
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalInternalLinkTypeInstantView(data json.RawMessage) (*InternalLinkTypeInstantView, error) {
     var resp InternalLinkTypeInstantView
 
@@ -19986,14 +20221,6 @@ func UnmarshalBlockListMain(data json.RawMessage) (*BlockListMain, error) {
 
 func UnmarshalBlockListStories(data json.RawMessage) (*BlockListStories, error) {
     var resp BlockListStories
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalFilePart(data json.RawMessage) (*FilePart, error) {
-    var resp FilePart
 
     err := json.Unmarshal(data, &resp)
 
@@ -20650,6 +20877,14 @@ func UnmarshalCount(data json.RawMessage) (*Count, error) {
 
 func UnmarshalText(data json.RawMessage) (*Text, error) {
     var resp Text
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalData(data json.RawMessage) (*Data, error) {
+    var resp Data
 
     err := json.Unmarshal(data, &resp)
 
@@ -21768,6 +22003,22 @@ func UnmarshalUpdateGroupCallParticipant(data json.RawMessage) (*UpdateGroupCall
     return &resp, err
 }
 
+func UnmarshalUpdateGroupCallParticipants(data json.RawMessage) (*UpdateGroupCallParticipants, error) {
+    var resp UpdateGroupCallParticipants
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateGroupCallVerificationState(data json.RawMessage) (*UpdateGroupCallVerificationState, error) {
+    var resp UpdateGroupCallVerificationState
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateNewCallSignalingData(data json.RawMessage) (*UpdateNewCallSignalingData, error) {
     var resp UpdateNewCallSignalingData
 
@@ -21816,16 +22067,16 @@ func UnmarshalUpdateStoryDeleted(data json.RawMessage) (*UpdateStoryDeleted, err
     return &resp, err
 }
 
-func UnmarshalUpdateStorySendSucceeded(data json.RawMessage) (*UpdateStorySendSucceeded, error) {
-    var resp UpdateStorySendSucceeded
+func UnmarshalUpdateStoryPostSucceeded(data json.RawMessage) (*UpdateStoryPostSucceeded, error) {
+    var resp UpdateStoryPostSucceeded
 
     err := json.Unmarshal(data, &resp)
 
     return &resp, err
 }
 
-func UnmarshalUpdateStorySendFailed(data json.RawMessage) (*UpdateStorySendFailed, error) {
-    var resp UpdateStorySendFailed
+func UnmarshalUpdateStoryPostFailed(data json.RawMessage) (*UpdateStoryPostFailed, error) {
+    var resp UpdateStoryPostFailed
 
     err := json.Unmarshal(data, &resp)
 
@@ -24062,6 +24313,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeLinkPreviewTypeExternalVideo:
         return UnmarshalLinkPreviewTypeExternalVideo(data)
 
+    case TypeLinkPreviewTypeGroupCall:
+        return UnmarshalLinkPreviewTypeGroupCall(data)
+
     case TypeLinkPreviewTypeInvoice:
         return UnmarshalLinkPreviewTypeInvoice(data)
 
@@ -24529,6 +24783,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessageCall:
         return UnmarshalMessageCall(data)
+
+    case TypeMessageGroupCall:
+        return UnmarshalMessageGroupCall(data)
 
     case TypeMessageVideoChatScheduled:
         return UnmarshalMessageVideoChatScheduled(data)
@@ -25232,8 +25489,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeCallDiscardReasonHungUp:
         return UnmarshalCallDiscardReasonHungUp(data)
 
-    case TypeCallDiscardReasonAllowGroupCall:
-        return UnmarshalCallDiscardReasonAllowGroupCall(data)
+    case TypeCallDiscardReasonUpgradeToGroupCall:
+        return UnmarshalCallDiscardReasonUpgradeToGroupCall(data)
 
     case TypeCallProtocol:
         return UnmarshalCallProtocol(data)
@@ -25271,6 +25528,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeCallStateError:
         return UnmarshalCallStateError(data)
 
+    case TypeGroupCallJoinParameters:
+        return UnmarshalGroupCallJoinParameters(data)
+
     case TypeGroupCallVideoQualityThumbnail:
         return UnmarshalGroupCallVideoQualityThumbnail(data)
 
@@ -25280,11 +25540,11 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeGroupCallVideoQualityFull:
         return UnmarshalGroupCallVideoQualityFull(data)
 
-    case TypeGroupCallStream:
-        return UnmarshalGroupCallStream(data)
+    case TypeVideoChatStream:
+        return UnmarshalVideoChatStream(data)
 
-    case TypeGroupCallStreams:
-        return UnmarshalGroupCallStreams(data)
+    case TypeVideoChatStreams:
+        return UnmarshalVideoChatStreams(data)
 
     case TypeRtmpUrl:
         return UnmarshalRtmpUrl(data)
@@ -25303,6 +25563,36 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeGroupCallParticipant:
         return UnmarshalGroupCallParticipant(data)
+
+    case TypeGroupCallParticipants:
+        return UnmarshalGroupCallParticipants(data)
+
+    case TypeGroupCallInfo:
+        return UnmarshalGroupCallInfo(data)
+
+    case TypeInviteGroupCallParticipantResultUserPrivacyRestricted:
+        return UnmarshalInviteGroupCallParticipantResultUserPrivacyRestricted(data)
+
+    case TypeInviteGroupCallParticipantResultUserAlreadyParticipant:
+        return UnmarshalInviteGroupCallParticipantResultUserAlreadyParticipant(data)
+
+    case TypeInviteGroupCallParticipantResultUserWasBanned:
+        return UnmarshalInviteGroupCallParticipantResultUserWasBanned(data)
+
+    case TypeInviteGroupCallParticipantResultSuccess:
+        return UnmarshalInviteGroupCallParticipantResultSuccess(data)
+
+    case TypeGroupCallDataChannelMain:
+        return UnmarshalGroupCallDataChannelMain(data)
+
+    case TypeGroupCallDataChannelScreenSharing:
+        return UnmarshalGroupCallDataChannelScreenSharing(data)
+
+    case TypeInputGroupCallLink:
+        return UnmarshalInputGroupCallLink(data)
+
+    case TypeInputGroupCallMessage:
+        return UnmarshalInputGroupCallMessage(data)
 
     case TypeCallProblemEcho:
         return UnmarshalCallProblemEcho(data)
@@ -25763,11 +26053,11 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePremiumLimitTypeActiveStoryCount:
         return UnmarshalPremiumLimitTypeActiveStoryCount(data)
 
-    case TypePremiumLimitTypeWeeklySentStoryCount:
-        return UnmarshalPremiumLimitTypeWeeklySentStoryCount(data)
+    case TypePremiumLimitTypeWeeklyPostedStoryCount:
+        return UnmarshalPremiumLimitTypeWeeklyPostedStoryCount(data)
 
-    case TypePremiumLimitTypeMonthlySentStoryCount:
-        return UnmarshalPremiumLimitTypeMonthlySentStoryCount(data)
+    case TypePremiumLimitTypeMonthlyPostedStoryCount:
+        return UnmarshalPremiumLimitTypeMonthlyPostedStoryCount(data)
 
     case TypePremiumLimitTypeStoryCaptionLength:
         return UnmarshalPremiumLimitTypeStoryCaptionLength(data)
@@ -26069,23 +26359,23 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeHashtags:
         return UnmarshalHashtags(data)
 
-    case TypeCanSendStoryResultOk:
-        return UnmarshalCanSendStoryResultOk(data)
+    case TypeCanPostStoryResultOk:
+        return UnmarshalCanPostStoryResultOk(data)
 
-    case TypeCanSendStoryResultPremiumNeeded:
-        return UnmarshalCanSendStoryResultPremiumNeeded(data)
+    case TypeCanPostStoryResultPremiumNeeded:
+        return UnmarshalCanPostStoryResultPremiumNeeded(data)
 
-    case TypeCanSendStoryResultBoostNeeded:
-        return UnmarshalCanSendStoryResultBoostNeeded(data)
+    case TypeCanPostStoryResultBoostNeeded:
+        return UnmarshalCanPostStoryResultBoostNeeded(data)
 
-    case TypeCanSendStoryResultActiveStoryLimitExceeded:
-        return UnmarshalCanSendStoryResultActiveStoryLimitExceeded(data)
+    case TypeCanPostStoryResultActiveStoryLimitExceeded:
+        return UnmarshalCanPostStoryResultActiveStoryLimitExceeded(data)
 
-    case TypeCanSendStoryResultWeeklyLimitExceeded:
-        return UnmarshalCanSendStoryResultWeeklyLimitExceeded(data)
+    case TypeCanPostStoryResultWeeklyLimitExceeded:
+        return UnmarshalCanPostStoryResultWeeklyLimitExceeded(data)
 
-    case TypeCanSendStoryResultMonthlyLimitExceeded:
-        return UnmarshalCanSendStoryResultMonthlyLimitExceeded(data)
+    case TypeCanPostStoryResultMonthlyLimitExceeded:
+        return UnmarshalCanPostStoryResultMonthlyLimitExceeded(data)
 
     case TypeCanTransferOwnershipResultOk:
         return UnmarshalCanTransferOwnershipResultOk(data)
@@ -26618,6 +26908,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(data)
 
+    case TypeInternalLinkTypeGroupCall:
+        return UnmarshalInternalLinkTypeGroupCall(data)
+
     case TypeInternalLinkTypeInstantView:
         return UnmarshalInternalLinkTypeInstantView(data)
 
@@ -26722,9 +27015,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeBlockListStories:
         return UnmarshalBlockListStories(data)
-
-    case TypeFilePart:
-        return UnmarshalFilePart(data)
 
     case TypeFileTypeNone:
         return UnmarshalFileTypeNone(data)
@@ -26971,6 +27261,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeText:
         return UnmarshalText(data)
+
+    case TypeData:
+        return UnmarshalData(data)
 
     case TypeSeconds:
         return UnmarshalSeconds(data)
@@ -27389,6 +27682,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateGroupCallParticipant:
         return UnmarshalUpdateGroupCallParticipant(data)
 
+    case TypeUpdateGroupCallParticipants:
+        return UnmarshalUpdateGroupCallParticipants(data)
+
+    case TypeUpdateGroupCallVerificationState:
+        return UnmarshalUpdateGroupCallVerificationState(data)
+
     case TypeUpdateNewCallSignalingData:
         return UnmarshalUpdateNewCallSignalingData(data)
 
@@ -27407,11 +27706,11 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateStoryDeleted:
         return UnmarshalUpdateStoryDeleted(data)
 
-    case TypeUpdateStorySendSucceeded:
-        return UnmarshalUpdateStorySendSucceeded(data)
+    case TypeUpdateStoryPostSucceeded:
+        return UnmarshalUpdateStoryPostSucceeded(data)
 
-    case TypeUpdateStorySendFailed:
-        return UnmarshalUpdateStorySendFailed(data)
+    case TypeUpdateStoryPostFailed:
+        return UnmarshalUpdateStoryPostFailed(data)
 
     case TypeUpdateChatActiveStories:
         return UnmarshalUpdateChatActiveStories(data)

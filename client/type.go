@@ -107,6 +107,9 @@ const (
     ClassCallServerType = "CallServerType"
     ClassCallState = "CallState"
     ClassGroupCallVideoQuality = "GroupCallVideoQuality"
+    ClassInviteGroupCallParticipantResult = "InviteGroupCallParticipantResult"
+    ClassGroupCallDataChannel = "GroupCallDataChannel"
+    ClassInputGroupCall = "InputGroupCall"
     ClassCallProblem = "CallProblem"
     ClassFirebaseAuthenticationSettings = "FirebaseAuthenticationSettings"
     ClassReactionUnavailabilityReason = "ReactionUnavailabilityReason"
@@ -132,7 +135,7 @@ const (
     ClassBackgroundFill = "BackgroundFill"
     ClassBackgroundType = "BackgroundType"
     ClassInputBackground = "InputBackground"
-    ClassCanSendStoryResult = "CanSendStoryResult"
+    ClassCanPostStoryResult = "CanPostStoryResult"
     ClassCanTransferOwnershipResult = "CanTransferOwnershipResult"
     ClassCheckChatUsernameResult = "CheckChatUsernameResult"
     ClassCheckStickerSetNameResult = "CheckStickerSetNameResult"
@@ -488,14 +491,17 @@ const (
     ClassCallServer = "CallServer"
     ClassCallId = "CallId"
     ClassGroupCallId = "GroupCallId"
-    ClassGroupCallStream = "GroupCallStream"
-    ClassGroupCallStreams = "GroupCallStreams"
+    ClassGroupCallJoinParameters = "GroupCallJoinParameters"
+    ClassVideoChatStream = "VideoChatStream"
+    ClassVideoChatStreams = "VideoChatStreams"
     ClassRtmpUrl = "RtmpUrl"
     ClassGroupCallRecentSpeaker = "GroupCallRecentSpeaker"
     ClassGroupCall = "GroupCall"
     ClassGroupCallVideoSourceGroup = "GroupCallVideoSourceGroup"
     ClassGroupCallParticipantVideoInfo = "GroupCallParticipantVideoInfo"
     ClassGroupCallParticipant = "GroupCallParticipant"
+    ClassGroupCallParticipants = "GroupCallParticipants"
+    ClassGroupCallInfo = "GroupCallInfo"
     ClassCall = "Call"
     ClassPhoneNumberAuthenticationSettings = "PhoneNumberAuthenticationSettings"
     ClassAddedReaction = "AddedReaction"
@@ -557,7 +563,6 @@ const (
     ClassMessageLinkInfo = "MessageLinkInfo"
     ClassChatBoostLink = "ChatBoostLink"
     ClassChatBoostLinkInfo = "ChatBoostLinkInfo"
-    ClassFilePart = "FilePart"
     ClassStorageStatisticsByFileType = "StorageStatisticsByFileType"
     ClassStorageStatisticsByChat = "StorageStatisticsByChat"
     ClassStorageStatistics = "StorageStatistics"
@@ -575,6 +580,7 @@ const (
     ClassTMeUrls = "TMeUrls"
     ClassCount = "Count"
     ClassText = "Text"
+    ClassData = "Data"
     ClassSeconds = "Seconds"
     ClassFileDownloadedPrefixSize = "FileDownloadedPrefixSize"
     ClassStarCount = "StarCount"
@@ -1154,6 +1160,7 @@ const (
     TypeLinkPreviewTypeEmbeddedVideoPlayer = "linkPreviewTypeEmbeddedVideoPlayer"
     TypeLinkPreviewTypeExternalAudio = "linkPreviewTypeExternalAudio"
     TypeLinkPreviewTypeExternalVideo = "linkPreviewTypeExternalVideo"
+    TypeLinkPreviewTypeGroupCall = "linkPreviewTypeGroupCall"
     TypeLinkPreviewTypeInvoice = "linkPreviewTypeInvoice"
     TypeLinkPreviewTypeMessage = "linkPreviewTypeMessage"
     TypeLinkPreviewTypePhoto = "linkPreviewTypePhoto"
@@ -1310,6 +1317,7 @@ const (
     TypeMessageStory = "messageStory"
     TypeMessageInvoice = "messageInvoice"
     TypeMessageCall = "messageCall"
+    TypeMessageGroupCall = "messageGroupCall"
     TypeMessageVideoChatScheduled = "messageVideoChatScheduled"
     TypeMessageVideoChatStarted = "messageVideoChatStarted"
     TypeMessageVideoChatEnded = "messageVideoChatEnded"
@@ -1544,7 +1552,7 @@ const (
     TypeCallDiscardReasonDeclined = "callDiscardReasonDeclined"
     TypeCallDiscardReasonDisconnected = "callDiscardReasonDisconnected"
     TypeCallDiscardReasonHungUp = "callDiscardReasonHungUp"
-    TypeCallDiscardReasonAllowGroupCall = "callDiscardReasonAllowGroupCall"
+    TypeCallDiscardReasonUpgradeToGroupCall = "callDiscardReasonUpgradeToGroupCall"
     TypeCallProtocol = "callProtocol"
     TypeCallServerTypeTelegramReflector = "callServerTypeTelegramReflector"
     TypeCallServerTypeWebrtc = "callServerTypeWebrtc"
@@ -1557,17 +1565,28 @@ const (
     TypeCallStateHangingUp = "callStateHangingUp"
     TypeCallStateDiscarded = "callStateDiscarded"
     TypeCallStateError = "callStateError"
+    TypeGroupCallJoinParameters = "groupCallJoinParameters"
     TypeGroupCallVideoQualityThumbnail = "groupCallVideoQualityThumbnail"
     TypeGroupCallVideoQualityMedium = "groupCallVideoQualityMedium"
     TypeGroupCallVideoQualityFull = "groupCallVideoQualityFull"
-    TypeGroupCallStream = "groupCallStream"
-    TypeGroupCallStreams = "groupCallStreams"
+    TypeVideoChatStream = "videoChatStream"
+    TypeVideoChatStreams = "videoChatStreams"
     TypeRtmpUrl = "rtmpUrl"
     TypeGroupCallRecentSpeaker = "groupCallRecentSpeaker"
     TypeGroupCall = "groupCall"
     TypeGroupCallVideoSourceGroup = "groupCallVideoSourceGroup"
     TypeGroupCallParticipantVideoInfo = "groupCallParticipantVideoInfo"
     TypeGroupCallParticipant = "groupCallParticipant"
+    TypeGroupCallParticipants = "groupCallParticipants"
+    TypeGroupCallInfo = "groupCallInfo"
+    TypeInviteGroupCallParticipantResultUserPrivacyRestricted = "inviteGroupCallParticipantResultUserPrivacyRestricted"
+    TypeInviteGroupCallParticipantResultUserAlreadyParticipant = "inviteGroupCallParticipantResultUserAlreadyParticipant"
+    TypeInviteGroupCallParticipantResultUserWasBanned = "inviteGroupCallParticipantResultUserWasBanned"
+    TypeInviteGroupCallParticipantResultSuccess = "inviteGroupCallParticipantResultSuccess"
+    TypeGroupCallDataChannelMain = "groupCallDataChannelMain"
+    TypeGroupCallDataChannelScreenSharing = "groupCallDataChannelScreenSharing"
+    TypeInputGroupCallLink = "inputGroupCallLink"
+    TypeInputGroupCallMessage = "inputGroupCallMessage"
     TypeCallProblemEcho = "callProblemEcho"
     TypeCallProblemNoise = "callProblemNoise"
     TypeCallProblemInterruptions = "callProblemInterruptions"
@@ -1721,8 +1740,8 @@ const (
     TypePremiumLimitTypeChatFolderInviteLinkCount = "premiumLimitTypeChatFolderInviteLinkCount"
     TypePremiumLimitTypeShareableChatFolderCount = "premiumLimitTypeShareableChatFolderCount"
     TypePremiumLimitTypeActiveStoryCount = "premiumLimitTypeActiveStoryCount"
-    TypePremiumLimitTypeWeeklySentStoryCount = "premiumLimitTypeWeeklySentStoryCount"
-    TypePremiumLimitTypeMonthlySentStoryCount = "premiumLimitTypeMonthlySentStoryCount"
+    TypePremiumLimitTypeWeeklyPostedStoryCount = "premiumLimitTypeWeeklyPostedStoryCount"
+    TypePremiumLimitTypeMonthlyPostedStoryCount = "premiumLimitTypeMonthlyPostedStoryCount"
     TypePremiumLimitTypeStoryCaptionLength = "premiumLimitTypeStoryCaptionLength"
     TypePremiumLimitTypeStorySuggestedReactionAreaCount = "premiumLimitTypeStorySuggestedReactionAreaCount"
     TypePremiumLimitTypeSimilarChatCount = "premiumLimitTypeSimilarChatCount"
@@ -1823,12 +1842,12 @@ const (
     TypeTimeZone = "timeZone"
     TypeTimeZones = "timeZones"
     TypeHashtags = "hashtags"
-    TypeCanSendStoryResultOk = "canSendStoryResultOk"
-    TypeCanSendStoryResultPremiumNeeded = "canSendStoryResultPremiumNeeded"
-    TypeCanSendStoryResultBoostNeeded = "canSendStoryResultBoostNeeded"
-    TypeCanSendStoryResultActiveStoryLimitExceeded = "canSendStoryResultActiveStoryLimitExceeded"
-    TypeCanSendStoryResultWeeklyLimitExceeded = "canSendStoryResultWeeklyLimitExceeded"
-    TypeCanSendStoryResultMonthlyLimitExceeded = "canSendStoryResultMonthlyLimitExceeded"
+    TypeCanPostStoryResultOk = "canPostStoryResultOk"
+    TypeCanPostStoryResultPremiumNeeded = "canPostStoryResultPremiumNeeded"
+    TypeCanPostStoryResultBoostNeeded = "canPostStoryResultBoostNeeded"
+    TypeCanPostStoryResultActiveStoryLimitExceeded = "canPostStoryResultActiveStoryLimitExceeded"
+    TypeCanPostStoryResultWeeklyLimitExceeded = "canPostStoryResultWeeklyLimitExceeded"
+    TypeCanPostStoryResultMonthlyLimitExceeded = "canPostStoryResultMonthlyLimitExceeded"
     TypeCanTransferOwnershipResultOk = "canTransferOwnershipResultOk"
     TypeCanTransferOwnershipResultPasswordNeeded = "canTransferOwnershipResultPasswordNeeded"
     TypeCanTransferOwnershipResultPasswordTooFresh = "canTransferOwnershipResultPasswordTooFresh"
@@ -2006,6 +2025,7 @@ const (
     TypeInternalLinkTypeDefaultMessageAutoDeleteTimerSettings = "internalLinkTypeDefaultMessageAutoDeleteTimerSettings"
     TypeInternalLinkTypeEditProfileSettings = "internalLinkTypeEditProfileSettings"
     TypeInternalLinkTypeGame = "internalLinkTypeGame"
+    TypeInternalLinkTypeGroupCall = "internalLinkTypeGroupCall"
     TypeInternalLinkTypeInstantView = "internalLinkTypeInstantView"
     TypeInternalLinkTypeInvoice = "internalLinkTypeInvoice"
     TypeInternalLinkTypeLanguagePack = "internalLinkTypeLanguagePack"
@@ -2041,7 +2061,6 @@ const (
     TypeChatBoostLinkInfo = "chatBoostLinkInfo"
     TypeBlockListMain = "blockListMain"
     TypeBlockListStories = "blockListStories"
-    TypeFilePart = "filePart"
     TypeFileTypeNone = "fileTypeNone"
     TypeFileTypeAnimation = "fileTypeAnimation"
     TypeFileTypeAudio = "fileTypeAudio"
@@ -2124,6 +2143,7 @@ const (
     TypeSuggestedActionExtendStarSubscriptions = "suggestedActionExtendStarSubscriptions"
     TypeCount = "count"
     TypeText = "text"
+    TypeData = "data"
     TypeSeconds = "seconds"
     TypeFileDownloadedPrefixSize = "fileDownloadedPrefixSize"
     TypeStarCount = "starCount"
@@ -2263,14 +2283,16 @@ const (
     TypeUpdateCall = "updateCall"
     TypeUpdateGroupCall = "updateGroupCall"
     TypeUpdateGroupCallParticipant = "updateGroupCallParticipant"
+    TypeUpdateGroupCallParticipants = "updateGroupCallParticipants"
+    TypeUpdateGroupCallVerificationState = "updateGroupCallVerificationState"
     TypeUpdateNewCallSignalingData = "updateNewCallSignalingData"
     TypeUpdateUserPrivacySettingRules = "updateUserPrivacySettingRules"
     TypeUpdateUnreadMessageCount = "updateUnreadMessageCount"
     TypeUpdateUnreadChatCount = "updateUnreadChatCount"
     TypeUpdateStory = "updateStory"
     TypeUpdateStoryDeleted = "updateStoryDeleted"
-    TypeUpdateStorySendSucceeded = "updateStorySendSucceeded"
-    TypeUpdateStorySendFailed = "updateStorySendFailed"
+    TypeUpdateStoryPostSucceeded = "updateStoryPostSucceeded"
+    TypeUpdateStoryPostFailed = "updateStoryPostFailed"
     TypeUpdateChatActiveStories = "updateChatActiveStories"
     TypeUpdateStoryListChatCount = "updateStoryListChatCount"
     TypeUpdateStoryStealthMode = "updateStoryStealthMode"
@@ -2792,7 +2814,7 @@ type StoryContent interface {
     StoryContentType() string
 }
 
-// The content of a story to send
+// The content of a story to post
 type InputStoryContent interface {
     InputStoryContentType() string
 }
@@ -2845,6 +2867,21 @@ type CallState interface {
 // Describes the quality of a group call video
 type GroupCallVideoQuality interface {
     GroupCallVideoQualityType() string
+}
+
+// Describes result of group call participant invitation
+type InviteGroupCallParticipantResult interface {
+    InviteGroupCallParticipantResultType() string
+}
+
+// Describes data channel for a group call
+type GroupCallDataChannel interface {
+    GroupCallDataChannelType() string
+}
+
+// Describes a non-joined group call that isn't bound to a chat
+type InputGroupCall interface {
+    InputGroupCallType() string
 }
 
 // Describes the exact type of problem with a call
@@ -2972,9 +3009,9 @@ type InputBackground interface {
     InputBackgroundType() string
 }
 
-// Represents result of checking whether the current user can send a story in the specific chat
-type CanSendStoryResult interface {
-    CanSendStoryResultType() string
+// Represents result of checking whether the current user can post a story on behalf of the specific chat
+type CanPostStoryResult interface {
+    CanPostStoryResultType() string
 }
 
 // Represents result of checking whether the current session can be used to transfer a chat ownership to another user
@@ -6852,7 +6889,7 @@ type BusinessBotRights struct {
     CanTransferAndUpgradeGifts bool `json:"can_transfer_and_upgrade_gifts"`
     // True, if the bot can transfer Telegram Stars received by the business account to account of the bot, or use them to upgrade and transfer gifts
     CanTransferStars bool `json:"can_transfer_stars"`
-    // True, if the bot can send, edit and delete stories
+    // True, if the bot can post, edit and delete stories
     CanManageStories bool `json:"can_manage_stories"`
 }
 
@@ -12671,7 +12708,7 @@ type Supergroup struct {
     Date int32 `json:"date"`
     // Status of the current user in the supergroup or channel; custom title will always be empty
     Status ChatMemberStatus `json:"status"`
-    // Number of members in the supergroup or channel; 0 if unknown. Currently, it is guaranteed to be known only if the supergroup or channel was received through getChatSimilarChats, getChatsToSendStories, getCreatedPublicChats, getGroupsInCommon, getInactiveSupergroupChats, getRecommendedChats, getSuitableDiscussionChats, getUserPrivacySettingRules, getVideoChatAvailableParticipants, searchPublicChats, or in chatFolderInviteLinkInfo.missing_chat_ids, or in userFullInfo.personal_chat_id, or for chats with messages or stories from publicForwards and foundStories
+    // Number of members in the supergroup or channel; 0 if unknown. Currently, it is guaranteed to be known only if the supergroup or channel was received through getChatSimilarChats, getChatsToPostStories, getCreatedPublicChats, getGroupsInCommon, getInactiveSupergroupChats, getRecommendedChats, getSuitableDiscussionChats, getUserPrivacySettingRules, getVideoChatAvailableParticipants, searchPublicChats, or in chatFolderInviteLinkInfo.missing_chat_ids, or in userFullInfo.personal_chat_id, or for chats with messages or stories from publicForwards and foundStories
     MemberCount int32 `json:"member_count"`
     // Approximate boost level for the chat
     BoostLevel int32 `json:"boost_level"`
@@ -14342,8 +14379,8 @@ func (messageReplyToMessage *MessageReplyToMessage) UnmarshalJSON(data []byte) e
 // Describes a story replied by a given message
 type MessageReplyToStory struct {
     meta
-    // The identifier of the sender of the story
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    // The identifier of the poster of the story
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // The identifier of the story
     StoryId int32 `json:"story_id"`
 }
@@ -14431,8 +14468,8 @@ func (*InputMessageReplyToExternalMessage) InputMessageReplyToType() string {
 // Describes a story to be replied
 type InputMessageReplyToStory struct {
     meta
-    // The identifier of the sender of the story. Currently, stories can be replied only in the sender's chat and channel stories can't be replied
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    // The identifier of the poster of the story. Currently, stories can be replied only in the chat that posted the story; channel stories can't be replied
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // The identifier of the story
     StoryId int32 `json:"story_id"`
 }
@@ -15674,10 +15711,10 @@ type ChatNotificationSettings struct {
     UseDefaultStorySound bool `json:"use_default_story_sound"`
     // Identifier of the notification sound to be played for stories; 0 if sound is disabled
     StorySoundId JsonInt64 `json:"story_sound_id"`
-    // If true, the value for the relevant type of chat is used instead of show_story_sender
-    UseDefaultShowStorySender bool `json:"use_default_show_story_sender"`
-    // True, if the sender of stories must be displayed in notifications
-    ShowStorySender bool `json:"show_story_sender"`
+    // If true, the value for the relevant type of chat is used instead of show_story_poster
+    UseDefaultShowStoryPoster bool `json:"use_default_show_story_poster"`
+    // True, if the chat that posted a story must be displayed in notifications
+    ShowStoryPoster bool `json:"show_story_poster"`
     // If true, the value for the relevant type of chat or the forum chat is used instead of disable_pinned_message_notifications
     UseDefaultDisablePinnedMessageNotifications bool `json:"use_default_disable_pinned_message_notifications"`
     // If true, notifications for incoming pinned messages will be created as for an ordinary unread message
@@ -15719,8 +15756,8 @@ type ScopeNotificationSettings struct {
     MuteStories bool `json:"mute_stories"`
     // Identifier of the notification sound to be played for stories; 0 if sound is disabled
     StorySoundId JsonInt64 `json:"story_sound_id"`
-    // True, if the sender of stories must be displayed in notifications
-    ShowStorySender bool `json:"show_story_sender"`
+    // True, if the chat that posted a story must be displayed in notifications
+    ShowStoryPoster bool `json:"show_story_poster"`
     // True, if notifications for incoming pinned messages will be created as for an ordinary unread message
     DisablePinnedMessageNotifications bool `json:"disable_pinned_message_notifications"`
     // True, if notifications for messages with mentions will be created as for an ordinary unread message
@@ -16721,7 +16758,7 @@ func (*BusinessBotManageBar) GetType() string {
     return TypeBusinessBotManageBar
 }
 
-// Describes a video chat
+// Describes a video chat, i.e. a group call bound to a chat
 type VideoChat struct {
     meta
     // Group call identifier of an active video chat; 0 if none. Full information about the video chat can be received through the method getGroupCall
@@ -21724,6 +21761,31 @@ func (*LinkPreviewTypeExternalVideo) LinkPreviewTypeType() string {
     return TypeLinkPreviewTypeExternalVideo
 }
 
+// The link is a link to a group call that isn't bound to a chat
+type LinkPreviewTypeGroupCall struct{
+    meta
+}
+
+func (entity *LinkPreviewTypeGroupCall) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub LinkPreviewTypeGroupCall
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*LinkPreviewTypeGroupCall) GetClass() string {
+    return ClassLinkPreviewType
+}
+
+func (*LinkPreviewTypeGroupCall) GetType() string {
+    return TypeLinkPreviewTypeGroupCall
+}
+
+func (*LinkPreviewTypeGroupCall) LinkPreviewTypeType() string {
+    return TypeLinkPreviewTypeGroupCall
+}
+
 // The link is a link to an invoice
 type LinkPreviewTypeInvoice struct{
     meta
@@ -21909,7 +21971,7 @@ func (*LinkPreviewTypeStickerSet) LinkPreviewTypeType() string {
 type LinkPreviewTypeStory struct {
     meta
     // The identifier of the chat that posted the story
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // Story identifier
     StoryId int32 `json:"story_id"`
 }
@@ -26393,7 +26455,7 @@ func (*MessagePoll) MessageContentType() string {
 type MessageStory struct {
     meta
     // Identifier of the chat that posted the story
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // Story identifier
     StoryId int32 `json:"story_id"`
     // True, if the story was automatically forwarded because of a mention of the user
@@ -26544,6 +26606,66 @@ func (messageCall *MessageCall) UnmarshalJSON(data []byte) error {
 
     fieldDiscardReason, _ := UnmarshalCallDiscardReason(tmp.DiscardReason)
     messageCall.DiscardReason = fieldDiscardReason
+
+    return nil
+}
+
+// A message with information about a group call not bound to a chat. If the message is incoming, the call isn't active, isn't missed, and has no duration, and getOption("can_accept_calls") is true, then incoming call screen must be shown to the user. Use joinGroupCall to accept the call or declineGroupCallInvitation to decline it. If the call become active or missed, then the call screen must be hidden
+type MessageGroupCall struct {
+    meta
+    // True, if the call is active, i.e. the called user joined the call
+    IsActive bool `json:"is_active"`
+    // True, if the called user missed or declined the call
+    WasMissed bool `json:"was_missed"`
+    // True, if the call is a video call
+    IsVideo bool `json:"is_video"`
+    // Call duration, in seconds; for left calls only
+    Duration int32 `json:"duration"`
+    // Identifiers of some other call participants
+    OtherParticipantIds []MessageSender `json:"other_participant_ids"`
+}
+
+func (entity *MessageGroupCall) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub MessageGroupCall
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*MessageGroupCall) GetClass() string {
+    return ClassMessageContent
+}
+
+func (*MessageGroupCall) GetType() string {
+    return TypeMessageGroupCall
+}
+
+func (*MessageGroupCall) MessageContentType() string {
+    return TypeMessageGroupCall
+}
+
+func (messageGroupCall *MessageGroupCall) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        IsActive bool `json:"is_active"`
+        WasMissed bool `json:"was_missed"`
+        IsVideo bool `json:"is_video"`
+        Duration int32 `json:"duration"`
+        OtherParticipantIds []json.RawMessage `json:"other_participant_ids"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    messageGroupCall.IsActive = tmp.IsActive
+    messageGroupCall.WasMissed = tmp.WasMissed
+    messageGroupCall.IsVideo = tmp.IsVideo
+    messageGroupCall.Duration = tmp.Duration
+
+    fieldOtherParticipantIds, _ := UnmarshalListOfMessageSender(tmp.OtherParticipantIds)
+    messageGroupCall.OtherParticipantIds = fieldOtherParticipantIds
 
     return nil
 }
@@ -30357,11 +30479,11 @@ func (inputMessagePoll *InputMessagePoll) UnmarshalJSON(data []byte) error {
     return nil
 }
 
-// A message with a forwarded story. Stories can't be sent to secret chats. A story can be forwarded only if story.can_be_forwarded
+// A message with a forwarded story. Stories can't be forwarded to secret chats. A story can be forwarded only if story.can_be_forwarded
 type InputMessageStory struct {
     meta
     // Identifier of the chat that posted the story
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // Story identifier
     StoryId int32 `json:"story_id"`
 }
@@ -32756,7 +32878,7 @@ func (*InputStoryAreas) GetType() string {
     return TypeInputStoryAreas
 }
 
-// Describes a video file sent in a story
+// Describes a video file posted as a story
 type StoryVideo struct {
     meta
     // Duration of the video, in seconds
@@ -33036,7 +33158,7 @@ func (*StoryListArchive) StoryListType() string {
     return TypeStoryListArchive
 }
 
-// The original story was a public story with known sender
+// The original story was a public story that was posted by a known chat
 type StoryOriginPublicStory struct {
     meta
     // Identifier of the chat that posted original story
@@ -33065,11 +33187,11 @@ func (*StoryOriginPublicStory) StoryOriginType() string {
     return TypeStoryOriginPublicStory
 }
 
-// The original story was sent by an unknown user
+// The original story was posted by an unknown user
 type StoryOriginHiddenUser struct {
     meta
-    // Name of the story sender
-    SenderName string `json:"sender_name"`
+    // Name of the user or the chat that posted the story
+    PosterName string `json:"poster_name"`
 }
 
 func (entity *StoryOriginHiddenUser) MarshalJSON() ([]byte, error) {
@@ -33168,21 +33290,21 @@ func (*StoryInteractionInfo) GetType() string {
 // Represents a story
 type Story struct {
     meta
-    // Unique story identifier among stories of the given sender
+    // Unique story identifier among stories posted by the given chat
     Id int32 `json:"id"`
     // Identifier of the chat that posted the story
-    SenderChatId int64 `json:"sender_chat_id"`
-    // Identifier of the sender of the story; may be null if the story is posted on behalf of the sender_chat_id
-    SenderId MessageSender `json:"sender_id"`
+    PosterChatId int64 `json:"poster_chat_id"`
+    // Identifier of the user or chat that posted the story; may be null if the story is posted on behalf of the poster_chat_id
+    PosterId MessageSender `json:"poster_id"`
     // Point in time (Unix timestamp) when the story was published
     Date int32 `json:"date"`
-    // True, if the story is being sent by the current user
-    IsBeingSent bool `json:"is_being_sent"`
+    // True, if the story is being posted by the current user
+    IsBeingPosted bool `json:"is_being_posted"`
     // True, if the story is being edited by the current user
     IsBeingEdited bool `json:"is_being_edited"`
     // True, if the story was edited
     IsEdited bool `json:"is_edited"`
-    // True, if the story is saved in the sender's profile and will be available there after expiration
+    // True, if the story is saved in the profile of the chat that posted it and will be available there after expiration
     IsPostedToChatPage bool `json:"is_posted_to_chat_page"`
     // True, if the story is visible only for the current user
     IsVisibleOnlyForSelf bool `json:"is_visible_only_for_self"`
@@ -33192,7 +33314,7 @@ type Story struct {
     CanBeEdited bool `json:"can_be_edited"`
     // True, if the story can be forwarded as a message. Otherwise, screenshots and saving of the story content must be also forbidden
     CanBeForwarded bool `json:"can_be_forwarded"`
-    // True, if the story can be replied in the chat with the story sender
+    // True, if the story can be replied in the chat with the user that posted the story
     CanBeReplied bool `json:"can_be_replied"`
     // True, if the story's is_posted_to_chat_page value can be changed
     CanToggleIsPostedToChatPage bool `json:"can_toggle_is_posted_to_chat_page"`
@@ -33237,10 +33359,10 @@ func (*Story) GetType() string {
 func (story *Story) UnmarshalJSON(data []byte) error {
     var tmp struct {
         Id int32 `json:"id"`
-        SenderChatId int64 `json:"sender_chat_id"`
-        SenderId json.RawMessage `json:"sender_id"`
+        PosterChatId int64 `json:"poster_chat_id"`
+        PosterId json.RawMessage `json:"poster_id"`
         Date int32 `json:"date"`
-        IsBeingSent bool `json:"is_being_sent"`
+        IsBeingPosted bool `json:"is_being_posted"`
         IsBeingEdited bool `json:"is_being_edited"`
         IsEdited bool `json:"is_edited"`
         IsPostedToChatPage bool `json:"is_posted_to_chat_page"`
@@ -33268,9 +33390,9 @@ func (story *Story) UnmarshalJSON(data []byte) error {
     }
 
     story.Id = tmp.Id
-    story.SenderChatId = tmp.SenderChatId
+    story.PosterChatId = tmp.PosterChatId
     story.Date = tmp.Date
-    story.IsBeingSent = tmp.IsBeingSent
+    story.IsBeingPosted = tmp.IsBeingPosted
     story.IsBeingEdited = tmp.IsBeingEdited
     story.IsEdited = tmp.IsEdited
     story.IsPostedToChatPage = tmp.IsPostedToChatPage
@@ -33288,8 +33410,8 @@ func (story *Story) UnmarshalJSON(data []byte) error {
     story.Areas = tmp.Areas
     story.Caption = tmp.Caption
 
-    fieldSenderId, _ := UnmarshalMessageSender(tmp.SenderId)
-    story.SenderId = fieldSenderId
+    fieldPosterId, _ := UnmarshalMessageSender(tmp.PosterId)
+    story.PosterId = fieldPosterId
 
     fieldChosenReactionType, _ := UnmarshalReactionType(tmp.ChosenReactionType)
     story.ChosenReactionType = fieldChosenReactionType
@@ -33357,12 +33479,12 @@ func (*FoundStories) GetType() string {
     return TypeFoundStories
 }
 
-// Contains identifier of a story along with identifier of its sender
+// Contains identifier of a story along with identifier of the chat that posted it
 type StoryFullId struct {
     meta
     // Identifier of the chat that posted the story
-    SenderChatId int64 `json:"sender_chat_id"`
-    // Unique story identifier among stories of the given sender
+    PosterChatId int64 `json:"poster_chat_id"`
+    // Unique story identifier among stories of the chat
     StoryId int32 `json:"story_id"`
 }
 
@@ -33385,7 +33507,7 @@ func (*StoryFullId) GetType() string {
 // Contains basic information about a story
 type StoryInfo struct {
     meta
-    // Unique story identifier among stories of the given sender
+    // Unique story identifier among stories of the chat
     StoryId int32 `json:"story_id"`
     // Point in time (Unix timestamp) when the story was published
     Date int32 `json:"date"`
@@ -33416,7 +33538,7 @@ type ChatActiveStories struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the story list in which the stories are shown; may be null if the stories aren't shown in a story list
     List StoryList `json:"list"`
-    // A parameter used to determine order of the stories in the story list; 0 if the stories doesn't need to be shown in the story list. Stories must be sorted by the pair (order, story_sender_chat_id) in descending order
+    // A parameter used to determine order of the stories in the story list; 0 if the stories doesn't need to be shown in the story list. Stories must be sorted by the pair (order, story_poster_chat_id) in descending order
     Order int64 `json:"order"`
     // Identifier of the last read active story
     MaxReadStoryId int32 `json:"max_read_story_id"`
@@ -34557,31 +34679,31 @@ func (*CallDiscardReasonHungUp) CallDiscardReasonType() string {
     return TypeCallDiscardReasonHungUp
 }
 
-// The call was ended because it has been used successfully to transfer private encryption key for the associated group call
-type CallDiscardReasonAllowGroupCall struct {
+// The call was ended because it has been upgraded to a group call
+type CallDiscardReasonUpgradeToGroupCall struct {
     meta
-    // Encrypted using the call private key encryption key for the associated group call
-    EncryptedGroupCallKey []byte `json:"encrypted_group_call_key"`
+    // Invite link for the group call
+    InviteLink string `json:"invite_link"`
 }
 
-func (entity *CallDiscardReasonAllowGroupCall) MarshalJSON() ([]byte, error) {
+func (entity *CallDiscardReasonUpgradeToGroupCall) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CallDiscardReasonAllowGroupCall
+    type stub CallDiscardReasonUpgradeToGroupCall
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CallDiscardReasonAllowGroupCall) GetClass() string {
+func (*CallDiscardReasonUpgradeToGroupCall) GetClass() string {
     return ClassCallDiscardReason
 }
 
-func (*CallDiscardReasonAllowGroupCall) GetType() string {
-    return TypeCallDiscardReasonAllowGroupCall
+func (*CallDiscardReasonUpgradeToGroupCall) GetType() string {
+    return TypeCallDiscardReasonUpgradeToGroupCall
 }
 
-func (*CallDiscardReasonAllowGroupCall) CallDiscardReasonType() string {
-    return TypeCallDiscardReasonAllowGroupCall
+func (*CallDiscardReasonUpgradeToGroupCall) CallDiscardReasonType() string {
+    return TypeCallDiscardReasonUpgradeToGroupCall
 }
 
 // Specifies the supported call protocols
@@ -34848,6 +34970,8 @@ type CallStateReady struct {
     Emojis []string `json:"emojis"`
     // True, if peer-to-peer connection is allowed by users privacy settings
     AllowP2p bool `json:"allow_p2p"`
+    // True, if the other party supports upgrading of the call to a group call
+    IsGroupCallSupported bool `json:"is_group_call_supported"`
     // Custom JSON-encoded call parameters to be passed to tgcalls
     CustomParameters string `json:"custom_parameters"`
 }
@@ -34980,6 +35104,35 @@ func (*CallStateError) CallStateType() string {
     return TypeCallStateError
 }
 
+// Describes parameters used to join a group call
+type GroupCallJoinParameters struct {
+    meta
+    // Audio channel synchronization source identifier; received from tgcalls
+    AudioSourceId int32 `json:"audio_source_id"`
+    // Group call join payload; received from tgcalls
+    Payload string `json:"payload"`
+    // Pass true to join the call with muted microphone
+    IsMuted bool `json:"is_muted"`
+    // Pass true if the user's video is enabled
+    IsMyVideoEnabled bool `json:"is_my_video_enabled"`
+}
+
+func (entity *GroupCallJoinParameters) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GroupCallJoinParameters
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GroupCallJoinParameters) GetClass() string {
+    return ClassGroupCallJoinParameters
+}
+
+func (*GroupCallJoinParameters) GetType() string {
+    return TypeGroupCallJoinParameters
+}
+
 // The worst available video quality
 type GroupCallVideoQualityThumbnail struct{
     meta
@@ -35055,8 +35208,8 @@ func (*GroupCallVideoQualityFull) GroupCallVideoQualityType() string {
     return TypeGroupCallVideoQualityFull
 }
 
-// Describes an available stream in a group call
-type GroupCallStream struct {
+// Describes an available stream in a video chat
+type VideoChatStream struct {
     meta
     // Identifier of an audio/video channel
     ChannelId int32 `json:"channel_id"`
@@ -35066,43 +35219,43 @@ type GroupCallStream struct {
     TimeOffset int64 `json:"time_offset"`
 }
 
-func (entity *GroupCallStream) MarshalJSON() ([]byte, error) {
+func (entity *VideoChatStream) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub GroupCallStream
+    type stub VideoChatStream
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*GroupCallStream) GetClass() string {
-    return ClassGroupCallStream
+func (*VideoChatStream) GetClass() string {
+    return ClassVideoChatStream
 }
 
-func (*GroupCallStream) GetType() string {
-    return TypeGroupCallStream
+func (*VideoChatStream) GetType() string {
+    return TypeVideoChatStream
 }
 
-// Represents a list of group call streams
-type GroupCallStreams struct {
+// Represents a list of video chat streams
+type VideoChatStreams struct {
     meta
-    // A list of group call streams
-    Streams []*GroupCallStream `json:"streams"`
+    // A list of video chat streams
+    Streams []*VideoChatStream `json:"streams"`
 }
 
-func (entity *GroupCallStreams) MarshalJSON() ([]byte, error) {
+func (entity *VideoChatStreams) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub GroupCallStreams
+    type stub VideoChatStreams
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*GroupCallStreams) GetClass() string {
-    return ClassGroupCallStreams
+func (*VideoChatStreams) GetClass() string {
+    return ClassVideoChatStreams
 }
 
-func (*GroupCallStreams) GetType() string {
-    return TypeGroupCallStreams
+func (*VideoChatStreams) GetType() string {
+    return TypeVideoChatStreams
 }
 
 // Represents an RTMP URL
@@ -35179,27 +35332,31 @@ type GroupCall struct {
     meta
     // Group call identifier
     Id int32 `json:"id"`
-    // Identifier of one-to-one call from which the group call was created; 0 if unknown
-    FromCallId int32 `json:"from_call_id"`
-    // Group call title
+    // Group call title; for video chats only
     Title string `json:"title"`
-    // Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 if it is already active or was ended
+    // Invite link for the group call; for group calls that aren't bound to a chat. For video chats call getVideoChatInviteLink to get the link
+    InviteLink string `json:"invite_link"`
+    // Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 if it is already active or was ended; for video chats only
     ScheduledStartDate int32 `json:"scheduled_start_date"`
-    // True, if the group call is scheduled and the current user will receive a notification when the group call starts
+    // True, if the group call is scheduled and the current user will receive a notification when the group call starts; for video chats only
     EnabledStartNotification bool `json:"enabled_start_notification"`
     // True, if the call is active
     IsActive bool `json:"is_active"`
-    // True, if the chat is an RTMP stream instead of an ordinary video chat
+    // True, if the call is bound to a chat
+    IsVideoChat bool `json:"is_video_chat"`
+    // True, if the call is an RTMP stream instead of an ordinary video chat; for video chats only
     IsRtmpStream bool `json:"is_rtmp_stream"`
     // True, if the call is joined
     IsJoined bool `json:"is_joined"`
     // True, if user was kicked from the call because of network loss and the call needs to be rejoined
     NeedRejoin bool `json:"need_rejoin"`
-    // True, if the current user can manage the group call
+    // True, if the user is the owner of the call and can end the call, change volume level of other users, or ban users there; for group calls that aren't bound to a chat
+    IsOwned bool `json:"is_owned"`
+    // True, if the current user can manage the group call; for video chats only
     CanBeManaged bool `json:"can_be_managed"`
     // Number of participants in the group call
     ParticipantCount int32 `json:"participant_count"`
-    // True, if group call participants, which are muted, aren't returned in participant list
+    // True, if group call participants, which are muted, aren't returned in participant list; for video chats only
     HasHiddenListeners bool `json:"has_hidden_listeners"`
     // True, if all group call participants are loaded
     LoadedAllParticipants bool `json:"loaded_all_participants"`
@@ -35211,9 +35368,9 @@ type GroupCall struct {
     IsMyVideoPaused bool `json:"is_my_video_paused"`
     // True, if the current user can broadcast video or share screen
     CanEnableVideo bool `json:"can_enable_video"`
-    // True, if only group call administrators can unmute new participants
+    // True, if only group call administrators can unmute new participants; for video chats only
     MuteNewParticipants bool `json:"mute_new_participants"`
-    // True, if the current user can enable or disable mute_new_participants setting
+    // True, if the current user can enable or disable mute_new_participants setting; for video chats only
     CanToggleMuteNewParticipants bool `json:"can_toggle_mute_new_participants"`
     // Duration of the ongoing group call recording, in seconds; 0 if none. An updateGroupCall update is not triggered when value of this field changes, but the same recording goes on
     RecordDuration int32 `json:"record_duration"`
@@ -35397,6 +35554,285 @@ func (groupCallParticipant *GroupCallParticipant) UnmarshalJSON(data []byte) err
     groupCallParticipant.ParticipantId = fieldParticipantId
 
     return nil
+}
+
+// Contains identifiers of group call participants
+type GroupCallParticipants struct {
+    meta
+    // Total number of group call participants
+    TotalCount int32 `json:"total_count"`
+    // Identifiers of the participants
+    ParticipantIds []MessageSender `json:"participant_ids"`
+}
+
+func (entity *GroupCallParticipants) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GroupCallParticipants
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GroupCallParticipants) GetClass() string {
+    return ClassGroupCallParticipants
+}
+
+func (*GroupCallParticipants) GetType() string {
+    return TypeGroupCallParticipants
+}
+
+func (groupCallParticipants *GroupCallParticipants) UnmarshalJSON(data []byte) error {
+    var tmp struct {
+        TotalCount int32 `json:"total_count"`
+        ParticipantIds []json.RawMessage `json:"participant_ids"`
+    }
+
+    err := json.Unmarshal(data, &tmp)
+    if err != nil {
+        return err
+    }
+
+    groupCallParticipants.TotalCount = tmp.TotalCount
+
+    fieldParticipantIds, _ := UnmarshalListOfMessageSender(tmp.ParticipantIds)
+    groupCallParticipants.ParticipantIds = fieldParticipantIds
+
+    return nil
+}
+
+// Contains information about a just created or just joined group call
+type GroupCallInfo struct {
+    meta
+    // Identifier of the group call
+    GroupCallId int32 `json:"group_call_id"`
+    // Join response payload for tgcalls; empty if the call isn't joined
+    JoinPayload string `json:"join_payload"`
+}
+
+func (entity *GroupCallInfo) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GroupCallInfo
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GroupCallInfo) GetClass() string {
+    return ClassGroupCallInfo
+}
+
+func (*GroupCallInfo) GetType() string {
+    return TypeGroupCallInfo
+}
+
+// The user can't be invited due to their privacy settings
+type InviteGroupCallParticipantResultUserPrivacyRestricted struct{
+    meta
+}
+
+func (entity *InviteGroupCallParticipantResultUserPrivacyRestricted) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InviteGroupCallParticipantResultUserPrivacyRestricted
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InviteGroupCallParticipantResultUserPrivacyRestricted) GetClass() string {
+    return ClassInviteGroupCallParticipantResult
+}
+
+func (*InviteGroupCallParticipantResultUserPrivacyRestricted) GetType() string {
+    return TypeInviteGroupCallParticipantResultUserPrivacyRestricted
+}
+
+func (*InviteGroupCallParticipantResultUserPrivacyRestricted) InviteGroupCallParticipantResultType() string {
+    return TypeInviteGroupCallParticipantResultUserPrivacyRestricted
+}
+
+// The user can't be invited because they are already a participant of the call
+type InviteGroupCallParticipantResultUserAlreadyParticipant struct{
+    meta
+}
+
+func (entity *InviteGroupCallParticipantResultUserAlreadyParticipant) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InviteGroupCallParticipantResultUserAlreadyParticipant
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InviteGroupCallParticipantResultUserAlreadyParticipant) GetClass() string {
+    return ClassInviteGroupCallParticipantResult
+}
+
+func (*InviteGroupCallParticipantResultUserAlreadyParticipant) GetType() string {
+    return TypeInviteGroupCallParticipantResultUserAlreadyParticipant
+}
+
+func (*InviteGroupCallParticipantResultUserAlreadyParticipant) InviteGroupCallParticipantResultType() string {
+    return TypeInviteGroupCallParticipantResultUserAlreadyParticipant
+}
+
+// The user can't be invited because they were banned by the owner of the call and can be invited back only by the owner of the group call
+type InviteGroupCallParticipantResultUserWasBanned struct{
+    meta
+}
+
+func (entity *InviteGroupCallParticipantResultUserWasBanned) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InviteGroupCallParticipantResultUserWasBanned
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InviteGroupCallParticipantResultUserWasBanned) GetClass() string {
+    return ClassInviteGroupCallParticipantResult
+}
+
+func (*InviteGroupCallParticipantResultUserWasBanned) GetType() string {
+    return TypeInviteGroupCallParticipantResultUserWasBanned
+}
+
+func (*InviteGroupCallParticipantResultUserWasBanned) InviteGroupCallParticipantResultType() string {
+    return TypeInviteGroupCallParticipantResultUserWasBanned
+}
+
+// The user was invited and a service message of the type messageGroupCall was sent which can be used in declineGroupCallInvitation to cancel the invitation
+type InviteGroupCallParticipantResultSuccess struct {
+    meta
+    // Identifier of the chat with the invitation message
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+func (entity *InviteGroupCallParticipantResultSuccess) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InviteGroupCallParticipantResultSuccess
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InviteGroupCallParticipantResultSuccess) GetClass() string {
+    return ClassInviteGroupCallParticipantResult
+}
+
+func (*InviteGroupCallParticipantResultSuccess) GetType() string {
+    return TypeInviteGroupCallParticipantResultSuccess
+}
+
+func (*InviteGroupCallParticipantResultSuccess) InviteGroupCallParticipantResultType() string {
+    return TypeInviteGroupCallParticipantResultSuccess
+}
+
+// The main data channel for audio and video data
+type GroupCallDataChannelMain struct{
+    meta
+}
+
+func (entity *GroupCallDataChannelMain) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GroupCallDataChannelMain
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GroupCallDataChannelMain) GetClass() string {
+    return ClassGroupCallDataChannel
+}
+
+func (*GroupCallDataChannelMain) GetType() string {
+    return TypeGroupCallDataChannelMain
+}
+
+func (*GroupCallDataChannelMain) GroupCallDataChannelType() string {
+    return TypeGroupCallDataChannelMain
+}
+
+// The data channel for screen sharing
+type GroupCallDataChannelScreenSharing struct{
+    meta
+}
+
+func (entity *GroupCallDataChannelScreenSharing) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GroupCallDataChannelScreenSharing
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GroupCallDataChannelScreenSharing) GetClass() string {
+    return ClassGroupCallDataChannel
+}
+
+func (*GroupCallDataChannelScreenSharing) GetType() string {
+    return TypeGroupCallDataChannelScreenSharing
+}
+
+func (*GroupCallDataChannelScreenSharing) GroupCallDataChannelType() string {
+    return TypeGroupCallDataChannelScreenSharing
+}
+
+// The group call is accessible through a link
+type InputGroupCallLink struct {
+    meta
+    // The link for the group call
+    Link string `json:"link"`
+}
+
+func (entity *InputGroupCallLink) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InputGroupCallLink
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InputGroupCallLink) GetClass() string {
+    return ClassInputGroupCall
+}
+
+func (*InputGroupCallLink) GetType() string {
+    return TypeInputGroupCallLink
+}
+
+func (*InputGroupCallLink) InputGroupCallType() string {
+    return TypeInputGroupCallLink
+}
+
+// The group call is accessible through a message of the type messageGroupCall
+type InputGroupCallMessage struct {
+    meta
+    // Identifier of the chat with the message
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message of the type messageGroupCall
+    MessageId int64 `json:"message_id"`
+}
+
+func (entity *InputGroupCallMessage) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InputGroupCallMessage
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InputGroupCallMessage) GetClass() string {
+    return ClassInputGroupCall
+}
+
+func (*InputGroupCallMessage) GetType() string {
+    return TypeInputGroupCallMessage
+}
+
+func (*InputGroupCallMessage) InputGroupCallType() string {
+    return TypeInputGroupCallMessage
 }
 
 // The user heard their own voice
@@ -35637,8 +36073,6 @@ type Call struct {
     IsVideo bool `json:"is_video"`
     // Call state
     State CallState `json:"state"`
-    // Identifier of the group call associated with the call; 0 if the group call isn't created yet. The group call can be received through the method getGroupCall
-    GroupCallId int32 `json:"group_call_id"`
 }
 
 func (entity *Call) MarshalJSON() ([]byte, error) {
@@ -35664,7 +36098,6 @@ func (call *Call) UnmarshalJSON(data []byte) error {
         IsOutgoing bool `json:"is_outgoing"`
         IsVideo bool `json:"is_video"`
         State json.RawMessage `json:"state"`
-        GroupCallId int32 `json:"group_call_id"`
     }
 
     err := json.Unmarshal(data, &tmp)
@@ -35676,7 +36109,6 @@ func (call *Call) UnmarshalJSON(data []byte) error {
     call.UserId = tmp.UserId
     call.IsOutgoing = tmp.IsOutgoing
     call.IsVideo = tmp.IsVideo
-    call.GroupCallId = tmp.GroupCallId
 
     fieldState, _ := UnmarshalCallState(tmp.State)
     call.State = fieldState
@@ -35753,7 +36185,7 @@ type PhoneNumberAuthenticationSettings struct {
     AllowSmsRetrieverApi bool `json:"allow_sms_retriever_api"`
     // For official Android and iOS applications only; pass null otherwise. Settings for Firebase Authentication
     FirebaseAuthenticationSettings FirebaseAuthenticationSettings `json:"firebase_authentication_settings"`
-    // List of up to 20 authentication tokens, recently received in updateOption("authentication_token") in previously logged out sessions
+    // List of up to 20 authentication tokens, recently received in updateOption("authentication_token") in previously logged out sessions; for setAuthenticationPhoneNumber only
     AuthenticationTokens []string `json:"authentication_tokens"`
 }
 
@@ -40659,57 +41091,57 @@ func (*PremiumLimitTypeActiveStoryCount) PremiumLimitTypeType() string {
     return TypePremiumLimitTypeActiveStoryCount
 }
 
-// The maximum number of stories sent per week
-type PremiumLimitTypeWeeklySentStoryCount struct{
+// The maximum number of stories posted per week
+type PremiumLimitTypeWeeklyPostedStoryCount struct{
     meta
 }
 
-func (entity *PremiumLimitTypeWeeklySentStoryCount) MarshalJSON() ([]byte, error) {
+func (entity *PremiumLimitTypeWeeklyPostedStoryCount) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumLimitTypeWeeklySentStoryCount
+    type stub PremiumLimitTypeWeeklyPostedStoryCount
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumLimitTypeWeeklySentStoryCount) GetClass() string {
+func (*PremiumLimitTypeWeeklyPostedStoryCount) GetClass() string {
     return ClassPremiumLimitType
 }
 
-func (*PremiumLimitTypeWeeklySentStoryCount) GetType() string {
-    return TypePremiumLimitTypeWeeklySentStoryCount
+func (*PremiumLimitTypeWeeklyPostedStoryCount) GetType() string {
+    return TypePremiumLimitTypeWeeklyPostedStoryCount
 }
 
-func (*PremiumLimitTypeWeeklySentStoryCount) PremiumLimitTypeType() string {
-    return TypePremiumLimitTypeWeeklySentStoryCount
+func (*PremiumLimitTypeWeeklyPostedStoryCount) PremiumLimitTypeType() string {
+    return TypePremiumLimitTypeWeeklyPostedStoryCount
 }
 
-// The maximum number of stories sent per month
-type PremiumLimitTypeMonthlySentStoryCount struct{
+// The maximum number of stories posted per month
+type PremiumLimitTypeMonthlyPostedStoryCount struct{
     meta
 }
 
-func (entity *PremiumLimitTypeMonthlySentStoryCount) MarshalJSON() ([]byte, error) {
+func (entity *PremiumLimitTypeMonthlyPostedStoryCount) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub PremiumLimitTypeMonthlySentStoryCount
+    type stub PremiumLimitTypeMonthlyPostedStoryCount
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*PremiumLimitTypeMonthlySentStoryCount) GetClass() string {
+func (*PremiumLimitTypeMonthlyPostedStoryCount) GetClass() string {
     return ClassPremiumLimitType
 }
 
-func (*PremiumLimitTypeMonthlySentStoryCount) GetType() string {
-    return TypePremiumLimitTypeMonthlySentStoryCount
+func (*PremiumLimitTypeMonthlyPostedStoryCount) GetType() string {
+    return TypePremiumLimitTypeMonthlyPostedStoryCount
 }
 
-func (*PremiumLimitTypeMonthlySentStoryCount) PremiumLimitTypeType() string {
-    return TypePremiumLimitTypeMonthlySentStoryCount
+func (*PremiumLimitTypeMonthlyPostedStoryCount) PremiumLimitTypeType() string {
+    return TypePremiumLimitTypeMonthlyPostedStoryCount
 }
 
-// The maximum length of captions of sent stories
+// The maximum length of captions of posted stories
 type PremiumLimitTypeStoryCaptionLength struct{
     meta
 }
@@ -43629,157 +44061,157 @@ func (*Hashtags) GetType() string {
 }
 
 // A story can be sent
-type CanSendStoryResultOk struct{
+type CanPostStoryResultOk struct{
     meta
 }
 
-func (entity *CanSendStoryResultOk) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultOk) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultOk
+    type stub CanPostStoryResultOk
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultOk) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultOk) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultOk) GetType() string {
-    return TypeCanSendStoryResultOk
+func (*CanPostStoryResultOk) GetType() string {
+    return TypeCanPostStoryResultOk
 }
 
-func (*CanSendStoryResultOk) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultOk
+func (*CanPostStoryResultOk) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultOk
 }
 
 // The user must subscribe to Telegram Premium to be able to post stories
-type CanSendStoryResultPremiumNeeded struct{
+type CanPostStoryResultPremiumNeeded struct{
     meta
 }
 
-func (entity *CanSendStoryResultPremiumNeeded) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultPremiumNeeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultPremiumNeeded
+    type stub CanPostStoryResultPremiumNeeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultPremiumNeeded) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultPremiumNeeded) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultPremiumNeeded) GetType() string {
-    return TypeCanSendStoryResultPremiumNeeded
+func (*CanPostStoryResultPremiumNeeded) GetType() string {
+    return TypeCanPostStoryResultPremiumNeeded
 }
 
-func (*CanSendStoryResultPremiumNeeded) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultPremiumNeeded
+func (*CanPostStoryResultPremiumNeeded) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultPremiumNeeded
 }
 
 // The chat must be boosted first by Telegram Premium subscribers to post more stories. Call getChatBoostStatus to get current boost status of the chat
-type CanSendStoryResultBoostNeeded struct{
+type CanPostStoryResultBoostNeeded struct{
     meta
 }
 
-func (entity *CanSendStoryResultBoostNeeded) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultBoostNeeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultBoostNeeded
+    type stub CanPostStoryResultBoostNeeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultBoostNeeded) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultBoostNeeded) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultBoostNeeded) GetType() string {
-    return TypeCanSendStoryResultBoostNeeded
+func (*CanPostStoryResultBoostNeeded) GetType() string {
+    return TypeCanPostStoryResultBoostNeeded
 }
 
-func (*CanSendStoryResultBoostNeeded) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultBoostNeeded
+func (*CanPostStoryResultBoostNeeded) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultBoostNeeded
 }
 
 // The limit for the number of active stories exceeded. The user can buy Telegram Premium, delete an active story, or wait for the oldest story to expire
-type CanSendStoryResultActiveStoryLimitExceeded struct{
+type CanPostStoryResultActiveStoryLimitExceeded struct{
     meta
 }
 
-func (entity *CanSendStoryResultActiveStoryLimitExceeded) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultActiveStoryLimitExceeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultActiveStoryLimitExceeded
+    type stub CanPostStoryResultActiveStoryLimitExceeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultActiveStoryLimitExceeded) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultActiveStoryLimitExceeded) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultActiveStoryLimitExceeded) GetType() string {
-    return TypeCanSendStoryResultActiveStoryLimitExceeded
+func (*CanPostStoryResultActiveStoryLimitExceeded) GetType() string {
+    return TypeCanPostStoryResultActiveStoryLimitExceeded
 }
 
-func (*CanSendStoryResultActiveStoryLimitExceeded) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultActiveStoryLimitExceeded
+func (*CanPostStoryResultActiveStoryLimitExceeded) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultActiveStoryLimitExceeded
 }
 
 // The weekly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time
-type CanSendStoryResultWeeklyLimitExceeded struct {
+type CanPostStoryResultWeeklyLimitExceeded struct {
     meta
-    // Time left before the user can send the next story
+    // Time left before the user can post the next story
     RetryAfter int32 `json:"retry_after"`
 }
 
-func (entity *CanSendStoryResultWeeklyLimitExceeded) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultWeeklyLimitExceeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultWeeklyLimitExceeded
+    type stub CanPostStoryResultWeeklyLimitExceeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultWeeklyLimitExceeded) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultWeeklyLimitExceeded) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultWeeklyLimitExceeded) GetType() string {
-    return TypeCanSendStoryResultWeeklyLimitExceeded
+func (*CanPostStoryResultWeeklyLimitExceeded) GetType() string {
+    return TypeCanPostStoryResultWeeklyLimitExceeded
 }
 
-func (*CanSendStoryResultWeeklyLimitExceeded) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultWeeklyLimitExceeded
+func (*CanPostStoryResultWeeklyLimitExceeded) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultWeeklyLimitExceeded
 }
 
 // The monthly limit for the number of posted stories exceeded. The user needs to buy Telegram Premium or wait specified time
-type CanSendStoryResultMonthlyLimitExceeded struct {
+type CanPostStoryResultMonthlyLimitExceeded struct {
     meta
-    // Time left before the user can send the next story
+    // Time left before the user can post the next story
     RetryAfter int32 `json:"retry_after"`
 }
 
-func (entity *CanSendStoryResultMonthlyLimitExceeded) MarshalJSON() ([]byte, error) {
+func (entity *CanPostStoryResultMonthlyLimitExceeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub CanSendStoryResultMonthlyLimitExceeded
+    type stub CanPostStoryResultMonthlyLimitExceeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*CanSendStoryResultMonthlyLimitExceeded) GetClass() string {
-    return ClassCanSendStoryResult
+func (*CanPostStoryResultMonthlyLimitExceeded) GetClass() string {
+    return ClassCanPostStoryResult
 }
 
-func (*CanSendStoryResultMonthlyLimitExceeded) GetType() string {
-    return TypeCanSendStoryResultMonthlyLimitExceeded
+func (*CanPostStoryResultMonthlyLimitExceeded) GetType() string {
+    return TypeCanPostStoryResultMonthlyLimitExceeded
 }
 
-func (*CanSendStoryResultMonthlyLimitExceeded) CanSendStoryResultType() string {
-    return TypeCanSendStoryResultMonthlyLimitExceeded
+func (*CanPostStoryResultMonthlyLimitExceeded) CanPostStoryResultType() string {
+    return TypeCanPostStoryResultMonthlyLimitExceeded
 }
 
 // The session can be used
@@ -48738,6 +49170,33 @@ func (*InternalLinkTypeGame) InternalLinkTypeType() string {
     return TypeInternalLinkTypeGame
 }
 
+// The link is a link to a group call that isn't bound to a chat. Call joinGroupCall with the given invite_link
+type InternalLinkTypeGroupCall struct {
+    meta
+    // Internal representation of the invite link
+    InviteLink string `json:"invite_link"`
+}
+
+func (entity *InternalLinkTypeGroupCall) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InternalLinkTypeGroupCall
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InternalLinkTypeGroupCall) GetClass() string {
+    return ClassInternalLinkType
+}
+
+func (*InternalLinkTypeGroupCall) GetType() string {
+    return TypeInternalLinkTypeGroupCall
+}
+
+func (*InternalLinkTypeGroupCall) InternalLinkTypeType() string {
+    return TypeInternalLinkTypeGroupCall
+}
+
 // The link must be opened in an Instant View. Call getWebPageInstantView with the given URL to process the link. If Instant View is found, then show it, otherwise, open the fallback URL in an external browser
 type InternalLinkTypeInstantView struct {
     meta
@@ -49311,11 +49770,11 @@ func (*InternalLinkTypeStickerSet) InternalLinkTypeType() string {
     return TypeInternalLinkTypeStickerSet
 }
 
-// The link is a link to a story. Call searchPublicChat with the given sender username, then call getStory with the received chat identifier and the given story identifier, then show the story if received
+// The link is a link to a story. Call searchPublicChat with the given poster username, then call getStory with the received chat identifier and the given story identifier, then show the story if received
 type InternalLinkTypeStory struct {
     meta
-    // Username of the sender of the story
-    StorySenderUsername string `json:"story_sender_username"`
+    // Username of the poster of the story
+    StoryPosterUsername string `json:"story_poster_username"`
     // Story identifier
     StoryId int32 `json:"story_id"`
 }
@@ -49529,7 +49988,7 @@ func (*InternalLinkTypeUserToken) InternalLinkTypeType() string {
     return TypeInternalLinkTypeUserToken
 }
 
-// The link is a link to a video chat. Call searchPublicChat with the given chat username, and then joinGroupCall with the given invite hash to process the link
+// The link is a link to a video chat. Call searchPublicChat with the given chat username, and then joinVideoChat with the given invite hash to process the link
 type InternalLinkTypeVideoChat struct {
     meta
     // Username of the chat with the video chat
@@ -49772,29 +50231,6 @@ func (*BlockListStories) GetType() string {
 
 func (*BlockListStories) BlockListType() string {
     return TypeBlockListStories
-}
-
-// Contains a part of a file
-type FilePart struct {
-    meta
-    // File bytes
-    Data []byte `json:"data"`
-}
-
-func (entity *FilePart) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub FilePart
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*FilePart) GetClass() string {
-    return ClassFilePart
-}
-
-func (*FilePart) GetType() string {
-    return TypeFilePart
 }
 
 // The data is not a file
@@ -52012,6 +52448,29 @@ func (*Text) GetType() string {
     return TypeText
 }
 
+// Contains some binary data
+type Data struct {
+    meta
+    // Data
+    Data []byte `json:"data"`
+}
+
+func (entity *Data) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub Data
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*Data) GetClass() string {
+    return ClassData
+}
+
+func (*Data) GetType() string {
+    return TypeData
+}
+
 // Contains a value representing a number of seconds
 type Seconds struct {
     meta
@@ -52548,7 +53007,7 @@ func (*ChatStatisticsObjectTypeMessage) ChatStatisticsObjectTypeType() string {
     return TypeChatStatisticsObjectTypeMessage
 }
 
-// Describes a story sent by the chat
+// Describes a story posted on behalf of the chat
 type ChatStatisticsObjectTypeStory struct {
     meta
     // Story identifier
@@ -52575,7 +53034,7 @@ func (*ChatStatisticsObjectTypeStory) ChatStatisticsObjectTypeType() string {
     return TypeChatStatisticsObjectTypeStory
 }
 
-// Contains statistics about interactions with a message sent in the chat or a story sent by the chat
+// Contains statistics about interactions with a message sent in the chat or a story posted on behalf of the chat
 type ChatStatisticsInteractionInfo struct {
     meta
     // Type of the object
@@ -52839,11 +53298,11 @@ type ChatStatisticsChannel struct {
     MeanMessageShareCount *StatisticalValue `json:"mean_message_share_count"`
     // Mean number of times reactions were added to the recently sent messages
     MeanMessageReactionCount *StatisticalValue `json:"mean_message_reaction_count"`
-    // Mean number of times the recently sent stories were viewed
+    // Mean number of times the recently posted stories were viewed
     MeanStoryViewCount *StatisticalValue `json:"mean_story_view_count"`
-    // Mean number of times the recently sent stories were shared
+    // Mean number of times the recently posted stories were shared
     MeanStoryShareCount *StatisticalValue `json:"mean_story_share_count"`
-    // Mean number of times reactions were added to the recently sent stories
+    // Mean number of times reactions were added to the recently posted stories
     MeanStoryReactionCount *StatisticalValue `json:"mean_story_reaction_count"`
     // A percentage of users with enabled notifications for the chat; 0-100
     EnabledNotificationsPercentage float64 `json:"enabled_notifications_percentage"`
@@ -52871,7 +53330,7 @@ type ChatStatisticsChannel struct {
     StoryReactionGraph StatisticalGraph `json:"story_reaction_graph"`
     // A graph containing number of views of associated with the chat instant views
     InstantViewInteractionGraph StatisticalGraph `json:"instant_view_interaction_graph"`
-    // Detailed statistics about number of views and shares of recently sent messages and stories
+    // Detailed statistics about number of views and shares of recently sent messages and posted stories
     RecentInteractions []*ChatStatisticsInteractionInfo `json:"recent_interactions"`
 }
 
@@ -55687,6 +56146,8 @@ type UpdateForumTopic struct {
     MessageThreadId int64 `json:"message_thread_id"`
     // True, if the topic is pinned in the topic list
     IsPinned bool `json:"is_pinned"`
+    // Identifier of the last read incoming message
+    LastReadInboxMessageId int64 `json:"last_read_inbox_message_id"`
     // Identifier of the last read outgoing message
     LastReadOutboxMessageId int64 `json:"last_read_outbox_message_id"`
     // Notification settings for the topic
@@ -56628,7 +57089,7 @@ func (*UpdateCall) UpdateType() string {
 // Information about a group call was updated
 type UpdateGroupCall struct {
     meta
-    // New data about a group call
+    // New data about the group call
     GroupCall *GroupCall `json:"group_call"`
 }
 
@@ -56655,9 +57116,9 @@ func (*UpdateGroupCall) UpdateType() string {
 // Information about a group call participant was changed. The updates are sent only after the group call is received through getGroupCall and only if the call is joined or being joined
 type UpdateGroupCallParticipant struct {
     meta
-    // Identifier of group call
+    // Identifier of the group call
     GroupCallId int32 `json:"group_call_id"`
-    // New data about a participant
+    // New data about the participant
     Participant *GroupCallParticipant `json:"participant"`
 }
 
@@ -56679,6 +57140,66 @@ func (*UpdateGroupCallParticipant) GetType() string {
 
 func (*UpdateGroupCallParticipant) UpdateType() string {
     return TypeUpdateGroupCallParticipant
+}
+
+// The list of group call participants that can send and receive encrypted call data has changed; for group calls not bound to a chat only
+type UpdateGroupCallParticipants struct {
+    meta
+    // Identifier of the group call
+    GroupCallId int32 `json:"group_call_id"`
+    // New list of group call participant user identifiers. The identifiers may be invalid or the corresponding users may be unknown. The participants must be shown in the list of group call participants even there is no information about them
+    ParticipantUserIds []JsonInt64 `json:"participant_user_ids"`
+}
+
+func (entity *UpdateGroupCallParticipants) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdateGroupCallParticipants
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdateGroupCallParticipants) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdateGroupCallParticipants) GetType() string {
+    return TypeUpdateGroupCallParticipants
+}
+
+func (*UpdateGroupCallParticipants) UpdateType() string {
+    return TypeUpdateGroupCallParticipants
+}
+
+// The verification state of an encrypted group call has changed; for group calls not bound to a chat only
+type UpdateGroupCallVerificationState struct {
+    meta
+    // Identifier of the group call
+    GroupCallId int32 `json:"group_call_id"`
+    // The call state generation to which the emoji corresponds. If generation is different for two users, then their emoji may be also different
+    Generation int32 `json:"generation"`
+    // Group call state fingerprint represented as 4 emoji; may be empty if the state isn't verified yet
+    Emojis []string `json:"emojis"`
+}
+
+func (entity *UpdateGroupCallVerificationState) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpdateGroupCallVerificationState
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpdateGroupCallVerificationState) GetClass() string {
+    return ClassUpdate
+}
+
+func (*UpdateGroupCallVerificationState) GetType() string {
+    return TypeUpdateGroupCallVerificationState
+}
+
+func (*UpdateGroupCallVerificationState) UpdateType() string {
+    return TypeUpdateGroupCallVerificationState
 }
 
 // New call signaling data arrived
@@ -56905,7 +57426,7 @@ func (*UpdateStory) UpdateType() string {
 type UpdateStoryDeleted struct {
     meta
     // Identifier of the chat that posted the story
-    StorySenderChatId int64 `json:"story_sender_chat_id"`
+    StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // Story identifier
     StoryId int32 `json:"story_id"`
 }
@@ -56930,67 +57451,67 @@ func (*UpdateStoryDeleted) UpdateType() string {
     return TypeUpdateStoryDeleted
 }
 
-// A story has been successfully sent
-type UpdateStorySendSucceeded struct {
+// A story has been successfully posted
+type UpdateStoryPostSucceeded struct {
     meta
-    // The sent story
+    // The posted story
     Story *Story `json:"story"`
     // The previous temporary story identifier
     OldStoryId int32 `json:"old_story_id"`
 }
 
-func (entity *UpdateStorySendSucceeded) MarshalJSON() ([]byte, error) {
+func (entity *UpdateStoryPostSucceeded) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub UpdateStorySendSucceeded
+    type stub UpdateStoryPostSucceeded
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*UpdateStorySendSucceeded) GetClass() string {
+func (*UpdateStoryPostSucceeded) GetClass() string {
     return ClassUpdate
 }
 
-func (*UpdateStorySendSucceeded) GetType() string {
-    return TypeUpdateStorySendSucceeded
+func (*UpdateStoryPostSucceeded) GetType() string {
+    return TypeUpdateStoryPostSucceeded
 }
 
-func (*UpdateStorySendSucceeded) UpdateType() string {
-    return TypeUpdateStorySendSucceeded
+func (*UpdateStoryPostSucceeded) UpdateType() string {
+    return TypeUpdateStoryPostSucceeded
 }
 
-// A story failed to send. If the story sending is canceled, then updateStoryDeleted will be received instead of this update
-type UpdateStorySendFailed struct {
+// A story failed to post. If the story posting is canceled, then updateStoryDeleted will be received instead of this update
+type UpdateStoryPostFailed struct {
     meta
-    // The failed to send story
+    // The failed to post story
     Story *Story `json:"story"`
-    // The cause of the story sending failure
+    // The cause of the story posting failure
     Error *Error `json:"error"`
     // Type of the error; may be null if unknown
-    ErrorType CanSendStoryResult `json:"error_type"`
+    ErrorType CanPostStoryResult `json:"error_type"`
 }
 
-func (entity *UpdateStorySendFailed) MarshalJSON() ([]byte, error) {
+func (entity *UpdateStoryPostFailed) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub UpdateStorySendFailed
+    type stub UpdateStoryPostFailed
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*UpdateStorySendFailed) GetClass() string {
+func (*UpdateStoryPostFailed) GetClass() string {
     return ClassUpdate
 }
 
-func (*UpdateStorySendFailed) GetType() string {
-    return TypeUpdateStorySendFailed
+func (*UpdateStoryPostFailed) GetType() string {
+    return TypeUpdateStoryPostFailed
 }
 
-func (*UpdateStorySendFailed) UpdateType() string {
-    return TypeUpdateStorySendFailed
+func (*UpdateStoryPostFailed) UpdateType() string {
+    return TypeUpdateStoryPostFailed
 }
 
-func (updateStorySendFailed *UpdateStorySendFailed) UnmarshalJSON(data []byte) error {
+func (updateStoryPostFailed *UpdateStoryPostFailed) UnmarshalJSON(data []byte) error {
     var tmp struct {
         Story *Story `json:"story"`
         Error *Error `json:"error"`
@@ -57002,11 +57523,11 @@ func (updateStorySendFailed *UpdateStorySendFailed) UnmarshalJSON(data []byte) e
         return err
     }
 
-    updateStorySendFailed.Story = tmp.Story
-    updateStorySendFailed.Error = tmp.Error
+    updateStoryPostFailed.Story = tmp.Story
+    updateStoryPostFailed.Error = tmp.Error
 
-    fieldErrorType, _ := UnmarshalCanSendStoryResult(tmp.ErrorType)
-    updateStorySendFailed.ErrorType = fieldErrorType
+    fieldErrorType, _ := UnmarshalCanPostStoryResult(tmp.ErrorType)
+    updateStoryPostFailed.ErrorType = fieldErrorType
 
     return nil
 }
