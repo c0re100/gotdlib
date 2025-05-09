@@ -26,6 +26,8 @@ const (
     ClassStarSubscriptionType = "StarSubscriptionType"
     ClassAffiliateType = "AffiliateType"
     ClassAffiliateProgramSortOrder = "AffiliateProgramSortOrder"
+    ClassUpgradedGiftAttributeId = "UpgradedGiftAttributeId"
+    ClassGiftForResaleOrder = "GiftForResaleOrder"
     ClassSentGift = "SentGift"
     ClassStarTransactionDirection = "StarTransactionDirection"
     ClassStarTransactionType = "StarTransactionType"
@@ -280,9 +282,15 @@ const (
     ClassUpgradedGiftBackdrop = "UpgradedGiftBackdrop"
     ClassUpgradedGiftOriginalDetails = "UpgradedGiftOriginalDetails"
     ClassGift = "Gift"
-    ClassGifts = "Gifts"
     ClassUpgradedGift = "UpgradedGift"
     ClassUpgradeGiftResult = "UpgradeGiftResult"
+    ClassAvailableGift = "AvailableGift"
+    ClassAvailableGifts = "AvailableGifts"
+    ClassUpgradedGiftModelCount = "UpgradedGiftModelCount"
+    ClassUpgradedGiftSymbolCount = "UpgradedGiftSymbolCount"
+    ClassUpgradedGiftBackdropCount = "UpgradedGiftBackdropCount"
+    ClassGiftForResale = "GiftForResale"
+    ClassGiftsForResale = "GiftsForResale"
     ClassReceivedGift = "ReceivedGift"
     ClassReceivedGifts = "ReceivedGifts"
     ClassGiftUpgradePreview = "GiftUpgradePreview"
@@ -798,9 +806,21 @@ const (
     TypeUpgradedGiftBackdrop = "upgradedGiftBackdrop"
     TypeUpgradedGiftOriginalDetails = "upgradedGiftOriginalDetails"
     TypeGift = "gift"
-    TypeGifts = "gifts"
     TypeUpgradedGift = "upgradedGift"
     TypeUpgradeGiftResult = "upgradeGiftResult"
+    TypeAvailableGift = "availableGift"
+    TypeAvailableGifts = "availableGifts"
+    TypeUpgradedGiftAttributeIdModel = "upgradedGiftAttributeIdModel"
+    TypeUpgradedGiftAttributeIdSymbol = "upgradedGiftAttributeIdSymbol"
+    TypeUpgradedGiftAttributeIdBackdrop = "upgradedGiftAttributeIdBackdrop"
+    TypeUpgradedGiftModelCount = "upgradedGiftModelCount"
+    TypeUpgradedGiftSymbolCount = "upgradedGiftSymbolCount"
+    TypeUpgradedGiftBackdropCount = "upgradedGiftBackdropCount"
+    TypeGiftForResaleOrderPrice = "giftForResaleOrderPrice"
+    TypeGiftForResaleOrderPriceChangeDate = "giftForResaleOrderPriceChangeDate"
+    TypeGiftForResaleOrderNumber = "giftForResaleOrderNumber"
+    TypeGiftForResale = "giftForResale"
+    TypeGiftsForResale = "giftsForResale"
     TypeSentGiftRegular = "sentGiftRegular"
     TypeSentGiftUpgraded = "sentGiftUpgraded"
     TypeReceivedGift = "receivedGift"
@@ -831,6 +851,8 @@ const (
     TypeStarTransactionTypeGiftTransfer = "starTransactionTypeGiftTransfer"
     TypeStarTransactionTypeGiftSale = "starTransactionTypeGiftSale"
     TypeStarTransactionTypeGiftUpgrade = "starTransactionTypeGiftUpgrade"
+    TypeStarTransactionTypeUpgradedGiftPurchase = "starTransactionTypeUpgradedGiftPurchase"
+    TypeStarTransactionTypeUpgradedGiftSale = "starTransactionTypeUpgradedGiftSale"
     TypeStarTransactionTypeChannelPaidReactionSend = "starTransactionTypeChannelPaidReactionSend"
     TypeStarTransactionTypeChannelPaidReactionReceive = "starTransactionTypeChannelPaidReactionReceive"
     TypeStarTransactionTypeAffiliateProgramCommission = "starTransactionTypeAffiliateProgramCommission"
@@ -1701,6 +1723,7 @@ const (
     TypeChatEventHasAggressiveAntiSpamEnabledToggled = "chatEventHasAggressiveAntiSpamEnabledToggled"
     TypeChatEventSignMessagesToggled = "chatEventSignMessagesToggled"
     TypeChatEventShowMessageSenderToggled = "chatEventShowMessageSenderToggled"
+    TypeChatEventAutomaticTranslationToggled = "chatEventAutomaticTranslationToggled"
     TypeChatEventInviteLinkEdited = "chatEventInviteLinkEdited"
     TypeChatEventInviteLinkRevoked = "chatEventInviteLinkRevoked"
     TypeChatEventInviteLinkDeleted = "chatEventInviteLinkDeleted"
@@ -2033,6 +2056,7 @@ const (
     TypeInternalLinkTypeMainWebApp = "internalLinkTypeMainWebApp"
     TypeInternalLinkTypeMessage = "internalLinkTypeMessage"
     TypeInternalLinkTypeMessageDraft = "internalLinkTypeMessageDraft"
+    TypeInternalLinkTypeMyStars = "internalLinkTypeMyStars"
     TypeInternalLinkTypePassportDataRequest = "internalLinkTypePassportDataRequest"
     TypeInternalLinkTypePhoneNumberConfirmation = "internalLinkTypePhoneNumberConfirmation"
     TypeInternalLinkTypePremiumFeatures = "internalLinkTypePremiumFeatures"
@@ -2141,6 +2165,7 @@ const (
     TypeSuggestedActionSetProfilePhoto = "suggestedActionSetProfilePhoto"
     TypeSuggestedActionExtendPremium = "suggestedActionExtendPremium"
     TypeSuggestedActionExtendStarSubscriptions = "suggestedActionExtendStarSubscriptions"
+    TypeSuggestedActionCustom = "suggestedActionCustom"
     TypeCount = "count"
     TypeText = "text"
     TypeData = "data"
@@ -2462,6 +2487,16 @@ type AffiliateType interface {
 // Describes the order of the found affiliate programs
 type AffiliateProgramSortOrder interface {
     AffiliateProgramSortOrderType() string
+}
+
+// Contains identifier of an upgraded gift attribute to search for
+type UpgradedGiftAttributeId interface {
+    UpgradedGiftAttributeIdType() string
+}
+
+// Describes order in which upgraded gifts for resale will be sorted
+type GiftForResaleOrder interface {
+    GiftForResaleOrderType() string
 }
 
 // Represents content of a gift received by a user or a channel chat
@@ -8766,6 +8801,8 @@ func (*UpgradedGiftBackdropColors) GetType() string {
 // Describes a backdrop of an upgraded gift
 type UpgradedGiftBackdrop struct {
     meta
+    // Unique identifier of the backdrop
+    Id int32 `json:"id"`
     // Name of the backdrop
     Name string `json:"name"`
     // Colors of the backdrop
@@ -8885,29 +8922,6 @@ func (*Gift) GetType() string {
     return TypeGift
 }
 
-// Contains a list of gifts that can be sent to another user or channel chat
-type Gifts struct {
-    meta
-    // The list of gifts
-    Gifts []*Gift `json:"gifts"`
-}
-
-func (entity *Gifts) MarshalJSON() ([]byte, error) {
-    entity.meta.Type = entity.GetType()
-
-    type stub Gifts
-
-    return json.Marshal((*stub)(entity))
-}
-
-func (*Gifts) GetClass() string {
-    return ClassGifts
-}
-
-func (*Gifts) GetType() string {
-    return TypeGifts
-}
-
 // Describes an upgraded gift that can be transferred to another owner or transferred to the TON blockchain as an NFT
 type UpgradedGift struct {
     meta
@@ -8915,7 +8929,7 @@ type UpgradedGift struct {
     Id JsonInt64 `json:"id"`
     // The title of the upgraded gift
     Title string `json:"title"`
-    // Unique name of the upgraded gift that can be used with internalLinkTypeUpgradedGift
+    // Unique name of the upgraded gift that can be used with internalLinkTypeUpgradedGift or sendResoldGift
     Name string `json:"name"`
     // Unique number of the upgraded gift among gifts upgraded from the same gift
     Number int32 `json:"number"`
@@ -8939,6 +8953,8 @@ type UpgradedGift struct {
     Backdrop *UpgradedGiftBackdrop `json:"backdrop"`
     // Information about the originally sent gift; may be null if unknown
     OriginalDetails *UpgradedGiftOriginalDetails `json:"original_details"`
+    // Number of Telegram Stars that must be paid to buy the gift and send it to someone else; 0 if resale isn't possible
+    ResaleStarCount int64 `json:"resale_star_count"`
 }
 
 func (entity *UpgradedGift) MarshalJSON() ([]byte, error) {
@@ -8973,6 +8989,7 @@ func (upgradedGift *UpgradedGift) UnmarshalJSON(data []byte) error {
         Symbol *UpgradedGiftSymbol `json:"symbol"`
         Backdrop *UpgradedGiftBackdrop `json:"backdrop"`
         OriginalDetails *UpgradedGiftOriginalDetails `json:"original_details"`
+        ResaleStarCount int64 `json:"resale_star_count"`
     }
 
     err := json.Unmarshal(data, &tmp)
@@ -8993,6 +9010,7 @@ func (upgradedGift *UpgradedGift) UnmarshalJSON(data []byte) error {
     upgradedGift.Symbol = tmp.Symbol
     upgradedGift.Backdrop = tmp.Backdrop
     upgradedGift.OriginalDetails = tmp.OriginalDetails
+    upgradedGift.ResaleStarCount = tmp.ResaleStarCount
 
     fieldOwnerId, _ := UnmarshalMessageSender(tmp.OwnerId)
     upgradedGift.OwnerId = fieldOwnerId
@@ -9013,6 +9031,10 @@ type UpgradeGiftResult struct {
     CanBeTransferred bool `json:"can_be_transferred"`
     // Number of Telegram Stars that must be paid to transfer the upgraded gift
     TransferStarCount int64 `json:"transfer_star_count"`
+    // Point in time (Unix timestamp) when the gift can be transferred to another owner; 0 if the gift can be transferred immediately or transfer isn't possible
+    NextTransferDate int32 `json:"next_transfer_date"`
+    // Point in time (Unix timestamp) when the gift can be resold to another user; 0 if the gift can't be resold; only for the receiver of the gift
+    NextResaleDate int32 `json:"next_resale_date"`
     // Point in time (Unix timestamp) when the gift can be transferred to the TON blockchain as an NFT
     ExportDate int32 `json:"export_date"`
 }
@@ -9031,6 +9053,347 @@ func (*UpgradeGiftResult) GetClass() string {
 
 func (*UpgradeGiftResult) GetType() string {
     return TypeUpgradeGiftResult
+}
+
+// Describes a gift that is available for purchase
+type AvailableGift struct {
+    meta
+    // The gift
+    Gift *Gift `json:"gift"`
+    // Number of gifts that are available for resale
+    ResaleCount int32 `json:"resale_count"`
+    // The minimum price for the gifts available for resale; 0 if there are no such gifts
+    MinResaleStarCount int64 `json:"min_resale_star_count"`
+    // The title of the upgraded gift; empty if the gift isn't available for resale
+    Title string `json:"title"`
+}
+
+func (entity *AvailableGift) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AvailableGift
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AvailableGift) GetClass() string {
+    return ClassAvailableGift
+}
+
+func (*AvailableGift) GetType() string {
+    return TypeAvailableGift
+}
+
+// Contains a list of gifts that can be sent to another user or channel chat
+type AvailableGifts struct {
+    meta
+    // The list of gifts
+    Gifts []*AvailableGift `json:"gifts"`
+}
+
+func (entity *AvailableGifts) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub AvailableGifts
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*AvailableGifts) GetClass() string {
+    return ClassAvailableGifts
+}
+
+func (*AvailableGifts) GetType() string {
+    return TypeAvailableGifts
+}
+
+// Identifier of a gift model
+type UpgradedGiftAttributeIdModel struct {
+    meta
+    // Identifier of the sticker representing the model
+    StickerId JsonInt64 `json:"sticker_id"`
+}
+
+func (entity *UpgradedGiftAttributeIdModel) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftAttributeIdModel
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftAttributeIdModel) GetClass() string {
+    return ClassUpgradedGiftAttributeId
+}
+
+func (*UpgradedGiftAttributeIdModel) GetType() string {
+    return TypeUpgradedGiftAttributeIdModel
+}
+
+func (*UpgradedGiftAttributeIdModel) UpgradedGiftAttributeIdType() string {
+    return TypeUpgradedGiftAttributeIdModel
+}
+
+// Identifier of a gift symbol
+type UpgradedGiftAttributeIdSymbol struct {
+    meta
+    // Identifier of the sticker representing the symbol
+    StickerId JsonInt64 `json:"sticker_id"`
+}
+
+func (entity *UpgradedGiftAttributeIdSymbol) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftAttributeIdSymbol
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftAttributeIdSymbol) GetClass() string {
+    return ClassUpgradedGiftAttributeId
+}
+
+func (*UpgradedGiftAttributeIdSymbol) GetType() string {
+    return TypeUpgradedGiftAttributeIdSymbol
+}
+
+func (*UpgradedGiftAttributeIdSymbol) UpgradedGiftAttributeIdType() string {
+    return TypeUpgradedGiftAttributeIdSymbol
+}
+
+// Identifier of a gift backdrop
+type UpgradedGiftAttributeIdBackdrop struct {
+    meta
+    // Identifier of the backdrop
+    BackdropId int32 `json:"backdrop_id"`
+}
+
+func (entity *UpgradedGiftAttributeIdBackdrop) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftAttributeIdBackdrop
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftAttributeIdBackdrop) GetClass() string {
+    return ClassUpgradedGiftAttributeId
+}
+
+func (*UpgradedGiftAttributeIdBackdrop) GetType() string {
+    return TypeUpgradedGiftAttributeIdBackdrop
+}
+
+func (*UpgradedGiftAttributeIdBackdrop) UpgradedGiftAttributeIdType() string {
+    return TypeUpgradedGiftAttributeIdBackdrop
+}
+
+// Describes a model of an upgraded gift with the number of gifts found
+type UpgradedGiftModelCount struct {
+    meta
+    // The model
+    Model *UpgradedGiftModel `json:"model"`
+    // Total number of gifts with the model
+    TotalCount int32 `json:"total_count"`
+}
+
+func (entity *UpgradedGiftModelCount) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftModelCount
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftModelCount) GetClass() string {
+    return ClassUpgradedGiftModelCount
+}
+
+func (*UpgradedGiftModelCount) GetType() string {
+    return TypeUpgradedGiftModelCount
+}
+
+// Describes a symbol shown on the pattern of an upgraded gift
+type UpgradedGiftSymbolCount struct {
+    meta
+    // The symbol
+    Symbol *UpgradedGiftSymbol `json:"symbol"`
+    // Total number of gifts with the symbol
+    TotalCount int32 `json:"total_count"`
+}
+
+func (entity *UpgradedGiftSymbolCount) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftSymbolCount
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftSymbolCount) GetClass() string {
+    return ClassUpgradedGiftSymbolCount
+}
+
+func (*UpgradedGiftSymbolCount) GetType() string {
+    return TypeUpgradedGiftSymbolCount
+}
+
+// Describes a backdrop of an upgraded gift
+type UpgradedGiftBackdropCount struct {
+    meta
+    // The backdrop
+    Backdrop *UpgradedGiftBackdrop `json:"backdrop"`
+    // Total number of gifts with the symbol
+    TotalCount int32 `json:"total_count"`
+}
+
+func (entity *UpgradedGiftBackdropCount) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub UpgradedGiftBackdropCount
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*UpgradedGiftBackdropCount) GetClass() string {
+    return ClassUpgradedGiftBackdropCount
+}
+
+func (*UpgradedGiftBackdropCount) GetType() string {
+    return TypeUpgradedGiftBackdropCount
+}
+
+// The gifts will be sorted by their price from the lowest to the highest
+type GiftForResaleOrderPrice struct{
+    meta
+}
+
+func (entity *GiftForResaleOrderPrice) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiftForResaleOrderPrice
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiftForResaleOrderPrice) GetClass() string {
+    return ClassGiftForResaleOrder
+}
+
+func (*GiftForResaleOrderPrice) GetType() string {
+    return TypeGiftForResaleOrderPrice
+}
+
+func (*GiftForResaleOrderPrice) GiftForResaleOrderType() string {
+    return TypeGiftForResaleOrderPrice
+}
+
+// The gifts will be sorted by the last date when their price was changed from the newest to the oldest
+type GiftForResaleOrderPriceChangeDate struct{
+    meta
+}
+
+func (entity *GiftForResaleOrderPriceChangeDate) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiftForResaleOrderPriceChangeDate
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiftForResaleOrderPriceChangeDate) GetClass() string {
+    return ClassGiftForResaleOrder
+}
+
+func (*GiftForResaleOrderPriceChangeDate) GetType() string {
+    return TypeGiftForResaleOrderPriceChangeDate
+}
+
+func (*GiftForResaleOrderPriceChangeDate) GiftForResaleOrderType() string {
+    return TypeGiftForResaleOrderPriceChangeDate
+}
+
+// The gifts will be sorted by their number from the smallest to the largest
+type GiftForResaleOrderNumber struct{
+    meta
+}
+
+func (entity *GiftForResaleOrderNumber) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiftForResaleOrderNumber
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiftForResaleOrderNumber) GetClass() string {
+    return ClassGiftForResaleOrder
+}
+
+func (*GiftForResaleOrderNumber) GetType() string {
+    return TypeGiftForResaleOrderNumber
+}
+
+func (*GiftForResaleOrderNumber) GiftForResaleOrderType() string {
+    return TypeGiftForResaleOrderNumber
+}
+
+// Describes a gift available for resale
+type GiftForResale struct {
+    meta
+    // The gift
+    Gift *UpgradedGift `json:"gift"`
+    // Unique identifier of the received gift for the current user; only for the gifts owned by the current user
+    ReceivedGiftId string `json:"received_gift_id"`
+}
+
+func (entity *GiftForResale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiftForResale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiftForResale) GetClass() string {
+    return ClassGiftForResale
+}
+
+func (*GiftForResale) GetType() string {
+    return TypeGiftForResale
+}
+
+// Describes gifts available for resale
+type GiftsForResale struct {
+    meta
+    // Total number of gifts found
+    TotalCount int32 `json:"total_count"`
+    // The gifts
+    Gifts []*GiftForResale `json:"gifts"`
+    // Available models; for searchGiftsForResale requests without offset and attributes only
+    Models []*UpgradedGiftModelCount `json:"models"`
+    // Available symbols; for searchGiftsForResale requests without offset and attributes only
+    Symbols []*UpgradedGiftSymbolCount `json:"symbols"`
+    // Available backdrops; for searchGiftsForResale requests without offset and attributes only
+    Backdrops []*UpgradedGiftBackdropCount `json:"backdrops"`
+    // The offset for the next request. If empty, then there are no more results
+    NextOffset string `json:"next_offset"`
+}
+
+func (entity *GiftsForResale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub GiftsForResale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*GiftsForResale) GetClass() string {
+    return ClassGiftsForResale
+}
+
+func (*GiftsForResale) GetType() string {
+    return TypeGiftsForResale
 }
 
 // Regular gift
@@ -9118,6 +9481,10 @@ type ReceivedGift struct {
     PrepaidUpgradeStarCount int64 `json:"prepaid_upgrade_star_count"`
     // Number of Telegram Stars that must be paid to transfer the upgraded gift; only for the receiver of the gift
     TransferStarCount int64 `json:"transfer_star_count"`
+    // Point in time (Unix timestamp) when the gift can be transferred to another owner; 0 if the gift can be transferred immediately or transfer isn't possible; only for the receiver of the gift
+    NextTransferDate int32 `json:"next_transfer_date"`
+    // Point in time (Unix timestamp) when the gift can be resold to another user; 0 if the gift can't be resold; only for the receiver of the gift
+    NextResaleDate int32 `json:"next_resale_date"`
     // Point in time (Unix timestamp) when the upgraded gift can be transferred to the TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
     ExportDate int32 `json:"export_date"`
 }
@@ -9154,6 +9521,8 @@ func (receivedGift *ReceivedGift) UnmarshalJSON(data []byte) error {
         SellStarCount int64 `json:"sell_star_count"`
         PrepaidUpgradeStarCount int64 `json:"prepaid_upgrade_star_count"`
         TransferStarCount int64 `json:"transfer_star_count"`
+        NextTransferDate int32 `json:"next_transfer_date"`
+        NextResaleDate int32 `json:"next_resale_date"`
         ExportDate int32 `json:"export_date"`
     }
 
@@ -9174,6 +9543,8 @@ func (receivedGift *ReceivedGift) UnmarshalJSON(data []byte) error {
     receivedGift.SellStarCount = tmp.SellStarCount
     receivedGift.PrepaidUpgradeStarCount = tmp.PrepaidUpgradeStarCount
     receivedGift.TransferStarCount = tmp.TransferStarCount
+    receivedGift.NextTransferDate = tmp.NextTransferDate
+    receivedGift.NextResaleDate = tmp.NextResaleDate
     receivedGift.ExportDate = tmp.ExportDate
 
     fieldSenderId, _ := UnmarshalMessageSender(tmp.SenderId)
@@ -10090,6 +10461,66 @@ func (*StarTransactionTypeGiftUpgrade) GetType() string {
 
 func (*StarTransactionTypeGiftUpgrade) StarTransactionTypeType() string {
     return TypeStarTransactionTypeGiftUpgrade
+}
+
+// The transaction is a purchase of an upgraded gift for some user or channel; for regular users only
+type StarTransactionTypeUpgradedGiftPurchase struct {
+    meta
+    // Identifier of the user that sold the gift
+    UserId int64 `json:"user_id"`
+    // The gift
+    Gift *UpgradedGift `json:"gift"`
+}
+
+func (entity *StarTransactionTypeUpgradedGiftPurchase) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeUpgradedGiftPurchase
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeUpgradedGiftPurchase) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeUpgradedGiftPurchase) GetType() string {
+    return TypeStarTransactionTypeUpgradedGiftPurchase
+}
+
+func (*StarTransactionTypeUpgradedGiftPurchase) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeUpgradedGiftPurchase
+}
+
+// The transaction is a sale of an upgraded gift; for regular users only
+type StarTransactionTypeUpgradedGiftSale struct {
+    meta
+    // Identifier of the user that bought the gift
+    UserId int64 `json:"user_id"`
+    // The gift
+    Gift *UpgradedGift `json:"gift"`
+    // Information about commission received by Telegram from the transaction
+    Affiliate *AffiliateInfo `json:"affiliate"`
+}
+
+func (entity *StarTransactionTypeUpgradedGiftSale) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub StarTransactionTypeUpgradedGiftSale
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*StarTransactionTypeUpgradedGiftSale) GetClass() string {
+    return ClassStarTransactionType
+}
+
+func (*StarTransactionTypeUpgradedGiftSale) GetType() string {
+    return TypeStarTransactionTypeUpgradedGiftSale
+}
+
+func (*StarTransactionTypeUpgradedGiftSale) StarTransactionTypeType() string {
+    return TypeStarTransactionTypeUpgradedGiftSale
 }
 
 // The transaction is a sending of a paid reaction to a message in a channel chat by the current user; for regular users only
@@ -12712,6 +13143,8 @@ type Supergroup struct {
     MemberCount int32 `json:"member_count"`
     // Approximate boost level for the chat
     BoostLevel int32 `json:"boost_level"`
+    // True, if automatic translation of messages is enabled in the channel
+    HasAutomaticTranslation bool `json:"has_automatic_translation"`
     // True, if the channel has a discussion group, or the supergroup is the designated discussion group for a channel
     HasLinkedChat bool `json:"has_linked_chat"`
     // True, if the supergroup is connected to a location, i.e. the supergroup is a location-based supergroup
@@ -12771,6 +13204,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
         Status json.RawMessage `json:"status"`
         MemberCount int32 `json:"member_count"`
         BoostLevel int32 `json:"boost_level"`
+        HasAutomaticTranslation bool `json:"has_automatic_translation"`
         HasLinkedChat bool `json:"has_linked_chat"`
         HasLocation bool `json:"has_location"`
         SignMessages bool `json:"sign_messages"`
@@ -12800,6 +13234,7 @@ func (supergroup *Supergroup) UnmarshalJSON(data []byte) error {
     supergroup.Date = tmp.Date
     supergroup.MemberCount = tmp.MemberCount
     supergroup.BoostLevel = tmp.BoostLevel
+    supergroup.HasAutomaticTranslation = tmp.HasAutomaticTranslation
     supergroup.HasLinkedChat = tmp.HasLinkedChat
     supergroup.HasLocation = tmp.HasLocation
     supergroup.SignMessages = tmp.SignMessages
@@ -28100,7 +28535,7 @@ type MessageUpgradedGift struct {
     SenderId MessageSender `json:"sender_id"`
     // Unique identifier of the received gift for the current user; only for the receiver of the gift
     ReceivedGiftId string `json:"received_gift_id"`
-    // True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred gift
+    // True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred or resold gift
     IsUpgrade bool `json:"is_upgrade"`
     // True, if the gift is displayed on the user's or the channel's profile page; only for the receiver of the gift
     IsSaved bool `json:"is_saved"`
@@ -28108,8 +28543,14 @@ type MessageUpgradedGift struct {
     CanBeTransferred bool `json:"can_be_transferred"`
     // True, if the gift was transferred to another owner; only for the receiver of the gift
     WasTransferred bool `json:"was_transferred"`
+    // Number of Telegram Stars that were paid by the sender for the gift; 0 if the gift was upgraded or transferred
+    LastResaleStarCount int64 `json:"last_resale_star_count"`
     // Number of Telegram Stars that must be paid to transfer the upgraded gift; only for the receiver of the gift
     TransferStarCount int64 `json:"transfer_star_count"`
+    // Point in time (Unix timestamp) when the gift can be transferred to another owner; 0 if the gift can be transferred immediately or transfer isn't possible; only for the receiver of the gift
+    NextTransferDate int32 `json:"next_transfer_date"`
+    // Point in time (Unix timestamp) when the gift can be resold to another user; 0 if the gift can't be resold; only for the receiver of the gift
+    NextResaleDate int32 `json:"next_resale_date"`
     // Point in time (Unix timestamp) when the gift can be transferred to the TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
     ExportDate int32 `json:"export_date"`
 }
@@ -28143,7 +28584,10 @@ func (messageUpgradedGift *MessageUpgradedGift) UnmarshalJSON(data []byte) error
         IsSaved bool `json:"is_saved"`
         CanBeTransferred bool `json:"can_be_transferred"`
         WasTransferred bool `json:"was_transferred"`
+        LastResaleStarCount int64 `json:"last_resale_star_count"`
         TransferStarCount int64 `json:"transfer_star_count"`
+        NextTransferDate int32 `json:"next_transfer_date"`
+        NextResaleDate int32 `json:"next_resale_date"`
         ExportDate int32 `json:"export_date"`
     }
 
@@ -28158,7 +28602,10 @@ func (messageUpgradedGift *MessageUpgradedGift) UnmarshalJSON(data []byte) error
     messageUpgradedGift.IsSaved = tmp.IsSaved
     messageUpgradedGift.CanBeTransferred = tmp.CanBeTransferred
     messageUpgradedGift.WasTransferred = tmp.WasTransferred
+    messageUpgradedGift.LastResaleStarCount = tmp.LastResaleStarCount
     messageUpgradedGift.TransferStarCount = tmp.TransferStarCount
+    messageUpgradedGift.NextTransferDate = tmp.NextTransferDate
+    messageUpgradedGift.NextResaleDate = tmp.NextResaleDate
     messageUpgradedGift.ExportDate = tmp.ExportDate
 
     fieldSenderId, _ := UnmarshalMessageSender(tmp.SenderId)
@@ -28174,7 +28621,7 @@ type MessageRefundedUpgradedGift struct {
     Gift *Gift `json:"gift"`
     // Sender of the gift
     SenderId MessageSender `json:"sender_id"`
-    // True, if the gift was obtained by upgrading of a previously received gift
+    // True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred or resold gift
     IsUpgrade bool `json:"is_upgrade"`
 }
 
@@ -34116,6 +34563,8 @@ type ChatBoostLevelFeatures struct {
     CanSetCustomBackground bool `json:"can_set_custom_background"`
     // True, if custom emoji sticker set can be set for the chat
     CanSetCustomEmojiStickerSet bool `json:"can_set_custom_emoji_sticker_set"`
+    // True, if automatic translation of messages can be enabled in the chat
+    CanEnableAutomaticTranslation bool `json:"can_enable_automatic_translation"`
     // True, if speech recognition can be used for video note and voice note messages by all users
     CanRecognizeSpeech bool `json:"can_recognize_speech"`
     // True, if sponsored messages can be disabled in the chat
@@ -34155,6 +34604,8 @@ type ChatBoostFeatures struct {
     MinCustomBackgroundBoostLevel int32 `json:"min_custom_background_boost_level"`
     // The minimum boost level required to set custom emoji sticker set for the chat; for supergroup chats only
     MinCustomEmojiStickerSetBoostLevel int32 `json:"min_custom_emoji_sticker_set_boost_level"`
+    // The minimum boost level allowing to enable automatic translation of messages for non-Premium users; for channel chats only
+    MinAutomaticTranslationBoostLevel int32 `json:"min_automatic_translation_boost_level"`
     // The minimum boost level allowing to recognize speech in video note and voice note messages for non-Premium users; for supergroup chats only
     MinSpeechRecognitionBoostLevel int32 `json:"min_speech_recognition_boost_level"`
     // The minimum boost level allowing to disable sponsored messages in the chat; for channel chats only
@@ -39936,6 +40387,33 @@ func (*ChatEventShowMessageSenderToggled) ChatEventActionType() string {
     return TypeChatEventShowMessageSenderToggled
 }
 
+// The has_automatic_translation setting of a channel was toggled
+type ChatEventAutomaticTranslationToggled struct {
+    meta
+    // New value of has_automatic_translation
+    HasAutomaticTranslation bool `json:"has_automatic_translation"`
+}
+
+func (entity *ChatEventAutomaticTranslationToggled) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChatEventAutomaticTranslationToggled
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChatEventAutomaticTranslationToggled) GetClass() string {
+    return ClassChatEventAction
+}
+
+func (*ChatEventAutomaticTranslationToggled) GetType() string {
+    return TypeChatEventAutomaticTranslationToggled
+}
+
+func (*ChatEventAutomaticTranslationToggled) ChatEventActionType() string {
+    return TypeChatEventAutomaticTranslationToggled
+}
+
 // A chat invite link was edited
 type ChatEventInviteLinkEdited struct {
     meta
@@ -44061,8 +44539,10 @@ func (*Hashtags) GetType() string {
 }
 
 // A story can be sent
-type CanPostStoryResultOk struct{
+type CanPostStoryResultOk struct {
     meta
+    // Number of stories that can be posted by the user
+    StoryCount int32 `json:"story_count"`
 }
 
 func (entity *CanPostStoryResultOk) MarshalJSON() ([]byte, error) {
@@ -45191,7 +45671,7 @@ func (*PushMessageContentGift) PushMessageContentType() string {
 // A message with an upgraded gift
 type PushMessageContentUpgradedGift struct {
     meta
-    // True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred gift
+    // True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred or resold gift
     IsUpgrade bool `json:"is_upgrade"`
 }
 
@@ -49413,6 +49893,31 @@ func (*InternalLinkTypeMessageDraft) InternalLinkTypeType() string {
     return TypeInternalLinkTypeMessageDraft
 }
 
+// The link is a link to the screen with information about Telegram Star balance and transactions of the current user
+type InternalLinkTypeMyStars struct{
+    meta
+}
+
+func (entity *InternalLinkTypeMyStars) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InternalLinkTypeMyStars
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InternalLinkTypeMyStars) GetClass() string {
+    return ClassInternalLinkType
+}
+
+func (*InternalLinkTypeMyStars) GetType() string {
+    return TypeInternalLinkTypeMyStars
+}
+
+func (*InternalLinkTypeMyStars) InternalLinkTypeType() string {
+    return TypeInternalLinkTypeMyStars
+}
+
 // The link contains a request of Telegram passport data. Call getPassportAuthorizationForm with the given parameters to process the link if the link was received from outside of the application; otherwise, ignore it
 type InternalLinkTypePassportDataRequest struct {
     meta
@@ -52402,6 +52907,39 @@ func (*SuggestedActionExtendStarSubscriptions) SuggestedActionType() string {
     return TypeSuggestedActionExtendStarSubscriptions
 }
 
+// A custom suggestion to be shown at the top of the chat list
+type SuggestedActionCustom struct {
+    meta
+    // Unique name of the suggestion
+    Name string `json:"name"`
+    // Title of the suggestion
+    Title *FormattedText `json:"title"`
+    // Description of the suggestion
+    Description *FormattedText `json:"description"`
+    // The link to open when the suggestion is clicked
+    Url string `json:"url"`
+}
+
+func (entity *SuggestedActionCustom) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub SuggestedActionCustom
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*SuggestedActionCustom) GetClass() string {
+    return ClassSuggestedAction
+}
+
+func (*SuggestedActionCustom) GetType() string {
+    return TypeSuggestedActionCustom
+}
+
+func (*SuggestedActionCustom) SuggestedActionType() string {
+    return TypeSuggestedActionCustom
+}
+
 // Contains a counter
 type Count struct {
     meta
@@ -54003,7 +54541,7 @@ func (*VectorPathCommandLine) VectorPathCommandType() string {
     return TypeVectorPathCommandLine
 }
 
-// A cubic BÃ©zier curve to a given point
+// A cubic Bézier curve to a given point
 type VectorPathCommandCubicBezierCurve struct {
     meta
     // The start control point of the curve

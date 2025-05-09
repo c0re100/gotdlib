@@ -8708,6 +8708,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeMessageDraft:
         return UnmarshalInternalLinkTypeMessageDraft(result.Data)
 
+    case TypeInternalLinkTypeMyStars:
+        return UnmarshalInternalLinkTypeMyStars(result.Data)
+
     case TypeInternalLinkTypePassportDataRequest:
         return UnmarshalInternalLinkTypePassportDataRequest(result.Data)
 
@@ -19163,6 +19166,35 @@ func (client *Client) ToggleSupergroupCanHaveSponsoredMessages(req *ToggleSuperg
     return UnmarshalOk(result.Data)
 }
 
+type ToggleSupergroupHasAutomaticTranslationRequest struct { 
+    // The identifier of the channel
+    SupergroupId int64 `json:"supergroup_id"`
+    // The new value of has_automatic_translation
+    HasAutomaticTranslation bool `json:"has_automatic_translation"`
+}
+
+// Toggles whether messages are automatically translated in the channel chat; requires can_change_info administrator right in the channel. The chat must have at least chatBoostFeatures.min_automatic_translation_boost_level boost level to enable automatic translation
+func (client *Client) ToggleSupergroupHasAutomaticTranslation(req *ToggleSupergroupHasAutomaticTranslationRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "toggleSupergroupHasAutomaticTranslation",
+        },
+        Data: map[string]interface{}{
+            "supergroup_id": req.SupergroupId,
+            "has_automatic_translation": req.HasAutomaticTranslation,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type ToggleSupergroupHasHiddenMembersRequest struct { 
     // Identifier of the supergroup
     SupergroupId int64 `json:"supergroup_id"`
@@ -19670,7 +19702,7 @@ func (client *Client) SetGiftSettings(req *SetGiftSettingsRequest) (*Ok, error) 
 }
 
 // Returns gifts that can be sent to other users and channel chats
-func (client *Client) GetAvailableGifts() (*Gifts, error) {
+func (client *Client) GetAvailableGifts() (*AvailableGifts, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "getAvailableGifts",
@@ -19685,7 +19717,7 @@ func (client *Client) GetAvailableGifts() (*Gifts, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalGifts(result.Data)
+    return UnmarshalAvailableGifts(result.Data)
 }
 
 type SendGiftRequest struct { 
@@ -19938,6 +19970,38 @@ func (client *Client) TransferGift(req *TransferGiftRequest) (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+type SendResoldGiftRequest struct { 
+    // Name of the upgraded gift to send
+    GiftName string `json:"gift_name"`
+    // Identifier of the user or the channel chat that will receive the gift
+    OwnerId MessageSender `json:"owner_id"`
+    // The amount of Telegram Stars required to pay for the gift
+    StarCount int64 `json:"star_count"`
+}
+
+// Sends an upgraded gift that is available for resale to another user or channel chat; gifts already owned by the current user must be transferred using transferGift and can't be passed to the method
+func (client *Client) SendResoldGift(req *SendResoldGiftRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "sendResoldGift",
+        },
+        Data: map[string]interface{}{
+            "gift_name": req.GiftName,
+            "owner_id": req.OwnerId,
+            "star_count": req.StarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type GetReceivedGiftsRequest struct { 
     // Unique identifier of business connection on behalf of which to send the request; for bots only
     BusinessConnectionId string `json:"business_connection_id"`
@@ -20070,6 +20134,73 @@ func (client *Client) GetUpgradedGiftWithdrawalUrl(req *GetUpgradedGiftWithdrawa
     }
 
     return UnmarshalHttpUrl(result.Data)
+}
+
+type SetGiftResalePriceRequest struct { 
+    // Identifier of the unique gift
+    ReceivedGiftId string `json:"received_gift_id"`
+    // The new price for the unique gift; 0 or getOption("gift_resale_star_count_min")-getOption("gift_resale_star_count_max"). Pass 0 to disallow gift resale. The current user will receive getOption("gift_resale_earnings_per_mille") Telegram Stars for each 1000 Telegram Stars paid for the gift
+    ResaleStarCount int64 `json:"resale_star_count"`
+}
+
+// Changes resale price of a unique gift owned by the current user
+func (client *Client) SetGiftResalePrice(req *SetGiftResalePriceRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setGiftResalePrice",
+        },
+        Data: map[string]interface{}{
+            "received_gift_id": req.ReceivedGiftId,
+            "resale_star_count": req.ResaleStarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SearchGiftsForResaleRequest struct { 
+    // Identifier of the regular gift that was upgraded to a unique gift
+    GiftId JsonInt64 `json:"gift_id"`
+    // Order in which the results will be sorted
+    Order GiftForResaleOrder `json:"order"`
+    // Attributes used to filter received gifts. If multiple attributes of the same type are specified, then all of them are allowed. If none attributes of specific type are specified, then all values for this attribute type are allowed
+    Attributes []UpgradedGiftAttributeId `json:"attributes"`
+    // Offset of the first entry to return as received from the previous request with the same order and attributes; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of gifts to return
+    Limit int32 `json:"limit"`
+}
+
+// Returns upgraded gifts that can be bought from other owners
+func (client *Client) SearchGiftsForResale(req *SearchGiftsForResaleRequest) (*GiftsForResale, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "searchGiftsForResale",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+            "order": req.Order,
+            "attributes": req.Attributes,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGiftsForResale(result.Data)
 }
 
 type CreateInvoiceLinkRequest struct { 
