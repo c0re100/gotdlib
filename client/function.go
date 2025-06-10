@@ -1672,6 +1672,35 @@ func (client *Client) GetMessageViewers(req *GetMessageViewersRequest) (*Message
     return UnmarshalMessageViewers(result.Data)
 }
 
+type GetMessageAuthorRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Returns information about actual author of a message sent on behalf of a channel. The method can be called if messageProperties.can_get_author == true
+func (client *Client) GetMessageAuthor(req *GetMessageAuthorRequest) (*User, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getMessageAuthor",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalUser(result.Data)
+}
+
 type GetFileRequest struct { 
     // Identifier of the file to get
     FileId int32 `json:"file_id"`
@@ -2387,7 +2416,7 @@ func (client *Client) GetSuitableDiscussionChats() (*Chats, error) {
     return UnmarshalChats(result.Data)
 }
 
-// Returns a list of recently inactive supergroups and channels. Can be used when user reaches limit on the number of joined supergroups and channels and receives CHANNELS_TOO_MUCH error. Also, the limit can be increased with Telegram Premium
+// Returns a list of recently inactive supergroups and channels. Can be used when user reaches limit on the number of joined supergroups and channels and receives the error "CHANNELS_TOO_MUCH". Also, the limit can be increased with Telegram Premium
 func (client *Client) GetInactiveSupergroupChats() (*Chats, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2423,6 +2452,320 @@ func (client *Client) GetSuitablePersonalChats() (*Chats, error) {
     }
 
     return UnmarshalChats(result.Data)
+}
+
+type LoadDirectMessagesChatTopicsRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // The maximum number of topics to be loaded. For optimal performance, the number of loaded topics is chosen by TDLib and can be smaller than the specified limit, even if the end of the list is not reached
+    Limit int32 `json:"limit"`
+}
+
+// Loads more topics in a channel direct messages chat administered by the current user. The loaded topics will be sent through updateDirectMessagesChatTopic. Topics are sorted by their topic.order in descending order. Returns a 404 error if all topics have been loaded
+func (client *Client) LoadDirectMessagesChatTopics(req *LoadDirectMessagesChatTopicsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "loadDirectMessagesChatTopics",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type GetDirectMessagesChatTopicRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic to get
+    TopicId int64 `json:"topic_id"`
+}
+
+// Returns information about the topic in a channel direct messages chat administered by the current user
+func (client *Client) GetDirectMessagesChatTopic(req *GetDirectMessagesChatTopicRequest) (*DirectMessagesChatTopic, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getDirectMessagesChatTopic",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalDirectMessagesChatTopic(result.Data)
+}
+
+type GetDirectMessagesChatTopicHistoryRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic which messages will be fetched
+    TopicId int64 `json:"topic_id"`
+    // Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message
+    FromMessageId int64 `json:"from_message_id"`
+    // Specify 0 to get results from exactly the message from_message_id or a negative offset up to 99 to get additionally some newer messages
+    Offset int32 `json:"offset"`
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    Limit int32 `json:"limit"`
+}
+
+// Returns messages in the topic in a channel direct messages chat administered by the current user. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id)
+func (client *Client) GetDirectMessagesChatTopicHistory(req *GetDirectMessagesChatTopicHistoryRequest) (*Messages, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getDirectMessagesChatTopicHistory",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "from_message_id": req.FromMessageId,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessages(result.Data)
+}
+
+type GetDirectMessagesChatTopicMessageByDateRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic which messages will be fetched
+    TopicId int64 `json:"topic_id"`
+    // Point in time (Unix timestamp) relative to which to search for messages
+    Date int32 `json:"date"`
+}
+
+// Returns the last message sent in the topic in a channel direct messages chat administered by the current user no later than the specified date
+func (client *Client) GetDirectMessagesChatTopicMessageByDate(req *GetDirectMessagesChatTopicMessageByDateRequest) (*Message, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getDirectMessagesChatTopicMessageByDate",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "date": req.Date,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessage(result.Data)
+}
+
+type DeleteDirectMessagesChatTopicHistoryRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic which messages will be deleted
+    TopicId int64 `json:"topic_id"`
+}
+
+// Deletes all messages in the topic in a channel direct messages chat administered by the current user
+func (client *Client) DeleteDirectMessagesChatTopicHistory(req *DeleteDirectMessagesChatTopicHistoryRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteDirectMessagesChatTopicHistory",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteDirectMessagesChatTopicMessagesByDateRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic which messages will be deleted
+    TopicId int64 `json:"topic_id"`
+    // The minimum date of the messages to delete
+    MinDate int32 `json:"min_date"`
+    // The maximum date of the messages to delete
+    MaxDate int32 `json:"max_date"`
+}
+
+// Deletes all messages between the specified dates in the topic in a channel direct messages chat administered by the current user. Messages sent in the last 30 seconds will not be deleted
+func (client *Client) DeleteDirectMessagesChatTopicMessagesByDate(req *DeleteDirectMessagesChatTopicMessagesByDateRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteDirectMessagesChatTopicMessagesByDate",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "min_date": req.MinDate,
+            "max_date": req.MaxDate,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetDirectMessagesChatTopicIsMarkedAsUnreadRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Topic identifier
+    TopicId int64 `json:"topic_id"`
+    // New value of is_marked_as_unread
+    IsMarkedAsUnread bool `json:"is_marked_as_unread"`
+}
+
+// Changes the marked as unread state of the topic in a channel direct messages chat administered by the current user
+func (client *Client) SetDirectMessagesChatTopicIsMarkedAsUnread(req *SetDirectMessagesChatTopicIsMarkedAsUnreadRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setDirectMessagesChatTopicIsMarkedAsUnread",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "is_marked_as_unread": req.IsMarkedAsUnread,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetDirectMessagesChatTopicDraftMessageRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Topic identifier
+    TopicId int64 `json:"topic_id"`
+    // New draft message; pass null to remove the draft. All files in draft message content must be of the type inputFileLocal. Media thumbnails and captions are ignored
+    DraftMessage *DraftMessage `json:"draft_message"`
+}
+
+// Changes the draft message in the topic in a channel direct messages chat administered by the current user
+func (client *Client) SetDirectMessagesChatTopicDraftMessage(req *SetDirectMessagesChatTopicDraftMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setDirectMessagesChatTopicDraftMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "draft_message": req.DraftMessage,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type UnpinAllDirectMessagesChatTopicMessagesRequest struct { 
+    // Identifier of the chat
+    ChatId int64 `json:"chat_id"`
+    // Topic identifier
+    TopicId int64 `json:"topic_id"`
+}
+
+// Removes all pinned messages from the topic in a channel direct messages chat administered by the current user
+func (client *Client) UnpinAllDirectMessagesChatTopicMessages(req *UnpinAllDirectMessagesChatTopicMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "unpinAllDirectMessagesChatTopicMessages",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ReadAllDirectMessagesChatTopicReactionsRequest struct { 
+    // Identifier of the chat
+    ChatId int64 `json:"chat_id"`
+    // Topic identifier
+    TopicId int64 `json:"topic_id"`
+}
+
+// Removes all unread reactions in the topic in a channel direct messages chat administered by the current user
+func (client *Client) ReadAllDirectMessagesChatTopicReactions(req *ReadAllDirectMessagesChatTopicReactionsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "readAllDirectMessagesChatTopicReactions",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
 }
 
 type LoadSavedMessagesTopicsRequest struct { 
@@ -2797,6 +3140,8 @@ func (client *Client) DeleteChat(req *DeleteChatRequest) (*Ok, error) {
 type SearchChatMessagesRequest struct { 
     // Identifier of the chat in which to search messages
     ChatId int64 `json:"chat_id"`
+    // Pass topic identifier to search messages only in specific topic; pass null to search for messages in all topics
+    TopicId MessageTopic `json:"topic_id"`
     // Query to search for
     Query string `json:"query"`
     // Identifier of the sender of messages to search for; pass null to search for messages from any sender. Not supported in secret chats
@@ -2809,13 +3154,9 @@ type SearchChatMessagesRequest struct {
     Limit int32 `json:"limit"`
     // Additional filter for messages to search; pass null to search for all messages
     Filter SearchMessagesFilter `json:"filter"`
-    // If not 0, only messages in the specified thread will be returned; supergroups only
-    MessageThreadId int64 `json:"message_thread_id"`
-    // If not 0, only messages in the specified Saved Messages topic will be returned; pass 0 to return all messages, or for chats other than Saved Messages
-    SavedMessagesTopicId int64 `json:"saved_messages_topic_id"`
 }
 
-// Searches for messages with given words in the chat. Returns the results in reverse chronological order, i.e. in order of decreasing message_id. Cannot be used in secret chats with a non-empty query (searchSecretMessages must be used instead), or without an enabled message database. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit. A combination of query, sender_id, filter and message_thread_id search criteria is expected to be supported, only if it is required for Telegram official application implementation
+// Searches for messages with given words in the chat. Returns the results in reverse chronological order, i.e. in order of decreasing message_id. Cannot be used in secret chats with a non-empty query (searchSecretMessages must be used instead), or without an enabled message database. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit. A combination of query, sender_id, filter and topic_id search criteria is expected to be supported, only if it is required for Telegram official application implementation
 func (client *Client) SearchChatMessages(req *SearchChatMessagesRequest) (*FoundChatMessages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2823,14 +3164,13 @@ func (client *Client) SearchChatMessages(req *SearchChatMessagesRequest) (*Found
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
             "query": req.Query,
             "sender_id": req.SenderId,
             "from_message_id": req.FromMessageId,
             "offset": req.Offset,
             "limit": req.Limit,
             "filter": req.Filter,
-            "message_thread_id": req.MessageThreadId,
-            "saved_messages_topic_id": req.SavedMessagesTopicId,
         },
     })
     if err != nil {
@@ -3371,12 +3711,12 @@ func (client *Client) GetChatSparseMessagePositions(req *GetChatSparseMessagePos
 type GetChatMessageCalendarRequest struct { 
     // Identifier of the chat in which to return information about messages
     ChatId int64 `json:"chat_id"`
+    // Pass topic identifier to get the result only in specific topic; pass null to get the result in all topics; forum topics aren't supported
+    TopicId MessageTopic `json:"topic_id"`
     // Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, and searchMessagesFilterUnreadReaction are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
     // The message identifier from which to return information about messages; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // If not0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all messages, or for chats other than Saved Messages
-    SavedMessagesTopicId int64 `json:"saved_messages_topic_id"`
 }
 
 // Returns information about the next messages of the specified type in the chat split by days. Returns the results in reverse chronological order. Can return partial result for the last returned day. Behavior of this method depends on the value of the option "utc_time_offset"
@@ -3387,9 +3727,9 @@ func (client *Client) GetChatMessageCalendar(req *GetChatMessageCalendarRequest)
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
             "filter": req.Filter,
             "from_message_id": req.FromMessageId,
-            "saved_messages_topic_id": req.SavedMessagesTopicId,
         },
     })
     if err != nil {
@@ -3406,15 +3746,15 @@ func (client *Client) GetChatMessageCalendar(req *GetChatMessageCalendarRequest)
 type GetChatMessageCountRequest struct { 
     // Identifier of the chat in which to count messages
     ChatId int64 `json:"chat_id"`
+    // Pass topic identifier to get number of messages only in specific topic; pass null to get number of messages in all topics
+    TopicId MessageTopic `json:"topic_id"`
     // Filter for message content; searchMessagesFilterEmpty is unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
-    // If not 0, only messages in the specified Saved Messages topic will be counted; pass 0 to count all messages, or for chats other than Saved Messages
-    SavedMessagesTopicId int64 `json:"saved_messages_topic_id"`
     // Pass true to get the number of messages without sending network requests, or -1 if the number of messages is unknown locally
     ReturnLocal bool `json:"return_local"`
 }
 
-// Returns approximate number of messages of the specified type in the chat
+// Returns approximate number of messages of the specified type in the chat or its topic
 func (client *Client) GetChatMessageCount(req *GetChatMessageCountRequest) (*Count, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3422,8 +3762,8 @@ func (client *Client) GetChatMessageCount(req *GetChatMessageCountRequest) (*Cou
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
             "filter": req.Filter,
-            "saved_messages_topic_id": req.SavedMessagesTopicId,
             "return_local": req.ReturnLocal,
         },
     })
@@ -3441,17 +3781,15 @@ func (client *Client) GetChatMessageCount(req *GetChatMessageCountRequest) (*Cou
 type GetChatMessagePositionRequest struct { 
     // Identifier of the chat in which to find message position
     ChatId int64 `json:"chat_id"`
-    // Message identifier
-    MessageId int64 `json:"message_id"`
+    // Pass topic identifier to get position among messages only in specific topic; pass null to get position among all chat messages
+    TopicId MessageTopic `json:"topic_id"`
     // Filter for message content; searchMessagesFilterEmpty, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, and searchMessagesFilterFailedToSend are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
-    // If not 0, only messages in the specified thread will be considered; supergroups only
-    MessageThreadId int64 `json:"message_thread_id"`
-    // If not 0, only messages in the specified Saved Messages topic will be considered; pass 0 to consider all relevant messages, or for chats other than Saved Messages
-    SavedMessagesTopicId int64 `json:"saved_messages_topic_id"`
+    // Message identifier
+    MessageId int64 `json:"message_id"`
 }
 
-// Returns approximate 1-based position of a message among messages, which can be found by the specified filter in the chat. Cannot be used in secret chats
+// Returns approximate 1-based position of a message among messages, which can be found by the specified filter in the chat and topic. Cannot be used in secret chats
 func (client *Client) GetChatMessagePosition(req *GetChatMessagePositionRequest) (*Count, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -3459,10 +3797,9 @@ func (client *Client) GetChatMessagePosition(req *GetChatMessagePositionRequest)
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
-            "message_id": req.MessageId,
+            "topic_id": req.TopicId,
             "filter": req.Filter,
-            "message_thread_id": req.MessageThreadId,
-            "saved_messages_topic_id": req.SavedMessagesTopicId,
+            "message_id": req.MessageId,
         },
     })
     if err != nil {
@@ -4235,7 +4572,7 @@ type ForwardMessagesRequest struct {
     MessageIds []int64 `json:"message_ids"`
     // Options to be used to send the messages; pass null to use default options
     Options *MessageSendOptions `json:"options"`
-    // Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local. Use messageProperties.can_be_saved and messageProperties.can_be_copied_to_secret_chat to check whether the message is suitable
+    // Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local. Use messageProperties.can_be_copied and messageProperties.can_be_copied_to_secret_chat to check whether the message is suitable
     SendCopy bool `json:"send_copy"`
     // Pass true to remove media captions of message copies. Ignored if send_copy is false
     RemoveCaption bool `json:"remove_caption"`
@@ -4362,7 +4699,7 @@ func (client *Client) SendChatScreenshotTakenNotification(req *SendChatScreensho
 }
 
 type AddLocalMessageRequest struct { 
-    // Target chat
+    // Target chat; channel direct messages chats aren't supported
     ChatId int64 `json:"chat_id"`
     // Identifier of the sender of the message
     SenderId MessageSender `json:"sender_id"`
@@ -7976,8 +8313,10 @@ type OpenWebAppRequest struct {
     BotUserId int64 `json:"bot_user_id"`
     // The URL from an inlineKeyboardButtonTypeWebApp button, a botMenuButton button, an internalLinkTypeAttachmentMenuBot link, or an empty string otherwise
     Url string `json:"url"`
-    // If not 0, the message thread identifier in which the message will be sent
+    // If not 0, the message thread identifier to which the message will be sent
     MessageThreadId int64 `json:"message_thread_id"`
+    // If not 0, unique identifier of the topic of channel direct messages chat to which the message will be sent
+    DirectMessagesChatTopicId int64 `json:"direct_messages_chat_topic_id"`
     // Information about the message or story to be replied in the message sent by the Web App; pass null if none
     ReplyTo InputMessageReplyTo `json:"reply_to"`
     // Parameters to use to open the Web App
@@ -7995,6 +8334,7 @@ func (client *Client) OpenWebApp(req *OpenWebAppRequest) (*WebAppInfo, error) {
             "bot_user_id": req.BotUserId,
             "url": req.Url,
             "message_thread_id": req.MessageThreadId,
+            "direct_messages_chat_topic_id": req.DirectMessagesChatTopicId,
             "reply_to": req.ReplyTo,
             "parameters": req.Parameters,
         },
@@ -10436,6 +10776,38 @@ func (client *Client) SetChatDiscussionGroup(req *SetChatDiscussionGroupRequest)
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "discussion_chat_id": req.DiscussionChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SetChatDirectMessagesGroupRequest struct { 
+    // Identifier of the channel chat
+    ChatId int64 `json:"chat_id"`
+    // Pass true if the direct messages group is enabled for the channel chat; pass false otherwise
+    IsEnabled bool `json:"is_enabled"`
+    // The new number of Telegram Stars that must be paid for each message that is sent to the direct messages chat unless the sender is an administrator of the channel chat; 0-getOption("paid_message_star_count_max"). The channel will receive getOption("paid_message_earnings_per_mille") Telegram Stars for each 1000 Telegram Stars paid for message sending. Requires supergroupFullInfo.can_enable_paid_messages for positive amounts
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
+}
+
+// Changes direct messages group settings for a channel chat; requires owner privileges in the chat
+func (client *Client) SetChatDirectMessagesGroup(req *SetChatDirectMessagesGroupRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setChatDirectMessagesGroup",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "is_enabled": req.IsEnabled,
+            "paid_message_star_count": req.PaidMessageStarCount,
         },
     })
     if err != nil {
@@ -13114,7 +13486,7 @@ func (client *Client) SearchFileDownloads(req *SearchFileDownloadsRequest) (*Fou
 type SetApplicationVerificationTokenRequest struct { 
     // Unique identifier for the verification process as received from updateApplicationVerificationRequired or updateApplicationRecaptchaVerificationRequired
     VerificationId int64 `json:"verification_id"`
-    // Play Integrity API token for the Android application, or secret from push notification for the iOS application for application verification, or reCAPTCHA token for reCAPTCHA verifications; pass an empty string to abort verification and receive error VERIFICATION_FAILED for the request
+    // Play Integrity API token for the Android application, or secret from push notification for the iOS application for application verification, or reCAPTCHA token for reCAPTCHA verifications; pass an empty string to abort verification and receive the error "VERIFICATION_FAILED" for the request
     Token string `json:"token"`
 }
 
@@ -14779,8 +15151,8 @@ type SetGroupCallParticipantIsSpeakingRequest struct {
     IsSpeaking bool `json:"is_speaking"`
 }
 
-// Informs TDLib that speaking state of a participant of an active group call has changed
-func (client *Client) SetGroupCallParticipantIsSpeaking(req *SetGroupCallParticipantIsSpeakingRequest) (*Ok, error) {
+// Informs TDLib that speaking state of a participant of an active group call has changed. Returns identifier of the participant if it is found
+func (client *Client) SetGroupCallParticipantIsSpeaking(req *SetGroupCallParticipantIsSpeakingRequest) (MessageSender, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "setGroupCallParticipantIsSpeaking",
@@ -14799,7 +15171,16 @@ func (client *Client) SetGroupCallParticipantIsSpeaking(req *SetGroupCallPartici
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalOk(result.Data)
+    switch result.Type {
+    case TypeMessageSenderUser:
+        return UnmarshalMessageSenderUser(result.Data)
+
+    case TypeMessageSenderChat:
+        return UnmarshalMessageSenderChat(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
 }
 
 type ToggleGroupCallParticipantIsMutedRequest struct { 
@@ -19258,6 +19639,8 @@ type ToggleSupergroupIsForumRequest struct {
     SupergroupId int64 `json:"supergroup_id"`
     // New value of is_forum
     IsForum bool `json:"is_forum"`
+    // New value of has_forum_tabs; ignored if is_forum is false
+    HasForumTabs bool `json:"has_forum_tabs"`
 }
 
 // Toggles whether the supergroup is a forum; requires owner privileges in the supergroup. Discussion supergroups can't be converted to forums
@@ -19269,6 +19652,7 @@ func (client *Client) ToggleSupergroupIsForum(req *ToggleSupergroupIsForumReques
         Data: map[string]interface{}{
             "supergroup_id": req.SupergroupId,
             "is_forum": req.IsForum,
+            "has_forum_tabs": req.HasForumTabs,
         },
     })
     if err != nil {
@@ -25370,6 +25754,12 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateSavedMessagesTopicCount:
         return UnmarshalUpdateSavedMessagesTopicCount(result.Data)
+
+    case TypeUpdateDirectMessagesChatTopic:
+        return UnmarshalUpdateDirectMessagesChatTopic(result.Data)
+
+    case TypeUpdateTopicMessageCount:
+        return UnmarshalUpdateTopicMessageCount(result.Data)
 
     case TypeUpdateQuickReplyShortcut:
         return UnmarshalUpdateQuickReplyShortcut(result.Data)

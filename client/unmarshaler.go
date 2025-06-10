@@ -1599,6 +1599,43 @@ func UnmarshalListOfPaidReactionType(dataList []json.RawMessage) ([]PaidReaction
     return list, nil
 }
 
+func UnmarshalMessageTopic(data json.RawMessage) (MessageTopic, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeMessageTopicForum:
+        return UnmarshalMessageTopicForum(data)
+
+    case TypeMessageTopicDirectMessages:
+        return UnmarshalMessageTopicDirectMessages(data)
+
+    case TypeMessageTopicSavedMessages:
+        return UnmarshalMessageTopicSavedMessages(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfMessageTopic(dataList []json.RawMessage) ([]MessageTopic, error) {
+    list := []MessageTopic{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalMessageTopic(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalMessageEffectType(data json.RawMessage) (MessageEffectType, error) {
     var meta meta
 
@@ -1755,6 +1792,9 @@ func UnmarshalMessageSource(data json.RawMessage) (MessageSource, error) {
 
     case TypeMessageSourceForumTopicHistory:
         return UnmarshalMessageSourceForumTopicHistory(data)
+
+    case TypeMessageSourceDirectMessagesChatTopicHistory:
+        return UnmarshalMessageSourceDirectMessagesChatTopicHistory(data)
 
     case TypeMessageSourceHistoryPreview:
         return UnmarshalMessageSourceHistoryPreview(data)
@@ -3607,6 +3647,9 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
 
     case TypeMessagePaidMessagePriceChanged:
         return UnmarshalMessagePaidMessagePriceChanged(data)
+
+    case TypeMessageDirectMessagePriceChanged:
+        return UnmarshalMessageDirectMessagePriceChanged(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -8393,6 +8436,12 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateSavedMessagesTopicCount:
         return UnmarshalUpdateSavedMessagesTopicCount(data)
 
+    case TypeUpdateDirectMessagesChatTopic:
+        return UnmarshalUpdateDirectMessagesChatTopic(data)
+
+    case TypeUpdateTopicMessageCount:
+        return UnmarshalUpdateTopicMessageCount(data)
+
     case TypeUpdateQuickReplyShortcut:
         return UnmarshalUpdateQuickReplyShortcut(data)
 
@@ -11484,6 +11533,30 @@ func UnmarshalUnreadReaction(data json.RawMessage) (*UnreadReaction, error) {
     return &resp, err
 }
 
+func UnmarshalMessageTopicForum(data json.RawMessage) (*MessageTopicForum, error) {
+    var resp MessageTopicForum
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageTopicDirectMessages(data json.RawMessage) (*MessageTopicDirectMessages, error) {
+    var resp MessageTopicDirectMessages
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageTopicSavedMessages(data json.RawMessage) (*MessageTopicSavedMessages, error) {
+    var resp MessageTopicSavedMessages
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalMessageEffectTypeEmojiReaction(data json.RawMessage) (*MessageEffectTypeEmojiReaction, error) {
     var resp MessageEffectTypeEmojiReaction
 
@@ -11686,6 +11759,14 @@ func UnmarshalMessageSourceMessageThreadHistory(data json.RawMessage) (*MessageS
 
 func UnmarshalMessageSourceForumTopicHistory(data json.RawMessage) (*MessageSourceForumTopicHistory, error) {
     var resp MessageSourceForumTopicHistory
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageSourceDirectMessagesChatTopicHistory(data json.RawMessage) (*MessageSourceDirectMessagesChatTopicHistory, error) {
+    var resp MessageSourceDirectMessagesChatTopicHistory
 
     err := json.Unmarshal(data, &resp)
 
@@ -12566,6 +12647,14 @@ func UnmarshalSavedMessagesTopicTypeSavedFromChat(data json.RawMessage) (*SavedM
 
 func UnmarshalSavedMessagesTopic(data json.RawMessage) (*SavedMessagesTopic, error) {
     var resp SavedMessagesTopic
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalDirectMessagesChatTopic(data json.RawMessage) (*DirectMessagesChatTopic, error) {
+    var resp DirectMessagesChatTopic
 
     err := json.Unmarshal(data, &resp)
 
@@ -14830,6 +14919,14 @@ func UnmarshalMessagePaidMessagesRefunded(data json.RawMessage) (*MessagePaidMes
 
 func UnmarshalMessagePaidMessagePriceChanged(data json.RawMessage) (*MessagePaidMessagePriceChanged, error) {
     var resp MessagePaidMessagePriceChanged
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageDirectMessagePriceChanged(data json.RawMessage) (*MessageDirectMessagePriceChanged, error) {
+    var resp MessageDirectMessagePriceChanged
 
     err := json.Unmarshal(data, &resp)
 
@@ -21948,6 +22045,22 @@ func UnmarshalUpdateSavedMessagesTopicCount(data json.RawMessage) (*UpdateSavedM
     return &resp, err
 }
 
+func UnmarshalUpdateDirectMessagesChatTopic(data json.RawMessage) (*UpdateDirectMessagesChatTopic, error) {
+    var resp UpdateDirectMessagesChatTopic
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateTopicMessageCount(data json.RawMessage) (*UpdateTopicMessageCount, error) {
+    var resp UpdateTopicMessageCount
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateQuickReplyShortcut(data json.RawMessage) (*UpdateQuickReplyShortcut, error) {
     var resp UpdateQuickReplyShortcut
 
@@ -23929,6 +24042,15 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUnreadReaction:
         return UnmarshalUnreadReaction(data)
 
+    case TypeMessageTopicForum:
+        return UnmarshalMessageTopicForum(data)
+
+    case TypeMessageTopicDirectMessages:
+        return UnmarshalMessageTopicDirectMessages(data)
+
+    case TypeMessageTopicSavedMessages:
+        return UnmarshalMessageTopicSavedMessages(data)
+
     case TypeMessageEffectTypeEmojiReaction:
         return UnmarshalMessageEffectTypeEmojiReaction(data)
 
@@ -24006,6 +24128,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessageSourceForumTopicHistory:
         return UnmarshalMessageSourceForumTopicHistory(data)
+
+    case TypeMessageSourceDirectMessagesChatTopicHistory:
+        return UnmarshalMessageSourceDirectMessagesChatTopicHistory(data)
 
     case TypeMessageSourceHistoryPreview:
         return UnmarshalMessageSourceHistoryPreview(data)
@@ -24336,6 +24461,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeSavedMessagesTopic:
         return UnmarshalSavedMessagesTopic(data)
+
+    case TypeDirectMessagesChatTopic:
+        return UnmarshalDirectMessagesChatTopic(data)
 
     case TypeForumTopicIcon:
         return UnmarshalForumTopicIcon(data)
@@ -25185,6 +25313,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessagePaidMessagePriceChanged:
         return UnmarshalMessagePaidMessagePriceChanged(data)
+
+    case TypeMessageDirectMessagePriceChanged:
+        return UnmarshalMessageDirectMessagePriceChanged(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -27852,6 +27983,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateSavedMessagesTopicCount:
         return UnmarshalUpdateSavedMessagesTopicCount(data)
+
+    case TypeUpdateDirectMessagesChatTopic:
+        return UnmarshalUpdateDirectMessagesChatTopic(data)
+
+    case TypeUpdateTopicMessageCount:
+        return UnmarshalUpdateTopicMessageCount(data)
 
     case TypeUpdateQuickReplyShortcut:
         return UnmarshalUpdateQuickReplyShortcut(data)
