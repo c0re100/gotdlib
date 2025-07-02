@@ -3507,6 +3507,9 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
     case TypeMessageStory:
         return UnmarshalMessageStory(data)
 
+    case TypeMessageChecklist:
+        return UnmarshalMessageChecklist(data)
+
     case TypeMessageInvoice:
         return UnmarshalMessageInvoice(data)
 
@@ -3650,6 +3653,12 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
 
     case TypeMessageDirectMessagePriceChanged:
         return UnmarshalMessageDirectMessagePriceChanged(data)
+
+    case TypeMessageChecklistTasksDone:
+        return UnmarshalMessageChecklistTasksDone(data)
+
+    case TypeMessageChecklistTasksAdded:
+        return UnmarshalMessageChecklistTasksAdded(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -3961,6 +3970,9 @@ func UnmarshalInputMessageContent(data json.RawMessage) (InputMessageContent, er
 
     case TypeInputMessageStory:
         return UnmarshalInputMessageStory(data)
+
+    case TypeInputMessageChecklist:
+        return UnmarshalInputMessageChecklist(data)
 
     case TypeInputMessageForwarded:
         return UnmarshalInputMessageForwarded(data)
@@ -5803,6 +5815,9 @@ func UnmarshalPremiumFeature(data json.RawMessage) (PremiumFeature, error) {
     case TypePremiumFeatureMessageEffects:
         return UnmarshalPremiumFeatureMessageEffects(data)
 
+    case TypePremiumFeatureChecklists:
+        return UnmarshalPremiumFeatureChecklists(data)
+
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
@@ -6603,6 +6618,9 @@ func UnmarshalPushMessageContent(data json.RawMessage) (PushMessageContent, erro
     case TypePushMessageContentText:
         return UnmarshalPushMessageContentText(data)
 
+    case TypePushMessageContentChecklist:
+        return UnmarshalPushMessageContentChecklist(data)
+
     case TypePushMessageContentVideo:
         return UnmarshalPushMessageContentVideo(data)
 
@@ -6656,6 +6674,12 @@ func UnmarshalPushMessageContent(data json.RawMessage) (PushMessageContent, erro
 
     case TypePushMessageContentProximityAlertTriggered:
         return UnmarshalPushMessageContentProximityAlertTriggered(data)
+
+    case TypePushMessageContentChecklistTasksAdded:
+        return UnmarshalPushMessageContentChecklistTasksAdded(data)
+
+    case TypePushMessageContentChecklistTasksDone:
+        return UnmarshalPushMessageContentChecklistTasksDone(data)
 
     case TypePushMessageContentMessageForwards:
         return UnmarshalPushMessageContentMessageForwards(data)
@@ -9429,6 +9453,38 @@ func UnmarshalPollTypeQuiz(data json.RawMessage) (*PollTypeQuiz, error) {
     return &resp, err
 }
 
+func UnmarshalChecklistTask(data json.RawMessage) (*ChecklistTask, error) {
+    var resp ChecklistTask
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputChecklistTask(data json.RawMessage) (*InputChecklistTask, error) {
+    var resp InputChecklistTask
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalChecklist(data json.RawMessage) (*Checklist, error) {
+    var resp Checklist
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputChecklist(data json.RawMessage) (*InputChecklist, error) {
+    var resp InputChecklist
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalAnimation(data json.RawMessage) (*Animation, error) {
     var resp Animation
 
@@ -9551,6 +9607,14 @@ func UnmarshalPoll(data json.RawMessage) (*Poll, error) {
 
 func UnmarshalAlternativeVideo(data json.RawMessage) (*AlternativeVideo, error) {
     var resp AlternativeVideo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalVideoStoryboard(data json.RawMessage) (*VideoStoryboard, error) {
+    var resp VideoStoryboard
 
     err := json.Unmarshal(data, &resp)
 
@@ -11829,8 +11893,8 @@ func UnmarshalMessageSourceOther(data json.RawMessage) (*MessageSourceOther, err
     return &resp, err
 }
 
-func UnmarshalMessageSponsor(data json.RawMessage) (*MessageSponsor, error) {
-    var resp MessageSponsor
+func UnmarshalAdvertisementSponsor(data json.RawMessage) (*AdvertisementSponsor, error) {
+    var resp AdvertisementSponsor
 
     err := json.Unmarshal(data, &resp)
 
@@ -11863,6 +11927,22 @@ func UnmarshalSponsoredChat(data json.RawMessage) (*SponsoredChat, error) {
 
 func UnmarshalSponsoredChats(data json.RawMessage) (*SponsoredChats, error) {
     var resp SponsoredChats
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalVideoMessageAdvertisement(data json.RawMessage) (*VideoMessageAdvertisement, error) {
+    var resp VideoMessageAdvertisement
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalVideoMessageAdvertisements(data json.RawMessage) (*VideoMessageAdvertisements, error) {
+    var resp VideoMessageAdvertisements
 
     err := json.Unmarshal(data, &resp)
 
@@ -14549,6 +14629,14 @@ func UnmarshalMessageStory(data json.RawMessage) (*MessageStory, error) {
     return &resp, err
 }
 
+func UnmarshalMessageChecklist(data json.RawMessage) (*MessageChecklist, error) {
+    var resp MessageChecklist
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalMessageInvoice(data json.RawMessage) (*MessageInvoice, error) {
     var resp MessageInvoice
 
@@ -14927,6 +15015,22 @@ func UnmarshalMessagePaidMessagePriceChanged(data json.RawMessage) (*MessagePaid
 
 func UnmarshalMessageDirectMessagePriceChanged(data json.RawMessage) (*MessageDirectMessagePriceChanged, error) {
     var resp MessageDirectMessagePriceChanged
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageChecklistTasksDone(data json.RawMessage) (*MessageChecklistTasksDone, error) {
+    var resp MessageChecklistTasksDone
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageChecklistTasksAdded(data json.RawMessage) (*MessageChecklistTasksAdded, error) {
+    var resp MessageChecklistTasksAdded
 
     err := json.Unmarshal(data, &resp)
 
@@ -15415,6 +15519,14 @@ func UnmarshalInputMessagePoll(data json.RawMessage) (*InputMessagePoll, error) 
 
 func UnmarshalInputMessageStory(data json.RawMessage) (*InputMessageStory, error) {
     var resp InputMessageStory
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputMessageChecklist(data json.RawMessage) (*InputMessageChecklist, error) {
+    var resp InputMessageChecklist
 
     err := json.Unmarshal(data, &resp)
 
@@ -18197,6 +18309,14 @@ func UnmarshalPremiumFeatureMessageEffects(data json.RawMessage) (*PremiumFeatur
     return &resp, err
 }
 
+func UnmarshalPremiumFeatureChecklists(data json.RawMessage) (*PremiumFeatureChecklists, error) {
+    var resp PremiumFeatureChecklists
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalBusinessFeatureLocation(data json.RawMessage) (*BusinessFeatureLocation, error) {
     var resp BusinessFeatureLocation
 
@@ -19149,6 +19269,14 @@ func UnmarshalPushMessageContentText(data json.RawMessage) (*PushMessageContentT
     return &resp, err
 }
 
+func UnmarshalPushMessageContentChecklist(data json.RawMessage) (*PushMessageContentChecklist, error) {
+    var resp PushMessageContentChecklist
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalPushMessageContentVideo(data json.RawMessage) (*PushMessageContentVideo, error) {
     var resp PushMessageContentVideo
 
@@ -19287,6 +19415,22 @@ func UnmarshalPushMessageContentSuggestProfilePhoto(data json.RawMessage) (*Push
 
 func UnmarshalPushMessageContentProximityAlertTriggered(data json.RawMessage) (*PushMessageContentProximityAlertTriggered, error) {
     var resp PushMessageContentProximityAlertTriggered
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPushMessageContentChecklistTasksAdded(data json.RawMessage) (*PushMessageContentChecklistTasksAdded, error) {
+    var resp PushMessageContentChecklistTasksAdded
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPushMessageContentChecklistTasksDone(data json.RawMessage) (*PushMessageContentChecklistTasksDone, error) {
+    var resp PushMessageContentChecklistTasksDone
 
     err := json.Unmarshal(data, &resp)
 
@@ -23253,6 +23397,18 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePollTypeQuiz:
         return UnmarshalPollTypeQuiz(data)
 
+    case TypeChecklistTask:
+        return UnmarshalChecklistTask(data)
+
+    case TypeInputChecklistTask:
+        return UnmarshalInputChecklistTask(data)
+
+    case TypeChecklist:
+        return UnmarshalChecklist(data)
+
+    case TypeInputChecklist:
+        return UnmarshalInputChecklist(data)
+
     case TypeAnimation:
         return UnmarshalAnimation(data)
 
@@ -23300,6 +23456,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeAlternativeVideo:
         return UnmarshalAlternativeVideo(data)
+
+    case TypeVideoStoryboard:
+        return UnmarshalVideoStoryboard(data)
 
     case TypeBackground:
         return UnmarshalBackground(data)
@@ -24153,8 +24312,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeMessageSourceOther:
         return UnmarshalMessageSourceOther(data)
 
-    case TypeMessageSponsor:
-        return UnmarshalMessageSponsor(data)
+    case TypeAdvertisementSponsor:
+        return UnmarshalAdvertisementSponsor(data)
 
     case TypeSponsoredMessage:
         return UnmarshalSponsoredMessage(data)
@@ -24167,6 +24326,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeSponsoredChats:
         return UnmarshalSponsoredChats(data)
+
+    case TypeVideoMessageAdvertisement:
+        return UnmarshalVideoMessageAdvertisement(data)
+
+    case TypeVideoMessageAdvertisements:
+        return UnmarshalVideoMessageAdvertisements(data)
 
     case TypeReportOption:
         return UnmarshalReportOption(data)
@@ -25173,6 +25338,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeMessageStory:
         return UnmarshalMessageStory(data)
 
+    case TypeMessageChecklist:
+        return UnmarshalMessageChecklist(data)
+
     case TypeMessageInvoice:
         return UnmarshalMessageInvoice(data)
 
@@ -25316,6 +25484,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeMessageDirectMessagePriceChanged:
         return UnmarshalMessageDirectMessagePriceChanged(data)
+
+    case TypeMessageChecklistTasksDone:
+        return UnmarshalMessageChecklistTasksDone(data)
+
+    case TypeMessageChecklistTasksAdded:
+        return UnmarshalMessageChecklistTasksAdded(data)
 
     case TypeMessageContactRegistered:
         return UnmarshalMessageContactRegistered(data)
@@ -25499,6 +25673,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInputMessageStory:
         return UnmarshalInputMessageStory(data)
+
+    case TypeInputMessageChecklist:
+        return UnmarshalInputMessageChecklist(data)
 
     case TypeInputMessageForwarded:
         return UnmarshalInputMessageForwarded(data)
@@ -26541,6 +26718,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePremiumFeatureMessageEffects:
         return UnmarshalPremiumFeatureMessageEffects(data)
 
+    case TypePremiumFeatureChecklists:
+        return UnmarshalPremiumFeatureChecklists(data)
+
     case TypeBusinessFeatureLocation:
         return UnmarshalBusinessFeatureLocation(data)
 
@@ -26898,6 +27078,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypePushMessageContentText:
         return UnmarshalPushMessageContentText(data)
 
+    case TypePushMessageContentChecklist:
+        return UnmarshalPushMessageContentChecklist(data)
+
     case TypePushMessageContentVideo:
         return UnmarshalPushMessageContentVideo(data)
 
@@ -26951,6 +27134,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypePushMessageContentProximityAlertTriggered:
         return UnmarshalPushMessageContentProximityAlertTriggered(data)
+
+    case TypePushMessageContentChecklistTasksAdded:
+        return UnmarshalPushMessageContentChecklistTasksAdded(data)
+
+    case TypePushMessageContentChecklistTasksDone:
+        return UnmarshalPushMessageContentChecklistTasksDone(data)
 
     case TypePushMessageContentMessageForwards:
         return UnmarshalPushMessageContentMessageForwards(data)

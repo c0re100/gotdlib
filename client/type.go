@@ -200,6 +200,10 @@ const (
     ClassClosedVectorPath = "ClosedVectorPath"
     ClassOutline = "Outline"
     ClassPollOption = "PollOption"
+    ClassChecklistTask = "ChecklistTask"
+    ClassInputChecklistTask = "InputChecklistTask"
+    ClassChecklist = "Checklist"
+    ClassInputChecklist = "InputChecklist"
     ClassAnimation = "Animation"
     ClassAudio = "Audio"
     ClassDocument = "Document"
@@ -216,6 +220,7 @@ const (
     ClassWebApp = "WebApp"
     ClassPoll = "Poll"
     ClassAlternativeVideo = "AlternativeVideo"
+    ClassVideoStoryboard = "VideoStoryboard"
     ClassBackground = "Background"
     ClassBackgrounds = "Backgrounds"
     ClassChatBackground = "ChatBackground"
@@ -357,11 +362,13 @@ const (
     ClassMessageCalendar = "MessageCalendar"
     ClassBusinessMessage = "BusinessMessage"
     ClassBusinessMessages = "BusinessMessages"
-    ClassMessageSponsor = "MessageSponsor"
+    ClassAdvertisementSponsor = "AdvertisementSponsor"
     ClassSponsoredMessage = "SponsoredMessage"
     ClassSponsoredMessages = "SponsoredMessages"
     ClassSponsoredChat = "SponsoredChat"
     ClassSponsoredChats = "SponsoredChats"
+    ClassVideoMessageAdvertisement = "VideoMessageAdvertisement"
+    ClassVideoMessageAdvertisements = "VideoMessageAdvertisements"
     ClassReportOption = "ReportOption"
     ClassFileDownload = "FileDownload"
     ClassDownloadedFileCounts = "DownloadedFileCounts"
@@ -704,6 +711,10 @@ const (
     TypePollOption = "pollOption"
     TypePollTypeRegular = "pollTypeRegular"
     TypePollTypeQuiz = "pollTypeQuiz"
+    TypeChecklistTask = "checklistTask"
+    TypeInputChecklistTask = "inputChecklistTask"
+    TypeChecklist = "checklist"
+    TypeInputChecklist = "inputChecklist"
     TypeAnimation = "animation"
     TypeAudio = "audio"
     TypeDocument = "document"
@@ -720,6 +731,7 @@ const (
     TypeWebApp = "webApp"
     TypePoll = "poll"
     TypeAlternativeVideo = "alternativeVideo"
+    TypeVideoStoryboard = "videoStoryboard"
     TypeBackground = "background"
     TypeBackgrounds = "backgrounds"
     TypeChatBackground = "chatBackground"
@@ -1004,11 +1016,13 @@ const (
     TypeMessageSourceNotification = "messageSourceNotification"
     TypeMessageSourceScreenshot = "messageSourceScreenshot"
     TypeMessageSourceOther = "messageSourceOther"
-    TypeMessageSponsor = "messageSponsor"
+    TypeAdvertisementSponsor = "advertisementSponsor"
     TypeSponsoredMessage = "sponsoredMessage"
     TypeSponsoredMessages = "sponsoredMessages"
     TypeSponsoredChat = "sponsoredChat"
     TypeSponsoredChats = "sponsoredChats"
+    TypeVideoMessageAdvertisement = "videoMessageAdvertisement"
+    TypeVideoMessageAdvertisements = "videoMessageAdvertisements"
     TypeReportOption = "reportOption"
     TypeReportSponsoredResultOk = "reportSponsoredResultOk"
     TypeReportSponsoredResultFailed = "reportSponsoredResultFailed"
@@ -1344,6 +1358,7 @@ const (
     TypeMessageGame = "messageGame"
     TypeMessagePoll = "messagePoll"
     TypeMessageStory = "messageStory"
+    TypeMessageChecklist = "messageChecklist"
     TypeMessageInvoice = "messageInvoice"
     TypeMessageCall = "messageCall"
     TypeMessageGroupCall = "messageGroupCall"
@@ -1392,6 +1407,8 @@ const (
     TypeMessagePaidMessagesRefunded = "messagePaidMessagesRefunded"
     TypeMessagePaidMessagePriceChanged = "messagePaidMessagePriceChanged"
     TypeMessageDirectMessagePriceChanged = "messageDirectMessagePriceChanged"
+    TypeMessageChecklistTasksDone = "messageChecklistTasksDone"
+    TypeMessageChecklistTasksAdded = "messageChecklistTasksAdded"
     TypeMessageContactRegistered = "messageContactRegistered"
     TypeMessageUsersShared = "messageUsersShared"
     TypeMessageChatShared = "messageChatShared"
@@ -1453,6 +1470,7 @@ const (
     TypeInputMessageInvoice = "inputMessageInvoice"
     TypeInputMessagePoll = "inputMessagePoll"
     TypeInputMessageStory = "inputMessageStory"
+    TypeInputMessageChecklist = "inputMessageChecklist"
     TypeInputMessageForwarded = "inputMessageForwarded"
     TypeMessageProperties = "messageProperties"
     TypeSearchMessagesFilterEmpty = "searchMessagesFilterEmpty"
@@ -1800,6 +1818,7 @@ const (
     TypePremiumFeatureLastSeenTimes = "premiumFeatureLastSeenTimes"
     TypePremiumFeatureBusiness = "premiumFeatureBusiness"
     TypePremiumFeatureMessageEffects = "premiumFeatureMessageEffects"
+    TypePremiumFeatureChecklists = "premiumFeatureChecklists"
     TypeBusinessFeatureLocation = "businessFeatureLocation"
     TypeBusinessFeatureOpeningHours = "businessFeatureOpeningHours"
     TypeBusinessFeatureQuickReplies = "businessFeatureQuickReplies"
@@ -1919,6 +1938,7 @@ const (
     TypePushMessageContentSticker = "pushMessageContentSticker"
     TypePushMessageContentStory = "pushMessageContentStory"
     TypePushMessageContentText = "pushMessageContentText"
+    TypePushMessageContentChecklist = "pushMessageContentChecklist"
     TypePushMessageContentVideo = "pushMessageContentVideo"
     TypePushMessageContentVideoNote = "pushMessageContentVideoNote"
     TypePushMessageContentVoiceNote = "pushMessageContentVoiceNote"
@@ -1937,6 +1957,8 @@ const (
     TypePushMessageContentRecurringPayment = "pushMessageContentRecurringPayment"
     TypePushMessageContentSuggestProfilePhoto = "pushMessageContentSuggestProfilePhoto"
     TypePushMessageContentProximityAlertTriggered = "pushMessageContentProximityAlertTriggered"
+    TypePushMessageContentChecklistTasksAdded = "pushMessageContentChecklistTasksAdded"
+    TypePushMessageContentChecklistTasksDone = "pushMessageContentChecklistTasksDone"
     TypePushMessageContentMessageForwards = "pushMessageContentMessageForwards"
     TypePushMessageContentMediaAlbum = "pushMessageContentMediaAlbum"
     TypeNotificationTypeNewMessage = "notificationTypeNewMessage"
@@ -5493,6 +5515,122 @@ func (*PollTypeQuiz) PollTypeType() string {
     return TypePollTypeQuiz
 }
 
+// Describes a task in a checklist
+type ChecklistTask struct {
+    meta
+    // Unique identifier of the task
+    Id int32 `json:"id"`
+    // Text of the task; may contain only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, Url, EmailAddress, Mention, Hashtag, Cashtag and PhoneNumber entities
+    Text *FormattedText `json:"text"`
+    // Identifier of the user that completed the task; 0 if the task isn't completed
+    CompletedByUserId int64 `json:"completed_by_user_id"`
+    // Point in time (Unix timestamp) when the task was completed; 0 if the task isn't completed
+    CompletionDate int32 `json:"completion_date"`
+}
+
+func (entity *ChecklistTask) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub ChecklistTask
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*ChecklistTask) GetClass() string {
+    return ClassChecklistTask
+}
+
+func (*ChecklistTask) GetType() string {
+    return TypeChecklistTask
+}
+
+// Describes a task in a checklist to be sent
+type InputChecklistTask struct {
+    meta
+    // Unique identifier of the task; must be positive
+    Id int32 `json:"id"`
+    // Text of the task; 1-getOption("checklist_task_text_length_max") characters without line feeds. May contain only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities
+    Text *FormattedText `json:"text"`
+}
+
+func (entity *InputChecklistTask) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InputChecklistTask
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InputChecklistTask) GetClass() string {
+    return ClassInputChecklistTask
+}
+
+func (*InputChecklistTask) GetType() string {
+    return TypeInputChecklistTask
+}
+
+// Describes a checklist
+type Checklist struct {
+    meta
+    // Title of the checklist; may contain only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities
+    Title *FormattedText `json:"title"`
+    // List of tasks in the checklist
+    Tasks []*ChecklistTask `json:"tasks"`
+    // True, if users other than creator of the list can add tasks to the list
+    OthersCanAddTasks bool `json:"others_can_add_tasks"`
+    // True, if the current user can add tasks to the list if they have Telegram Premium subscription
+    CanAddTasks bool `json:"can_add_tasks"`
+    // True, if users other than creator of the list can mark tasks as done or not done. If true, then the checklist is called "group checklist"
+    OthersCanMarkTasksAsDone bool `json:"others_can_mark_tasks_as_done"`
+    // True, if the current user can mark tasks as done or not done if they have Telegram Premium subscription
+    CanMarkTasksAsDone bool `json:"can_mark_tasks_as_done"`
+}
+
+func (entity *Checklist) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub Checklist
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*Checklist) GetClass() string {
+    return ClassChecklist
+}
+
+func (*Checklist) GetType() string {
+    return TypeChecklist
+}
+
+// Describes a checklist to be sent
+type InputChecklist struct {
+    meta
+    // Title of the checklist; 1-getOption("checklist_title_length_max") characters. May contain only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities
+    Title *FormattedText `json:"title"`
+    // List of tasks in the checklist; 1-getOption("checklist_task_count_max") tasks
+    Tasks []*InputChecklistTask `json:"tasks"`
+    // True, if other users can add tasks to the list
+    OthersCanAddTasks bool `json:"others_can_add_tasks"`
+    // True, if other users can mark tasks as done or not done
+    OthersCanMarkTasksAsDone bool `json:"others_can_mark_tasks_as_done"`
+}
+
+func (entity *InputChecklist) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InputChecklist
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InputChecklist) GetClass() string {
+    return ClassInputChecklist
+}
+
+func (*InputChecklist) GetType() string {
+    return TypeInputChecklist
+}
+
 // Describes an animation file. The animation must be encoded in GIF or MPEG4 format
 type Animation struct {
     meta
@@ -6161,6 +6299,35 @@ func (*AlternativeVideo) GetClass() string {
 
 func (*AlternativeVideo) GetType() string {
     return TypeAlternativeVideo
+}
+
+// Describes a storyboard for a video
+type VideoStoryboard struct {
+    meta
+    // A JPEG file that contains tiled previews of video
+    StoryboardFile *File `json:"storyboard_file"`
+    // Width of a tile
+    Width int32 `json:"width"`
+    // Height of a tile
+    Height int32 `json:"height"`
+    // File that describes mapping of position in the video to a tile in the JPEG file
+    MapFile *File `json:"map_file"`
+}
+
+func (entity *VideoStoryboard) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub VideoStoryboard
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*VideoStoryboard) GetClass() string {
+    return ClassVideoStoryboard
+}
+
+func (*VideoStoryboard) GetType() string {
+    return TypeVideoStoryboard
 }
 
 // Describes a chat background
@@ -7600,7 +7767,7 @@ type ChatPermissions struct {
     CanSendVideoNotes bool `json:"can_send_video_notes"`
     // True, if the user can send voice notes
     CanSendVoiceNotes bool `json:"can_send_voice_notes"`
-    // True, if the user can send polls
+    // True, if the user can send polls and checklists
     CanSendPolls bool `json:"can_send_polls"`
     // True, if the user can send stickers. Implies can_send_messages permissions
     CanSendStickers bool `json:"can_send_stickers"`
@@ -13352,6 +13519,8 @@ type SupergroupFullInfo struct {
     MyBoostCount int32 `json:"my_boost_count"`
     // Number of times the supergroup must be boosted by a user to ignore slow mode and chat permission restrictions; 0 if unspecified
     UnrestrictBoostCount int32 `json:"unrestrict_boost_count"`
+    // Number of Telegram Stars that must be paid by the current user for each sent message to the supergroup
+    OutgoingPaidMessageStarCount int64 `json:"outgoing_paid_message_star_count"`
     // Identifier of the supergroup sticker set that must be shown before user sticker sets; 0 if none
     StickerSetId JsonInt64 `json:"sticker_set_id"`
     // Identifier of the custom emoji sticker set that can be used in the supergroup without Telegram Premium subscription; 0 if none
@@ -14872,7 +15041,7 @@ type MessageReplyToMessage struct {
     Origin MessageOrigin `json:"origin"`
     // Point in time (Unix timestamp) when the message was sent if the message was from another chat or topic; 0 for messages from the same chat
     OriginSendDate int32 `json:"origin_send_date"`
-    // Media content of the message if the message was from another chat or topic; may be null for messages from the same chat and messages without media. Can be only one of the following types: messageAnimation, messageAudio, messageContact, messageDice, messageDocument, messageGame, messageGiveaway, messageGiveawayWinners, messageInvoice, messageLocation, messagePaidMedia, messagePhoto, messagePoll, messageSticker, messageStory, messageText (for link preview), messageVenue, messageVideo, messageVideoNote, or messageVoiceNote
+    // Media content of the message if the message was from another chat or topic; may be null for messages from the same chat and messages without media. Can be only one of the following types: messageAnimation, messageAudio, messageChecklist, messageContact, messageDice, messageDocument, messageGame, messageGiveaway, messageGiveawayWinners, messageInvoice, messageLocation, messagePaidMedia, messagePhoto, messagePoll, messageSticker, messageStory, messageText (for link preview), messageVenue, messageVideo, messageVideoNote, or messageVoiceNote
     Content MessageContent `json:"content"`
 }
 
@@ -15766,31 +15935,31 @@ func (*MessageSourceOther) MessageSourceType() string {
     return TypeMessageSourceOther
 }
 
-// Information about the sponsor of a message
-type MessageSponsor struct {
+// Information about the sponsor of an advertisement
+type AdvertisementSponsor struct {
     meta
-    // URL of the sponsor to be opened when the message is clicked
+    // URL of the sponsor to be opened when the advertisement is clicked
     Url string `json:"url"`
     // Photo of the sponsor; may be null if must not be shown
     Photo *Photo `json:"photo"`
-    // Additional optional information about the sponsor to be shown along with the message
+    // Additional optional information about the sponsor to be shown along with the advertisement
     Info string `json:"info"`
 }
 
-func (entity *MessageSponsor) MarshalJSON() ([]byte, error) {
+func (entity *AdvertisementSponsor) MarshalJSON() ([]byte, error) {
     entity.meta.Type = entity.GetType()
 
-    type stub MessageSponsor
+    type stub AdvertisementSponsor
 
     return json.Marshal((*stub)(entity))
 }
 
-func (*MessageSponsor) GetClass() string {
-    return ClassMessageSponsor
+func (*AdvertisementSponsor) GetClass() string {
+    return ClassAdvertisementSponsor
 }
 
-func (*MessageSponsor) GetType() string {
-    return TypeMessageSponsor
+func (*AdvertisementSponsor) GetType() string {
+    return TypeAdvertisementSponsor
 }
 
 // Describes a sponsored message
@@ -15805,7 +15974,7 @@ type SponsoredMessage struct {
     // Content of the message. Currently, can be only of the types messageText, messageAnimation, messagePhoto, or messageVideo. Video messages can be viewed fullscreen
     Content MessageContent `json:"content"`
     // Information about the sponsor of the message
-    Sponsor *MessageSponsor `json:"sponsor"`
+    Sponsor *AdvertisementSponsor `json:"sponsor"`
     // Title of the sponsored message
     Title string `json:"title"`
     // Text for the message action button
@@ -15840,7 +16009,7 @@ func (sponsoredMessage *SponsoredMessage) UnmarshalJSON(data []byte) error {
         IsRecommended bool `json:"is_recommended"`
         CanBeReported bool `json:"can_be_reported"`
         Content json.RawMessage `json:"content"`
-        Sponsor *MessageSponsor `json:"sponsor"`
+        Sponsor *AdvertisementSponsor `json:"sponsor"`
         Title string `json:"title"`
         ButtonText string `json:"button_text"`
         AccentColorId int32 `json:"accent_color_id"`
@@ -15944,6 +16113,70 @@ func (*SponsoredChats) GetClass() string {
 
 func (*SponsoredChats) GetType() string {
     return TypeSponsoredChats
+}
+
+// Describes an advertisent to be shown while a video from a message is watched
+type VideoMessageAdvertisement struct {
+    meta
+    // Unique identifier of this result
+    UniqueId int64 `json:"unique_id"`
+    // Text of the advertisement
+    Text string `json:"text"`
+    // The minimum amount of time the advertisement must be dispalyed before it can be hidden by the user, in seconds
+    MinDisplayDuration int32 `json:"min_display_duration"`
+    // The maximum amount of time the advertisement must be dispalyed before it must be automatically hidden, in seconds
+    MaxDisplayDuration int32 `json:"max_display_duration"`
+    // True, if the advertisement can be reported to Telegram moderators through reportVideoMessageAdvertisement
+    CanBeReported bool `json:"can_be_reported"`
+    // Information about the sponsor of the advertisement
+    Sponsor *AdvertisementSponsor `json:"sponsor"`
+    // Title of the sponsored message
+    Title string `json:"title"`
+    // If non-empty, additional information about the sponsored message to be shown along with the message
+    AdditionalInfo string `json:"additional_info"`
+}
+
+func (entity *VideoMessageAdvertisement) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub VideoMessageAdvertisement
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*VideoMessageAdvertisement) GetClass() string {
+    return ClassVideoMessageAdvertisement
+}
+
+func (*VideoMessageAdvertisement) GetType() string {
+    return TypeVideoMessageAdvertisement
+}
+
+// Contains a list of advertisements to be shown while a video from a message is watched
+type VideoMessageAdvertisements struct {
+    meta
+    // List of advertisements
+    Advertisements []*VideoMessageAdvertisement `json:"advertisements"`
+    // Delay before the first advertisement is shown, in seconds
+    StartDelay int32 `json:"start_delay"`
+    // Delay between consecutive advertisements, in seconds
+    BetweenDelay int32 `json:"between_delay"`
+}
+
+func (entity *VideoMessageAdvertisements) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub VideoMessageAdvertisements
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*VideoMessageAdvertisements) GetClass() string {
+    return ClassVideoMessageAdvertisements
+}
+
+func (*VideoMessageAdvertisements) GetType() string {
+    return TypeVideoMessageAdvertisements
 }
 
 // Describes an option to report an entity to Telegram
@@ -19168,6 +19401,8 @@ type DirectMessagesChatTopic struct {
     SenderId MessageSender `json:"sender_id"`
     // A parameter used to determine order of the topic in the topic list. Topics must be sorted by the order in descending order
     Order JsonInt64 `json:"order"`
+    // True, if the other party can send unpaid messages even if the chat has paid messages enabled
+    CanSendUnpaidMessages bool `json:"can_send_unpaid_messages"`
     // True, if the forum topic is marked as unread
     IsMarkedAsUnread bool `json:"is_marked_as_unread"`
     // Number of unread messages in the chat
@@ -19206,6 +19441,7 @@ func (directMessagesChatTopic *DirectMessagesChatTopic) UnmarshalJSON(data []byt
         Id int64 `json:"id"`
         SenderId json.RawMessage `json:"sender_id"`
         Order JsonInt64 `json:"order"`
+        CanSendUnpaidMessages bool `json:"can_send_unpaid_messages"`
         IsMarkedAsUnread bool `json:"is_marked_as_unread"`
         UnreadCount int64 `json:"unread_count"`
         LastReadInboxMessageId int64 `json:"last_read_inbox_message_id"`
@@ -19223,6 +19459,7 @@ func (directMessagesChatTopic *DirectMessagesChatTopic) UnmarshalJSON(data []byt
     directMessagesChatTopic.ChatId = tmp.ChatId
     directMessagesChatTopic.Id = tmp.Id
     directMessagesChatTopic.Order = tmp.Order
+    directMessagesChatTopic.CanSendUnpaidMessages = tmp.CanSendUnpaidMessages
     directMessagesChatTopic.IsMarkedAsUnread = tmp.IsMarkedAsUnread
     directMessagesChatTopic.UnreadCount = tmp.UnreadCount
     directMessagesChatTopic.LastReadInboxMessageId = tmp.LastReadInboxMessageId
@@ -26677,6 +26914,8 @@ type MessageVideo struct {
     Video *Video `json:"video"`
     // Alternative qualities of the video
     AlternativeVideos []*AlternativeVideo `json:"alternative_videos"`
+    // Available storyboards for the video
+    Storyboards []*VideoStoryboard `json:"storyboards"`
     // Cover of the video; may be null if none
     Cover *Photo `json:"cover"`
     // Timestamp from which the video playing must start, in seconds
@@ -27136,6 +27375,33 @@ func (*MessageStory) GetType() string {
 
 func (*MessageStory) MessageContentType() string {
     return TypeMessageStory
+}
+
+// A message with a checklist
+type MessageChecklist struct {
+    meta
+    // The checklist description
+    List *Checklist `json:"list"`
+}
+
+func (entity *MessageChecklist) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub MessageChecklist
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*MessageChecklist) GetClass() string {
+    return ClassMessageContent
+}
+
+func (*MessageChecklist) GetType() string {
+    return TypeMessageChecklist
+}
+
+func (*MessageChecklist) MessageContentType() string {
+    return TypeMessageChecklist
 }
 
 // A message with an invoice from a bot. Use getInternalLink with internalLinkTypeBotStart to share the invoice
@@ -28988,6 +29254,66 @@ func (*MessageDirectMessagePriceChanged) GetType() string {
 
 func (*MessageDirectMessagePriceChanged) MessageContentType() string {
     return TypeMessageDirectMessagePriceChanged
+}
+
+// Some tasks from a checklist were marked as done or not done
+type MessageChecklistTasksDone struct {
+    meta
+    // Identifier of the message with the checklist; can be 0 if the message was deleted
+    ChecklistMessageId int64 `json:"checklist_message_id"`
+    // Identifiers of tasks that were marked as done
+    MarkedAsDoneTaskIds []int32 `json:"marked_as_done_task_ids"`
+    // Identifiers of tasks that were marked as not done
+    MarkedAsNotDoneTaskIds []int32 `json:"marked_as_not_done_task_ids"`
+}
+
+func (entity *MessageChecklistTasksDone) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub MessageChecklistTasksDone
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*MessageChecklistTasksDone) GetClass() string {
+    return ClassMessageContent
+}
+
+func (*MessageChecklistTasksDone) GetType() string {
+    return TypeMessageChecklistTasksDone
+}
+
+func (*MessageChecklistTasksDone) MessageContentType() string {
+    return TypeMessageChecklistTasksDone
+}
+
+// Some tasks were added to a checklist
+type MessageChecklistTasksAdded struct {
+    meta
+    // Identifier of the message with the checklist; can be 0 if the message was deleted
+    ChecklistMessageId int64 `json:"checklist_message_id"`
+    // List of tasks added to the checklist
+    Tasks []*ChecklistTask `json:"tasks"`
+}
+
+func (entity *MessageChecklistTasksAdded) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub MessageChecklistTasksAdded
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*MessageChecklistTasksAdded) GetClass() string {
+    return ClassMessageContent
+}
+
+func (*MessageChecklistTasksAdded) GetType() string {
+    return TypeMessageChecklistTasksAdded
+}
+
+func (*MessageChecklistTasksAdded) MessageContentType() string {
+    return TypeMessageChecklistTasksAdded
 }
 
 // A contact has registered with Telegram
@@ -31227,6 +31553,33 @@ func (*InputMessageStory) InputMessageContentType() string {
     return TypeInputMessageStory
 }
 
+// A message with a checklist. Checklists can't be sent to secret chats, channel chats and channel direct messages chats; for Telegram Premium users only
+type InputMessageChecklist struct {
+    meta
+    // The checklist to send
+    Checklist *InputChecklist `json:"checklist"`
+}
+
+func (entity *InputMessageChecklist) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub InputMessageChecklist
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*InputMessageChecklist) GetClass() string {
+    return ClassInputMessageContent
+}
+
+func (*InputMessageChecklist) GetType() string {
+    return TypeInputMessageChecklist
+}
+
+func (*InputMessageChecklist) InputMessageContentType() string {
+    return TypeInputMessageChecklist
+}
+
 // A forwarded message
 type InputMessageForwarded struct {
     meta
@@ -31267,6 +31620,8 @@ func (*InputMessageForwarded) InputMessageContentType() string {
 // Contains properties of a message and describes actions that can be done with the message right now
 type MessageProperties struct {
     meta
+    // True, if tasks can be added to the message's checklist using addChecklistTasks if the current user has Telegram Premium subscription
+    CanAddTasks bool `json:"can_add_tasks"`
     // True, if content of the message can be copied using inputMessageForwarded or forwardMessages with copy options
     CanBeCopied bool `json:"can_be_copied"`
     // True, if content of the message can be copied to a secret chat using inputMessageForwarded or forwardMessages with copy options
@@ -31275,7 +31630,7 @@ type MessageProperties struct {
     CanBeDeletedOnlyForSelf bool `json:"can_be_deleted_only_for_self"`
     // True, if the message can be deleted for all users using the method deleteMessages with revoke == true
     CanBeDeletedForAllUsers bool `json:"can_be_deleted_for_all_users"`
-    // True, if the message can be edited using the methods editMessageText, editMessageCaption, or editMessageReplyMarkup. For live location and poll messages this fields shows whether editMessageLiveLocation or stopPoll can be used with this message
+    // True, if the message can be edited using the methods editMessageText, editMessageCaption, or editMessageReplyMarkup. For live location, poll, and checklist messages this fields shows whether editMessageLiveLocation, stopPoll, or editMessageChecklist respectively can be used with this message
     CanBeEdited bool `json:"can_be_edited"`
     // True, if the message can be forwarded using inputMessageForwarded or forwardMessages without copy options
     CanBeForwarded bool `json:"can_be_forwarded"`
@@ -31309,8 +31664,12 @@ type MessageProperties struct {
     CanGetReadDate bool `json:"can_get_read_date"`
     // True, if message statistics are available through getMessageStatistics and message forwards can be received using getMessagePublicForwards
     CanGetStatistics bool `json:"can_get_statistics"`
+    // True, if advertisements for video of the message can be received though getVideoMessageAdvertisements
+    CanGetVideoAdvertisements bool `json:"can_get_video_advertisements"`
     // True, if chat members already viewed the message can be received through getMessageViewers
     CanGetViewers bool `json:"can_get_viewers"`
+    // True, if tasks can be marked as done or not done in the message's checklist using markChecklistTasksAsDone if the current user has Telegram Premium subscription
+    CanMarkTasksAsDone bool `json:"can_mark_tasks_as_done"`
     // True, if speech can be recognized for the message through recognizeSpeech
     CanRecognizeSpeech bool `json:"can_recognize_speech"`
     // True, if the message can be reported using reportChat
@@ -42570,6 +42929,31 @@ func (*PremiumFeatureMessageEffects) PremiumFeatureType() string {
     return TypePremiumFeatureMessageEffects
 }
 
+// The ability to create and use checklist messages
+type PremiumFeatureChecklists struct{
+    meta
+}
+
+func (entity *PremiumFeatureChecklists) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PremiumFeatureChecklists
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PremiumFeatureChecklists) GetClass() string {
+    return ClassPremiumFeature
+}
+
+func (*PremiumFeatureChecklists) GetType() string {
+    return TypePremiumFeatureChecklists
+}
+
+func (*PremiumFeatureChecklists) PremiumFeatureType() string {
+    return TypePremiumFeatureChecklists
+}
+
 // The ability to set location
 type BusinessFeatureLocation struct{
     meta
@@ -46085,6 +46469,35 @@ func (*PushMessageContentText) PushMessageContentType() string {
     return TypePushMessageContentText
 }
 
+// A message with a checklist
+type PushMessageContentChecklist struct {
+    meta
+    // Checklist title
+    Title string `json:"title"`
+    // True, if the message is a pinned message with the specified content
+    IsPinned bool `json:"is_pinned"`
+}
+
+func (entity *PushMessageContentChecklist) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PushMessageContentChecklist
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PushMessageContentChecklist) GetClass() string {
+    return ClassPushMessageContent
+}
+
+func (*PushMessageContentChecklist) GetType() string {
+    return TypePushMessageContentChecklist
+}
+
+func (*PushMessageContentChecklist) PushMessageContentType() string {
+    return TypePushMessageContentChecklist
+}
+
 // A video message
 type PushMessageContentVideo struct {
     meta
@@ -46573,6 +46986,60 @@ func (*PushMessageContentProximityAlertTriggered) GetType() string {
 
 func (*PushMessageContentProximityAlertTriggered) PushMessageContentType() string {
     return TypePushMessageContentProximityAlertTriggered
+}
+
+// Some tasks were added to a checklist
+type PushMessageContentChecklistTasksAdded struct {
+    meta
+    // Number of added tasks
+    TaskCount int32 `json:"task_count"`
+}
+
+func (entity *PushMessageContentChecklistTasksAdded) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PushMessageContentChecklistTasksAdded
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PushMessageContentChecklistTasksAdded) GetClass() string {
+    return ClassPushMessageContent
+}
+
+func (*PushMessageContentChecklistTasksAdded) GetType() string {
+    return TypePushMessageContentChecklistTasksAdded
+}
+
+func (*PushMessageContentChecklistTasksAdded) PushMessageContentType() string {
+    return TypePushMessageContentChecklistTasksAdded
+}
+
+// Some tasks from a checklist were marked as done or not done
+type PushMessageContentChecklistTasksDone struct {
+    meta
+    // Number of changed tasks
+    TaskCount int32 `json:"task_count"`
+}
+
+func (entity *PushMessageContentChecklistTasksDone) MarshalJSON() ([]byte, error) {
+    entity.meta.Type = entity.GetType()
+
+    type stub PushMessageContentChecklistTasksDone
+
+    return json.Marshal((*stub)(entity))
+}
+
+func (*PushMessageContentChecklistTasksDone) GetClass() string {
+    return ClassPushMessageContent
+}
+
+func (*PushMessageContentChecklistTasksDone) GetType() string {
+    return TypePushMessageContentChecklistTasksDone
+}
+
+func (*PushMessageContentChecklistTasksDone) PushMessageContentType() string {
+    return TypePushMessageContentChecklistTasksDone
 }
 
 // A forwarded messages

@@ -1429,7 +1429,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted and topic messages without non-bundled replied message respectively. Returns a 404 error if the message doesn't exist
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, the checklist message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted, messageChecklistTasksDone and messageChecklistTasksAdded, and topic messages without non-bundled replied message respectively. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2768,6 +2768,70 @@ func (client *Client) ReadAllDirectMessagesChatTopicReactions(req *ReadAllDirect
     return UnmarshalOk(result.Data)
 }
 
+type GetDirectMessagesChatTopicRevenueRequest struct { 
+    // Chat identifier of the channel direct messages chat administered by the current user
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic
+    TopicId int64 `json:"topic_id"`
+}
+
+// Returns the total number of Telegram Stars received by the channel chat for direct messages from the given topic
+func (client *Client) GetDirectMessagesChatTopicRevenue(req *GetDirectMessagesChatTopicRevenueRequest) (*StarCount, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getDirectMessagesChatTopicRevenue",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStarCount(result.Data)
+}
+
+type ToggleDirectMessagesChatTopicCanSendUnpaidMessagesRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic
+    TopicId int64 `json:"topic_id"`
+    // Pass true to allow unpaid messages; pass false to disallow unpaid messages
+    CanSendUnpaidMessages bool `json:"can_send_unpaid_messages"`
+    // Pass true to refund the user previously paid messages
+    RefundPayments bool `json:"refund_payments"`
+}
+
+// Allows to send unpaid messages to the given topic of the channel direct messages chat administered by the current user
+func (client *Client) ToggleDirectMessagesChatTopicCanSendUnpaidMessages(req *ToggleDirectMessagesChatTopicCanSendUnpaidMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "toggleDirectMessagesChatTopicCanSendUnpaidMessages",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "can_send_unpaid_messages": req.CanSendUnpaidMessages,
+            "refund_payments": req.RefundPayments,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type LoadSavedMessagesTopicsRequest struct { 
     // The maximum number of topics to be loaded. For optimal performance, the number of loaded topics is chosen by TDLib and can be smaller than the specified limit, even if the end of the list is not reached
     Limit int32 `json:"limit"`
@@ -4075,6 +4139,134 @@ func (client *Client) ReportSponsoredChat(req *ReportSponsoredChatRequest) (Repo
    }
 }
 
+type GetVideoMessageAdvertisementsRequest struct { 
+    // Identifier of the chat with the message
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Returns advertisements to be shown while a video from a message is watched. Available only if messageProperties.can_get_video_advertisements
+func (client *Client) GetVideoMessageAdvertisements(req *GetVideoMessageAdvertisementsRequest) (*VideoMessageAdvertisements, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getVideoMessageAdvertisements",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalVideoMessageAdvertisements(result.Data)
+}
+
+type ViewVideoMessageAdvertisementRequest struct { 
+    // Unique identifier of the advertisement
+    AdvertisementUniqueId int64 `json:"advertisement_unique_id"`
+}
+
+// Informs TDLib that the user viewed a video message advertisement
+func (client *Client) ViewVideoMessageAdvertisement(req *ViewVideoMessageAdvertisementRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "viewVideoMessageAdvertisement",
+        },
+        Data: map[string]interface{}{
+            "advertisement_unique_id": req.AdvertisementUniqueId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ClickVideoMessageAdvertisementRequest struct { 
+    // Unique identifier of the advertisement
+    AdvertisementUniqueId int64 `json:"advertisement_unique_id"`
+}
+
+// Informs TDLib that the user clicked a video message advertisement
+func (client *Client) ClickVideoMessageAdvertisement(req *ClickVideoMessageAdvertisementRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "clickVideoMessageAdvertisement",
+        },
+        Data: map[string]interface{}{
+            "advertisement_unique_id": req.AdvertisementUniqueId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ReportVideoMessageAdvertisementRequest struct { 
+    // Unique identifier of the advertisement
+    AdvertisementUniqueId int64 `json:"advertisement_unique_id"`
+    // Option identifier chosen by the user; leave empty for the initial request
+    OptionId []byte `json:"option_id"`
+}
+
+// Reports a video message advertisement to Telegram moderators
+func (client *Client) ReportVideoMessageAdvertisement(req *ReportVideoMessageAdvertisementRequest) (ReportSponsoredResult, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "reportVideoMessageAdvertisement",
+        },
+        Data: map[string]interface{}{
+            "advertisement_unique_id": req.AdvertisementUniqueId,
+            "option_id": req.OptionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    switch result.Type {
+    case TypeReportSponsoredResultOk:
+        return UnmarshalReportSponsoredResultOk(result.Data)
+
+    case TypeReportSponsoredResultFailed:
+        return UnmarshalReportSponsoredResultFailed(result.Data)
+
+    case TypeReportSponsoredResultOptionRequired:
+        return UnmarshalReportSponsoredResultOptionRequired(result.Data)
+
+    case TypeReportSponsoredResultAdsHidden:
+        return UnmarshalReportSponsoredResultAdsHidden(result.Data)
+
+    case TypeReportSponsoredResultPremiumRequired:
+        return UnmarshalReportSponsoredResultPremiumRequired(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
+}
+
 type RemoveNotificationRequest struct { 
     // Identifier of notification group to which the notification belongs
     NotificationGroupId int32 `json:"notification_group_id"`
@@ -4911,6 +5103,41 @@ func (client *Client) EditMessageLiveLocation(req *EditMessageLiveLocationReques
     return UnmarshalMessage(result.Data)
 }
 
+type EditMessageChecklistRequest struct { 
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
+    MessageId int64 `json:"message_id"`
+    // The new message reply markup; pass null if none; for bots only
+    ReplyMarkup ReplyMarkup `json:"reply_markup"`
+    // The new checklist. If some tasks were completed, this information will be kept
+    Checklist *InputChecklist `json:"checklist"`
+}
+
+// Edits the message content of a checklist. Returns the edited message after the edit is completed on the server side
+func (client *Client) EditMessageChecklist(req *EditMessageChecklistRequest) (*Message, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editMessageChecklist",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "reply_markup": req.ReplyMarkup,
+            "checklist": req.Checklist,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessage(result.Data)
+}
+
 type EditMessageMediaRequest struct { 
     // The chat the message belongs to
     ChatId int64 `json:"chat_id"`
@@ -5412,6 +5639,44 @@ func (client *Client) EditBusinessMessageLiveLocation(req *EditBusinessMessageLi
             "live_period": req.LivePeriod,
             "heading": req.Heading,
             "proximity_alert_radius": req.ProximityAlertRadius,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBusinessMessage(result.Data)
+}
+
+type EditBusinessMessageChecklistRequest struct { 
+    // Unique identifier of business connection on behalf of which the message was sent
+    BusinessConnectionId string `json:"business_connection_id"`
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // The new message reply markup; pass null if none
+    ReplyMarkup ReplyMarkup `json:"reply_markup"`
+    // The new checklist. If some tasks were completed, this information will be kept
+    Checklist *InputChecklist `json:"checklist"`
+}
+
+// Edits the content of a checklist in a message sent on behalf of a business account; for bots only
+func (client *Client) EditBusinessMessageChecklist(req *EditBusinessMessageChecklistRequest) (*BusinessMessage, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editBusinessMessageChecklist",
+        },
+        Data: map[string]interface{}{
+            "business_connection_id": req.BusinessConnectionId,
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "reply_markup": req.ReplyMarkup,
+            "checklist": req.Checklist,
         },
     })
     if err != nil {
@@ -6137,7 +6402,7 @@ type AddQuickReplyShortcutMessageRequest struct {
     ShortcutName string `json:"shortcut_name"`
     // Identifier of a quick reply message in the same shortcut to be replied; pass 0 if none
     ReplyToMessageId int64 `json:"reply_to_message_id"`
-    // The content of the message to be added; inputMessagePoll, inputMessageForwarded and inputMessageLocation with live_period aren't supported
+    // The content of the message to be added; inputMessagePaidMedia, inputMessageForwarded and inputMessageLocation with live_period aren't supported
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
@@ -6268,11 +6533,11 @@ type EditQuickReplyMessageRequest struct {
     ShortcutId int32 `json:"shortcut_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // New content of the message. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto or inputMessageVideo
+    // New content of the message. Must be one of the following types: inputMessageAnimation, inputMessageAudio, inputMessageChecklist, inputMessageDocument, inputMessagePhoto, inputMessageText, or inputMessageVideo
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Asynchronously edits the text, media or caption of a quick reply message. Use quickReplyMessage.can_be_edited to check whether a message can be edited. Media message can be edited only to a media message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
+// Asynchronously edits the text, media or caption of a quick reply message. Use quickReplyMessage.can_be_edited to check whether a message can be edited. Media message can be edited only to a media message. Checklist messages can be edited only to a checklist message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
 func (client *Client) EditQuickReplyMessage(req *EditQuickReplyMessageRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7706,6 +7971,73 @@ func (client *Client) StopPoll(req *StopPollRequest) (*Ok, error) {
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "reply_markup": req.ReplyMarkup,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type AddChecklistTasksRequest struct { 
+    // Identifier of the chat with the message
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the checklist. Use messageProperties.can_add_tasks to check whether the tasks can be added
+    MessageId int64 `json:"message_id"`
+    // List of added tasks
+    Tasks []*InputChecklistTask `json:"tasks"`
+}
+
+// Adds tasks to a checklist in a message
+func (client *Client) AddChecklistTasks(req *AddChecklistTasksRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addChecklistTasks",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "tasks": req.Tasks,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type MarkChecklistTasksAsDoneRequest struct { 
+    // Identifier of the chat with the message
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the checklist. Use messageProperties.can_mark_tasks_as_done to check whether the tasks can be marked as done or not done
+    MessageId int64 `json:"message_id"`
+    // Identifiers of tasks that were marked as done
+    MarkedAsDoneTaskIds []int32 `json:"marked_as_done_task_ids"`
+    // Identifiers of tasks that were marked as not done
+    MarkedAsNotDoneTaskIds []int32 `json:"marked_as_not_done_task_ids"`
+}
+
+// Adds tasks of a checklist in a message as done or not done
+func (client *Client) MarkChecklistTasksAsDone(req *MarkChecklistTasksAsDoneRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "markChecklistTasksAsDone",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "marked_as_done_task_ids": req.MarkedAsDoneTaskIds,
+            "marked_as_not_done_task_ids": req.MarkedAsNotDoneTaskIds,
         },
     })
     if err != nil {
