@@ -23,22 +23,18 @@ func IsCommand(text string) bool {
 
 func CheckCommand(text string, entities []*TextEntity) string {
 	if IsCommand(text) {
-		var cmd string
+		cmd := text
 
 		// e.g. ["/hello 123", "/hell o 123"]
 		// Result: "/hello", "/hell"
-		if i := strings.Index(text, " "); i != -1 {
-			cmd = text[:i]
+		if i := strings.Index(cmd, " "); i != -1 {
+			cmd = cmd[:i]
 		}
 
 		// e.g.: ["/hello@world_bot", "/hello@", "/hello@123"]
 		// Result: "/hello"
-		if i := strings.Index(text, "@"); i != -1 {
-			cmd = text[:i]
-		}
-
-		if cmd == "" {
-			return text
+		if i := strings.Index(cmd, "@"); i != -1 {
+			cmd = cmd[:i]
 		}
 
 		return cmd
