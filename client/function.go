@@ -1429,7 +1429,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message, the game message, the invoice message, the message with a previously set same background, the giveaway message, the checklist message, and the topic creation message for messages of the types messagePinMessage, messageGameScore, messagePaymentSuccessful, messageChatSetBackground, messageGiveawayCompleted, messageChecklistTasksDone and messageChecklistTasksAdded, and topic messages without non-bundled replied message respectively. Returns a 404 error if the message doesn't exist
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -2519,9 +2519,9 @@ type GetDirectMessagesChatTopicHistoryRequest struct {
     TopicId int64 `json:"topic_id"`
     // Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset up to 99 to get additionally some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number from -99 to -1 to get additionally -offset newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -2863,9 +2863,9 @@ type GetSavedMessagesTopicHistoryRequest struct {
     SavedMessagesTopicId int64 `json:"saved_messages_topic_id"`
     // Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset up to 99 to get additionally some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number from -99 to -1 to get additionally -offset newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -3072,9 +3072,9 @@ type GetChatHistoryRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message starting from which history must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset up to 99 to get additionally some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number from -99 to -1 to get additionally -offset newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
     // Pass true to get only messages that are available without sending network requests
     OnlyLocal bool `json:"only_local"`
@@ -3112,9 +3112,9 @@ type GetMessageThreadHistoryRequest struct {
     MessageId int64 `json:"message_id"`
     // Identifier of the message starting from which history must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset up to 99 to get additionally some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number from -99 to -1 to get additionally -offset newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than or equal to -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -3212,9 +3212,9 @@ type SearchChatMessagesRequest struct {
     SenderId MessageSender `json:"sender_id"`
     // Identifier of the message starting from which history must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset to get the specified message and some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number to get the specified message and some newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
     // Additional filter for messages to search; pass null to search for all messages
     Filter SearchMessagesFilter `json:"filter"`
@@ -3342,9 +3342,9 @@ type SearchSavedMessagesRequest struct {
     Query string `json:"query"`
     // Identifier of the message starting from which messages must be fetched; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
-    // Specify 0 to get results from exactly the message from_message_id or a negative offset to get the specified message and some newer messages
+    // Specify 0 to get results from exactly the message from_message_id or a negative number to get the specified message and some newer messages
     Offset int32 `json:"offset"`
-    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
+    // The maximum number of messages to be returned; must be positive and can't be greater than 100. If the offset is negative, then the limit must be greater than -offset. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
 }
 
@@ -6071,7 +6071,7 @@ type SetBusinessAccountProfilePhotoRequest struct {
     BusinessConnectionId string `json:"business_connection_id"`
     // Profile photo to set; pass null to remove the photo
     Photo InputChatPhoto `json:"photo"`
-    // Pass true to set the public photo, which will be visible even the main photo is hidden by privacy settings
+    // Pass true to set the public photo, which will be visible even if the main photo is hidden by privacy settings
     IsPublic bool `json:"is_public"`
 }
 
@@ -6624,7 +6624,7 @@ type EditForumTopicRequest struct {
     IconCustomEmojiId JsonInt64 `json:"icon_custom_emoji_id"`
 }
 
-// Edits title and icon of a topic in a forum supergroup chat; requires can_manage_topics right in the supergroup unless the user is creator of the topic
+// Edits title and icon of a topic in a forum supergroup chat; requires can_manage_topics administrator right in the supergroup unless the user is creator of the topic
 func (client *Client) EditForumTopic(req *EditForumTopicRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6789,7 +6789,7 @@ type ToggleForumTopicIsClosedRequest struct {
     IsClosed bool `json:"is_closed"`
 }
 
-// Toggles whether a topic is closed in a forum supergroup chat; requires can_manage_topics right in the supergroup unless the user is creator of the topic
+// Toggles whether a topic is closed in a forum supergroup chat; requires can_manage_topics administrator right in the supergroup unless the user is creator of the topic
 func (client *Client) ToggleForumTopicIsClosed(req *ToggleForumTopicIsClosedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6819,7 +6819,7 @@ type ToggleGeneralForumTopicIsHiddenRequest struct {
     IsHidden bool `json:"is_hidden"`
 }
 
-// Toggles whether a General topic is hidden in a forum supergroup chat; requires can_manage_topics right in the supergroup
+// Toggles whether a General topic is hidden in a forum supergroup chat; requires can_manage_topics administrator right in the supergroup
 func (client *Client) ToggleGeneralForumTopicIsHidden(req *ToggleGeneralForumTopicIsHiddenRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6850,7 +6850,7 @@ type ToggleForumTopicIsPinnedRequest struct {
     IsPinned bool `json:"is_pinned"`
 }
 
-// Changes the pinned state of a forum topic; requires can_manage_topics right in the supergroup. There can be up to getOption("pinned_forum_topic_count_max") pinned forum topics
+// Changes the pinned state of a forum topic; requires can_manage_topics administrator right in the supergroup. There can be up to getOption("pinned_forum_topic_count_max") pinned forum topics
 func (client *Client) ToggleForumTopicIsPinned(req *ToggleForumTopicIsPinnedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6880,7 +6880,7 @@ type SetPinnedForumTopicsRequest struct {
     MessageThreadIds []int64 `json:"message_thread_ids"`
 }
 
-// Changes the order of pinned forum topics; requires can_manage_topics right in the supergroup
+// Changes the order of pinned forum topics; requires can_manage_topics administrator right in the supergroup
 func (client *Client) SetPinnedForumTopics(req *SetPinnedForumTopicsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -9163,7 +9163,7 @@ type ViewMessagesRequest struct {
     MessageIds []int64 `json:"message_ids"`
     // Source of the message view; pass null to guess the source based on chat open state
     Source MessageSource `json:"source"`
-    // Pass true to mark as read the specified messages even the chat is closed
+    // Pass true to mark as read the specified messages even if the chat is closed
     ForceRead bool `json:"force_read"`
 }
 
@@ -9382,6 +9382,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeMyStars:
         return UnmarshalInternalLinkTypeMyStars(result.Data)
+
+    case TypeInternalLinkTypeMyToncoins:
+        return UnmarshalInternalLinkTypeMyToncoins(result.Data)
 
     case TypeInternalLinkTypePassportDataRequest:
         return UnmarshalInternalLinkTypePassportDataRequest(result.Data)
@@ -11189,7 +11192,7 @@ type SetChatSlowModeDelayRequest struct {
     SlowModeDelay int32 `json:"slow_mode_delay"`
 }
 
-// Changes the slow mode delay of a chat. Available only for supergroups; requires can_restrict_members right
+// Changes the slow mode delay of a chat. Available only for supergroups; requires can_restrict_members administrator right
 func (client *Client) SetChatSlowModeDelay(req *SetChatSlowModeDelayRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12087,7 +12090,7 @@ type CanPostStoryRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Checks whether the current user can post a story on behalf of a chat; requires can_post_stories right for supergroup and channel chats
+// Checks whether the current user can post a story on behalf of a chat; requires can_post_stories administrator right for supergroup and channel chats
 func (client *Client) CanPostStory(req *CanPostStoryRequest) (CanPostStoryResult, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12150,7 +12153,7 @@ type PostStoryRequest struct {
     ProtectContent bool `json:"protect_content"`
 }
 
-// Posts a new story on behalf of a chat; requires can_post_stories right for supergroup and channel chats. Returns a temporary story
+// Posts a new story on behalf of a chat; requires can_post_stories administrator right for supergroup and channel chats. Returns a temporary story
 func (client *Client) PostStory(req *PostStoryRequest) (*Story, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12480,7 +12483,7 @@ type GetChatArchivedStoriesRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns the list of all stories posted by the given chat; requires can_edit_stories right in the chat. The stories are returned in reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
+// Returns the list of all stories posted by the given chat; requires can_edit_stories administrator right in the chat. The stories are returned in reverse chronological order (i.e., in order of decreasing story_id). For optimal performance, the number of returned stories is chosen by TDLib
 func (client *Client) GetChatArchivedStories(req *GetChatArchivedStoriesRequest) (*Stories, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12510,7 +12513,7 @@ type SetChatPinnedStoriesRequest struct {
     StoryIds []int32 `json:"story_ids"`
 }
 
-// Changes the list of pinned stories on a chat page; requires can_edit_stories right in the chat
+// Changes the list of pinned stories on a chat page; requires can_edit_stories administrator right in the chat
 func (client *Client) SetChatPinnedStories(req *SetChatPinnedStoriesRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -13273,7 +13276,7 @@ func (client *Client) GetDefaultChatEmojiStatuses() (*EmojiStatusCustomEmojis, e
     return UnmarshalEmojiStatusCustomEmojis(result.Data)
 }
 
-// Returns the list of emoji statuses, which can't be used as chat emoji status, even they are from a sticker set with is_allowed_as_chat_emoji_status == true
+// Returns the list of emoji statuses, which can't be used as chat emoji status, even if they are from a sticker set with is_allowed_as_chat_emoji_status == true
 func (client *Client) GetDisallowedChatEmojiStatuses() (*EmojiStatusCustomEmojis, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -14482,6 +14485,102 @@ func (client *Client) ProcessChatJoinRequests(req *ProcessChatJoinRequestsReques
     }
 
     return UnmarshalOk(result.Data)
+}
+
+type ApproveSuggestedPostRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message with the suggested post. Use messageProperties.can_be_approved to check whether the suggested post can be approved
+    MessageId int64 `json:"message_id"`
+    // Point in time (Unix timestamp) when the post is expected to be published; pass 0 if the date has already been chosen. If specified, then the date must be in the future, but at most getOption("suggested_post_send_delay_max") seconds in the future
+    SendDate int32 `json:"send_date"`
+}
+
+// Approves a suggested post in a channel direct messages chat
+func (client *Client) ApproveSuggestedPost(req *ApproveSuggestedPostRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "approveSuggestedPost",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "send_date": req.SendDate,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeclineSuggestedPostRequest struct { 
+    // Chat identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message with the suggested post. Use messageProperties.can_be_declined to check whether the suggested post can be declined
+    MessageId int64 `json:"message_id"`
+    // Comment for the creator of the suggested post; 0-128 characters
+    Comment string `json:"comment"`
+}
+
+// Declines a suggested post in a channel direct messages chat
+func (client *Client) DeclineSuggestedPost(req *DeclineSuggestedPostRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "declineSuggestedPost",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "comment": req.Comment,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type AddOfferRequest struct { 
+    // Identifier of the channel direct messages chat
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message in the chat which will be sent as suggested post. Use messageProperties.can_add_offer to check whether an offer can be added or messageProperties.can_edit_suggested_post_info to check whether price or time of sending of the post can be changed
+    MessageId int64 `json:"message_id"`
+    // Options to be used to send the message. New information about the suggested post must always be specified
+    Options *MessageSendOptions `json:"options"`
+}
+
+// Sent a suggested post based on a previously sent message in a channel direct messages chat. Can be also used to suggest price or time change for an existing suggested post. Returns the sent message
+func (client *Client) AddOffer(req *AddOfferRequest) (*Message, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addOffer",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "options": req.Options,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessage(result.Data)
 }
 
 type CreateCallRequest struct { 
@@ -17576,7 +17675,7 @@ func (client *Client) GetWebPageInstantView(req *GetWebPageInstantViewRequest) (
 type SetProfilePhotoRequest struct { 
     // Profile photo to set
     Photo InputChatPhoto `json:"photo"`
-    // Pass true to set the public photo, which will be visible even the main photo is hidden by privacy settings
+    // Pass true to set the public photo, which will be visible even if the main photo is hidden by privacy settings
     IsPublic bool `json:"is_public"`
 }
 
@@ -20481,7 +20580,7 @@ type SellGiftRequest struct {
     ReceivedGiftId string `json:"received_gift_id"`
 }
 
-// Sells a gift for Telegram Stars
+// Sells a gift for Telegram Stars; requires owner privileges for gifts owned by a chat
 func (client *Client) SellGift(req *SellGiftRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -20894,7 +20993,7 @@ type SearchGiftsForResaleRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns upgraded gifts that can be bought from other owners
+// Returns upgraded gifts that can be bought from other owners using sendResoldGift
 func (client *Client) SearchGiftsForResale(req *SearchGiftsForResaleRequest) (*GiftsForResale, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -22206,9 +22305,9 @@ func (client *Client) GetChatRevenueWithdrawalUrl(req *GetChatRevenueWithdrawalU
 type GetChatRevenueTransactionsRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Number of transactions to skip
-    Offset int32 `json:"offset"`
-    // The maximum number of transactions to be returned; up to 200
+    // Offset of the first transaction to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of transactions to be returned; up to 100
     Limit int32 `json:"limit"`
 }
 
@@ -22233,6 +22332,38 @@ func (client *Client) GetChatRevenueTransactions(req *GetChatRevenueTransactions
     }
 
     return UnmarshalChatRevenueTransactions(result.Data)
+}
+
+type GetTonTransactionsRequest struct { 
+    // Direction of the transactions to receive; pass null to get all transactions
+    Direction TransactionDirection `json:"direction"`
+    // Offset of the first transaction to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of transactions to return
+    Limit int32 `json:"limit"`
+}
+
+// Returns the list of Toncoin transactions of the current user
+func (client *Client) GetTonTransactions(req *GetTonTransactionsRequest) (*TonTransactions, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getTonTransactions",
+        },
+        Data: map[string]interface{}{
+            "direction": req.Direction,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalTonTransactions(result.Data)
 }
 
 type GetStarRevenueStatisticsRequest struct { 
@@ -22267,7 +22398,7 @@ func (client *Client) GetStarRevenueStatistics(req *GetStarRevenueStatisticsRequ
 type GetStarWithdrawalUrlRequest struct { 
     // Identifier of the owner of the Telegram Stars; can be identifier of the current user, an owned bot, or an owned supergroup or channel chat
     OwnerId MessageSender `json:"owner_id"`
-    // The number of Telegram Stars to withdraw. Must be at least getOption("star_withdrawal_count_min")
+    // The number of Telegram Stars to withdraw; must be between getOption("star_withdrawal_count_min") and getOption("star_withdrawal_count_max")
     StarCount int64 `json:"star_count"`
     // The 2-step verification password of the current user
     Password string `json:"password"`
@@ -24271,7 +24402,7 @@ type GetStarTransactionsRequest struct {
     // If non-empty, only transactions related to the Star Subscription will be returned
     SubscriptionId string `json:"subscription_id"`
     // Direction of the transactions to receive; pass null to get all transactions
-    Direction StarTransactionDirection `json:"direction"`
+    Direction TransactionDirection `json:"direction"`
     // Offset of the first transaction to return as received from the previous request; use empty string to get the first chunk of results
     Offset string `json:"offset"`
     // The maximum number of transactions to return
@@ -25970,6 +26101,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateMessageFactCheck:
         return UnmarshalUpdateMessageFactCheck(result.Data)
 
+    case TypeUpdateMessageSuggestedPostInfo:
+        return UnmarshalUpdateMessageSuggestedPostInfo(result.Data)
+
     case TypeUpdateMessageLiveLocationViewed:
         return UnmarshalUpdateMessageLiveLocationViewed(result.Data)
 
@@ -26314,6 +26448,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateOwnedStarCount:
         return UnmarshalUpdateOwnedStarCount(result.Data)
+
+    case TypeUpdateOwnedTonCount:
+        return UnmarshalUpdateOwnedTonCount(result.Data)
 
     case TypeUpdateChatRevenueAmount:
         return UnmarshalUpdateChatRevenueAmount(result.Data)
