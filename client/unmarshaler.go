@@ -511,6 +511,58 @@ func UnmarshalListOfPollType(dataList []json.RawMessage) ([]PollType, error) {
     return list, nil
 }
 
+func UnmarshalProfileTab(data json.RawMessage) (ProfileTab, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeProfileTabPosts:
+        return UnmarshalProfileTabPosts(data)
+
+    case TypeProfileTabGifts:
+        return UnmarshalProfileTabGifts(data)
+
+    case TypeProfileTabMedia:
+        return UnmarshalProfileTabMedia(data)
+
+    case TypeProfileTabFiles:
+        return UnmarshalProfileTabFiles(data)
+
+    case TypeProfileTabLinks:
+        return UnmarshalProfileTabLinks(data)
+
+    case TypeProfileTabMusic:
+        return UnmarshalProfileTabMusic(data)
+
+    case TypeProfileTabVoice:
+        return UnmarshalProfileTabVoice(data)
+
+    case TypeProfileTabGifs:
+        return UnmarshalProfileTabGifs(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfProfileTab(dataList []json.RawMessage) ([]ProfileTab, error) {
+    list := []ProfileTab{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalProfileTab(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalUserType(data json.RawMessage) (UserType, error) {
     var meta meta
 
@@ -653,6 +705,40 @@ func UnmarshalListOfInputChatPhoto(dataList []json.RawMessage) ([]InputChatPhoto
 
     for _, data := range dataList {
         entity, err := UnmarshalInputChatPhoto(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalGiftResalePrice(data json.RawMessage) (GiftResalePrice, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeGiftResalePriceStar:
+        return UnmarshalGiftResalePriceStar(data)
+
+    case TypeGiftResalePriceTon:
+        return UnmarshalGiftResalePriceTon(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfGiftResalePrice(dataList []json.RawMessage) ([]GiftResalePrice, error) {
+    list := []GiftResalePrice{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalGiftResalePrice(data)
         if err != nil {
             return nil, err
         }
@@ -875,6 +961,40 @@ func UnmarshalListOfAffiliateProgramSortOrder(dataList []json.RawMessage) ([]Aff
     return list, nil
 }
 
+func UnmarshalCanSendGiftResult(data json.RawMessage) (CanSendGiftResult, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeCanSendGiftResultOk:
+        return UnmarshalCanSendGiftResultOk(data)
+
+    case TypeCanSendGiftResultFail:
+        return UnmarshalCanSendGiftResultFail(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfCanSendGiftResult(dataList []json.RawMessage) ([]CanSendGiftResult, error) {
+    list := []CanSendGiftResult{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalCanSendGiftResult(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalUpgradedGiftOrigin(data json.RawMessage) (UpgradedGiftOrigin, error) {
     var meta meta
 
@@ -892,6 +1012,9 @@ func UnmarshalUpgradedGiftOrigin(data json.RawMessage) (UpgradedGiftOrigin, erro
 
     case TypeUpgradedGiftOriginResale:
         return UnmarshalUpgradedGiftOriginResale(data)
+
+    case TypeUpgradedGiftOriginPrepaidUpgrade:
+        return UnmarshalUpgradedGiftOriginPrepaidUpgrade(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -977,6 +1100,40 @@ func UnmarshalListOfGiftForResaleOrder(dataList []json.RawMessage) ([]GiftForRes
 
     for _, data := range dataList {
         entity, err := UnmarshalGiftForResaleOrder(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalGiftResaleResult(data json.RawMessage) (GiftResaleResult, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeGiftResaleResultOk:
+        return UnmarshalGiftResaleResultOk(data)
+
+    case TypeGiftResaleResultPriceIncreased:
+        return UnmarshalGiftResaleResultPriceIncreased(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfGiftResaleResult(dataList []json.RawMessage) ([]GiftResaleResult, error) {
+    list := []GiftResaleResult{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalGiftResaleResult(data)
         if err != nil {
             return nil, err
         }
@@ -1132,6 +1289,9 @@ func UnmarshalStarTransactionType(data json.RawMessage) (StarTransactionType, er
     case TypeStarTransactionTypeGiftUpgrade:
         return UnmarshalStarTransactionTypeGiftUpgrade(data)
 
+    case TypeStarTransactionTypeGiftUpgradePurchase:
+        return UnmarshalStarTransactionTypeGiftUpgradePurchase(data)
+
     case TypeStarTransactionTypeUpgradedGiftPurchase:
         return UnmarshalStarTransactionTypeUpgradedGiftPurchase(data)
 
@@ -1167,6 +1327,9 @@ func UnmarshalStarTransactionType(data json.RawMessage) (StarTransactionType, er
 
     case TypeStarTransactionTypeBusinessBotTransferReceive:
         return UnmarshalStarTransactionTypeBusinessBotTransferReceive(data)
+
+    case TypeStarTransactionTypePublicPostSearch:
+        return UnmarshalStarTransactionTypePublicPostSearch(data)
 
     case TypeStarTransactionTypeUnsupported:
         return UnmarshalStarTransactionTypeUnsupported(data)
@@ -1204,6 +1367,12 @@ func UnmarshalTonTransactionType(data json.RawMessage) (TonTransactionType, erro
 
     case TypeTonTransactionTypeSuggestedPostPayment:
         return UnmarshalTonTransactionTypeSuggestedPostPayment(data)
+
+    case TypeTonTransactionTypeUpgradedGiftPurchase:
+        return UnmarshalTonTransactionTypeUpgradedGiftPurchase(data)
+
+    case TypeTonTransactionTypeUpgradedGiftSale:
+        return UnmarshalTonTransactionTypeUpgradedGiftSale(data)
 
     case TypeTonTransactionTypeUnsupported:
         return UnmarshalTonTransactionTypeUnsupported(data)
@@ -2618,6 +2787,49 @@ func UnmarshalListOfSavedMessagesTopicType(dataList []json.RawMessage) ([]SavedM
     return list, nil
 }
 
+func UnmarshalBuiltInTheme(data json.RawMessage) (BuiltInTheme, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeBuiltInThemeClassic:
+        return UnmarshalBuiltInThemeClassic(data)
+
+    case TypeBuiltInThemeDay:
+        return UnmarshalBuiltInThemeDay(data)
+
+    case TypeBuiltInThemeNight:
+        return UnmarshalBuiltInThemeNight(data)
+
+    case TypeBuiltInThemeTinted:
+        return UnmarshalBuiltInThemeTinted(data)
+
+    case TypeBuiltInThemeArctic:
+        return UnmarshalBuiltInThemeArctic(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfBuiltInTheme(dataList []json.RawMessage) ([]BuiltInTheme, error) {
+    list := []BuiltInTheme{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalBuiltInTheme(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalRichText(data json.RawMessage) (RichText, error) {
     var meta meta
 
@@ -2953,6 +3165,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
     case TypeLinkPreviewTypeChat:
         return UnmarshalLinkPreviewTypeChat(data)
 
+    case TypeLinkPreviewTypeDirectMessagesChat:
+        return UnmarshalLinkPreviewTypeDirectMessagesChat(data)
+
     case TypeLinkPreviewTypeDocument:
         return UnmarshalLinkPreviewTypeDocument(data)
 
@@ -2970,6 +3185,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
 
     case TypeLinkPreviewTypeExternalVideo:
         return UnmarshalLinkPreviewTypeExternalVideo(data)
+
+    case TypeLinkPreviewTypeGiftCollection:
+        return UnmarshalLinkPreviewTypeGiftCollection(data)
 
     case TypeLinkPreviewTypeGroupCall:
         return UnmarshalLinkPreviewTypeGroupCall(data)
@@ -2997,6 +3215,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
 
     case TypeLinkPreviewTypeStory:
         return UnmarshalLinkPreviewTypeStory(data)
+
+    case TypeLinkPreviewTypeStoryAlbum:
+        return UnmarshalLinkPreviewTypeStoryAlbum(data)
 
     case TypeLinkPreviewTypeSupergroupBoost:
         return UnmarshalLinkPreviewTypeSupergroupBoost(data)
@@ -6506,6 +6727,74 @@ func UnmarshalListOfInputBackground(dataList []json.RawMessage) ([]InputBackgrou
     return list, nil
 }
 
+func UnmarshalChatTheme(data json.RawMessage) (ChatTheme, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeChatThemeEmoji:
+        return UnmarshalChatThemeEmoji(data)
+
+    case TypeChatThemeGift:
+        return UnmarshalChatThemeGift(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfChatTheme(dataList []json.RawMessage) ([]ChatTheme, error) {
+    list := []ChatTheme{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalChatTheme(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
+func UnmarshalInputChatTheme(data json.RawMessage) (InputChatTheme, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypeInputChatThemeEmoji:
+        return UnmarshalInputChatThemeEmoji(data)
+
+    case TypeInputChatThemeGift:
+        return UnmarshalInputChatThemeGift(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfInputChatTheme(dataList []json.RawMessage) ([]InputChatTheme, error) {
+    list := []InputChatTheme{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalInputChatTheme(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalCanPostStoryResult(data json.RawMessage) (CanPostStoryResult, error) {
     var meta meta
 
@@ -7554,11 +7843,17 @@ func UnmarshalInternalLinkType(data json.RawMessage) (InternalLinkType, error) {
     case TypeInternalLinkTypeDefaultMessageAutoDeleteTimerSettings:
         return UnmarshalInternalLinkTypeDefaultMessageAutoDeleteTimerSettings(data)
 
+    case TypeInternalLinkTypeDirectMessagesChat:
+        return UnmarshalInternalLinkTypeDirectMessagesChat(data)
+
     case TypeInternalLinkTypeEditProfileSettings:
         return UnmarshalInternalLinkTypeEditProfileSettings(data)
 
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(data)
+
+    case TypeInternalLinkTypeGiftCollection:
+        return UnmarshalInternalLinkTypeGiftCollection(data)
 
     case TypeInternalLinkTypeGroupCall:
         return UnmarshalInternalLinkTypeGroupCall(data)
@@ -7628,6 +7923,9 @@ func UnmarshalInternalLinkType(data json.RawMessage) (InternalLinkType, error) {
 
     case TypeInternalLinkTypeStory:
         return UnmarshalInternalLinkTypeStory(data)
+
+    case TypeInternalLinkTypeStoryAlbum:
+        return UnmarshalInternalLinkTypeStoryAlbum(data)
 
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(data)
@@ -8852,8 +9150,8 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateDefaultBackground:
         return UnmarshalUpdateDefaultBackground(data)
 
-    case TypeUpdateChatThemes:
-        return UnmarshalUpdateChatThemes(data)
+    case TypeUpdateEmojiChatThemes:
+        return UnmarshalUpdateEmojiChatThemes(data)
 
     case TypeUpdateAccentColors:
         return UnmarshalUpdateAccentColors(data)
@@ -8869,6 +9167,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
 
     case TypeUpdateFreezeState:
         return UnmarshalUpdateFreezeState(data)
+
+    case TypeUpdateAgeVerificationParameters:
+        return UnmarshalUpdateAgeVerificationParameters(data)
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(data)
@@ -8911,6 +9212,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
 
     case TypeUpdateStarRevenueStatus:
         return UnmarshalUpdateStarRevenueStatus(data)
+
+    case TypeUpdateTonRevenueStatus:
+        return UnmarshalUpdateTonRevenueStatus(data)
 
     case TypeUpdateSpeechRecognitionTrial:
         return UnmarshalUpdateSpeechRecognitionTrial(data)
@@ -9719,6 +10023,14 @@ func UnmarshalAudio(data json.RawMessage) (*Audio, error) {
     return &resp, err
 }
 
+func UnmarshalAudios(data json.RawMessage) (*Audios, error) {
+    var resp Audios
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalDocument(data json.RawMessage) (*Document, error) {
     var resp Document
 
@@ -9873,6 +10185,70 @@ func UnmarshalProfilePhoto(data json.RawMessage) (*ProfilePhoto, error) {
 
 func UnmarshalChatPhotoInfo(data json.RawMessage) (*ChatPhotoInfo, error) {
     var resp ChatPhotoInfo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabPosts(data json.RawMessage) (*ProfileTabPosts, error) {
+    var resp ProfileTabPosts
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabGifts(data json.RawMessage) (*ProfileTabGifts, error) {
+    var resp ProfileTabGifts
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabMedia(data json.RawMessage) (*ProfileTabMedia, error) {
+    var resp ProfileTabMedia
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabFiles(data json.RawMessage) (*ProfileTabFiles, error) {
+    var resp ProfileTabFiles
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabLinks(data json.RawMessage) (*ProfileTabLinks, error) {
+    var resp ProfileTabLinks
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabMusic(data json.RawMessage) (*ProfileTabMusic, error) {
+    var resp ProfileTabMusic
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabVoice(data json.RawMessage) (*ProfileTabVoice, error) {
+    var resp ProfileTabVoice
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalProfileTabGifs(data json.RawMessage) (*ProfileTabGifs, error) {
+    var resp ProfileTabGifs
 
     err := json.Unmarshal(data, &resp)
 
@@ -10223,6 +10599,22 @@ func UnmarshalChatAdministratorRights(data json.RawMessage) (*ChatAdministratorR
     return &resp, err
 }
 
+func UnmarshalGiftResalePriceStar(data json.RawMessage) (*GiftResalePriceStar, error) {
+    var resp GiftResalePriceStar
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftResalePriceTon(data json.RawMessage) (*GiftResalePriceTon, error) {
+    var resp GiftResalePriceTon
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalSuggestedPostPriceStar(data json.RawMessage) (*SuggestedPostPriceStar, error) {
     var resp SuggestedPostPriceStar
 
@@ -10567,6 +10959,54 @@ func UnmarshalGiftSettings(data json.RawMessage) (*GiftSettings, error) {
     return &resp, err
 }
 
+func UnmarshalGiftPurchaseLimits(data json.RawMessage) (*GiftPurchaseLimits, error) {
+    var resp GiftPurchaseLimits
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftResaleParameters(data json.RawMessage) (*GiftResaleParameters, error) {
+    var resp GiftResaleParameters
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftCollection(data json.RawMessage) (*GiftCollection, error) {
+    var resp GiftCollection
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftCollections(data json.RawMessage) (*GiftCollections, error) {
+    var resp GiftCollections
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalCanSendGiftResultOk(data json.RawMessage) (*CanSendGiftResultOk, error) {
+    var resp CanSendGiftResultOk
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalCanSendGiftResultFail(data json.RawMessage) (*CanSendGiftResultFail, error) {
+    var resp CanSendGiftResultFail
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpgradedGiftOriginUpgrade(data json.RawMessage) (*UpgradedGiftOriginUpgrade, error) {
     var resp UpgradedGiftOriginUpgrade
 
@@ -10585,6 +11025,14 @@ func UnmarshalUpgradedGiftOriginTransfer(data json.RawMessage) (*UpgradedGiftOri
 
 func UnmarshalUpgradedGiftOriginResale(data json.RawMessage) (*UpgradedGiftOriginResale, error) {
     var resp UpgradedGiftOriginResale
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpgradedGiftOriginPrepaidUpgrade(data json.RawMessage) (*UpgradedGiftOriginPrepaidUpgrade, error) {
+    var resp UpgradedGiftOriginPrepaidUpgrade
 
     err := json.Unmarshal(data, &resp)
 
@@ -10641,6 +11089,14 @@ func UnmarshalGift(data json.RawMessage) (*Gift, error) {
 
 func UnmarshalUpgradedGift(data json.RawMessage) (*UpgradedGift, error) {
     var resp UpgradedGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpgradedGiftValueInfo(data json.RawMessage) (*UpgradedGiftValueInfo, error) {
+    var resp UpgradedGiftValueInfo
 
     err := json.Unmarshal(data, &resp)
 
@@ -10753,6 +11209,22 @@ func UnmarshalGiftForResale(data json.RawMessage) (*GiftForResale, error) {
 
 func UnmarshalGiftsForResale(data json.RawMessage) (*GiftsForResale, error) {
     var resp GiftsForResale
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftResaleResultOk(data json.RawMessage) (*GiftResaleResultOk, error) {
+    var resp GiftResaleResultOk
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftResaleResultPriceIncreased(data json.RawMessage) (*GiftResaleResultPriceIncreased, error) {
+    var resp GiftResaleResultPriceIncreased
 
     err := json.Unmarshal(data, &resp)
 
@@ -10999,6 +11471,14 @@ func UnmarshalStarTransactionTypeGiftUpgrade(data json.RawMessage) (*StarTransac
     return &resp, err
 }
 
+func UnmarshalStarTransactionTypeGiftUpgradePurchase(data json.RawMessage) (*StarTransactionTypeGiftUpgradePurchase, error) {
+    var resp StarTransactionTypeGiftUpgradePurchase
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStarTransactionTypeUpgradedGiftPurchase(data json.RawMessage) (*StarTransactionTypeUpgradedGiftPurchase, error) {
     var resp StarTransactionTypeUpgradedGiftPurchase
 
@@ -11095,6 +11575,14 @@ func UnmarshalStarTransactionTypeBusinessBotTransferReceive(data json.RawMessage
     return &resp, err
 }
 
+func UnmarshalStarTransactionTypePublicPostSearch(data json.RawMessage) (*StarTransactionTypePublicPostSearch, error) {
+    var resp StarTransactionTypePublicPostSearch
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStarTransactionTypeUnsupported(data json.RawMessage) (*StarTransactionTypeUnsupported, error) {
     var resp StarTransactionTypeUnsupported
 
@@ -11129,6 +11617,22 @@ func UnmarshalTonTransactionTypeFragmentDeposit(data json.RawMessage) (*TonTrans
 
 func UnmarshalTonTransactionTypeSuggestedPostPayment(data json.RawMessage) (*TonTransactionTypeSuggestedPostPayment, error) {
     var resp TonTransactionTypeSuggestedPostPayment
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTonTransactionTypeUpgradedGiftPurchase(data json.RawMessage) (*TonTransactionTypeUpgradedGiftPurchase, error) {
+    var resp TonTransactionTypeUpgradedGiftPurchase
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTonTransactionTypeUpgradedGiftSale(data json.RawMessage) (*TonTransactionTypeUpgradedGiftSale, error) {
+    var resp TonTransactionTypeUpgradedGiftSale
 
     err := json.Unmarshal(data, &resp)
 
@@ -11249,6 +11753,22 @@ func UnmarshalProfileAccentColors(data json.RawMessage) (*ProfileAccentColors, e
 
 func UnmarshalProfileAccentColor(data json.RawMessage) (*ProfileAccentColor, error) {
     var resp ProfileAccentColor
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUserRating(data json.RawMessage) (*UserRating, error) {
+    var resp UserRating
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalRestrictionInfo(data json.RawMessage) (*RestrictionInfo, error) {
+    var resp RestrictionInfo
 
     err := json.Unmarshal(data, &resp)
 
@@ -11719,6 +12239,14 @@ func UnmarshalSecretChat(data json.RawMessage) (*SecretChat, error) {
     return &resp, err
 }
 
+func UnmarshalPublicPostSearchLimits(data json.RawMessage) (*PublicPostSearchLimits, error) {
+    var resp PublicPostSearchLimits
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalMessageSenderUser(data json.RawMessage) (*MessageSenderUser, error) {
     var resp MessageSenderUser
 
@@ -12121,6 +12649,14 @@ func UnmarshalFoundMessages(data json.RawMessage) (*FoundMessages, error) {
 
 func UnmarshalFoundChatMessages(data json.RawMessage) (*FoundChatMessages, error) {
     var resp FoundChatMessages
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalFoundPublicPosts(data json.RawMessage) (*FoundPublicPosts, error) {
+    var resp FoundPublicPosts
 
     err := json.Unmarshal(data, &resp)
 
@@ -13167,6 +13703,46 @@ func UnmarshalSharedChat(data json.RawMessage) (*SharedChat, error) {
     return &resp, err
 }
 
+func UnmarshalBuiltInThemeClassic(data json.RawMessage) (*BuiltInThemeClassic, error) {
+    var resp BuiltInThemeClassic
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalBuiltInThemeDay(data json.RawMessage) (*BuiltInThemeDay, error) {
+    var resp BuiltInThemeDay
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalBuiltInThemeNight(data json.RawMessage) (*BuiltInThemeNight, error) {
+    var resp BuiltInThemeNight
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalBuiltInThemeTinted(data json.RawMessage) (*BuiltInThemeTinted, error) {
+    var resp BuiltInThemeTinted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalBuiltInThemeArctic(data json.RawMessage) (*BuiltInThemeArctic, error) {
+    var resp BuiltInThemeArctic
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalThemeSettings(data json.RawMessage) (*ThemeSettings, error) {
     var resp ThemeSettings
 
@@ -13711,6 +14287,14 @@ func UnmarshalLinkPreviewTypeChat(data json.RawMessage) (*LinkPreviewTypeChat, e
     return &resp, err
 }
 
+func UnmarshalLinkPreviewTypeDirectMessagesChat(data json.RawMessage) (*LinkPreviewTypeDirectMessagesChat, error) {
+    var resp LinkPreviewTypeDirectMessagesChat
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalLinkPreviewTypeDocument(data json.RawMessage) (*LinkPreviewTypeDocument, error) {
     var resp LinkPreviewTypeDocument
 
@@ -13753,6 +14337,14 @@ func UnmarshalLinkPreviewTypeExternalAudio(data json.RawMessage) (*LinkPreviewTy
 
 func UnmarshalLinkPreviewTypeExternalVideo(data json.RawMessage) (*LinkPreviewTypeExternalVideo, error) {
     var resp LinkPreviewTypeExternalVideo
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalLinkPreviewTypeGiftCollection(data json.RawMessage) (*LinkPreviewTypeGiftCollection, error) {
+    var resp LinkPreviewTypeGiftCollection
 
     err := json.Unmarshal(data, &resp)
 
@@ -13825,6 +14417,14 @@ func UnmarshalLinkPreviewTypeStickerSet(data json.RawMessage) (*LinkPreviewTypeS
 
 func UnmarshalLinkPreviewTypeStory(data json.RawMessage) (*LinkPreviewTypeStory, error) {
     var resp LinkPreviewTypeStory
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalLinkPreviewTypeStoryAlbum(data json.RawMessage) (*LinkPreviewTypeStoryAlbum, error) {
+    var resp LinkPreviewTypeStoryAlbum
 
     err := json.Unmarshal(data, &resp)
 
@@ -16703,6 +17303,22 @@ func UnmarshalFoundStories(data json.RawMessage) (*FoundStories, error) {
     return &resp, err
 }
 
+func UnmarshalStoryAlbum(data json.RawMessage) (*StoryAlbum, error) {
+    var resp StoryAlbum
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalStoryAlbums(data json.RawMessage) (*StoryAlbums, error) {
+    var resp StoryAlbums
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalStoryFullId(data json.RawMessage) (*StoryFullId, error) {
     var resp StoryFullId
 
@@ -19287,8 +19903,56 @@ func UnmarshalInputBackgroundPrevious(data json.RawMessage) (*InputBackgroundPre
     return &resp, err
 }
 
-func UnmarshalChatTheme(data json.RawMessage) (*ChatTheme, error) {
-    var resp ChatTheme
+func UnmarshalEmojiChatTheme(data json.RawMessage) (*EmojiChatTheme, error) {
+    var resp EmojiChatTheme
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftChatTheme(data json.RawMessage) (*GiftChatTheme, error) {
+    var resp GiftChatTheme
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftChatThemes(data json.RawMessage) (*GiftChatThemes, error) {
+    var resp GiftChatThemes
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalChatThemeEmoji(data json.RawMessage) (*ChatThemeEmoji, error) {
+    var resp ChatThemeEmoji
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalChatThemeGift(data json.RawMessage) (*ChatThemeGift, error) {
+    var resp ChatThemeGift
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputChatThemeEmoji(data json.RawMessage) (*InputChatThemeEmoji, error) {
+    var resp InputChatThemeEmoji
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInputChatThemeGift(data json.RawMessage) (*InputChatThemeGift, error) {
+    var resp InputChatThemeGift
 
     err := json.Unmarshal(data, &resp)
 
@@ -20791,6 +21455,14 @@ func UnmarshalInternalLinkTypeDefaultMessageAutoDeleteTimerSettings(data json.Ra
     return &resp, err
 }
 
+func UnmarshalInternalLinkTypeDirectMessagesChat(data json.RawMessage) (*InternalLinkTypeDirectMessagesChat, error) {
+    var resp InternalLinkTypeDirectMessagesChat
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalInternalLinkTypeEditProfileSettings(data json.RawMessage) (*InternalLinkTypeEditProfileSettings, error) {
     var resp InternalLinkTypeEditProfileSettings
 
@@ -20801,6 +21473,14 @@ func UnmarshalInternalLinkTypeEditProfileSettings(data json.RawMessage) (*Intern
 
 func UnmarshalInternalLinkTypeGame(data json.RawMessage) (*InternalLinkTypeGame, error) {
     var resp InternalLinkTypeGame
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInternalLinkTypeGiftCollection(data json.RawMessage) (*InternalLinkTypeGiftCollection, error) {
+    var resp InternalLinkTypeGiftCollection
 
     err := json.Unmarshal(data, &resp)
 
@@ -20985,6 +21665,14 @@ func UnmarshalInternalLinkTypeStickerSet(data json.RawMessage) (*InternalLinkTyp
 
 func UnmarshalInternalLinkTypeStory(data json.RawMessage) (*InternalLinkTypeStory, error) {
     var resp InternalLinkTypeStory
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInternalLinkTypeStoryAlbum(data json.RawMessage) (*InternalLinkTypeStoryAlbum, error) {
+    var resp InternalLinkTypeStoryAlbum
 
     err := json.Unmarshal(data, &resp)
 
@@ -21505,6 +22193,14 @@ func UnmarshalConnectionStateUpdating(data json.RawMessage) (*ConnectionStateUpd
 
 func UnmarshalConnectionStateReady(data json.RawMessage) (*ConnectionStateReady, error) {
     var resp ConnectionStateReady
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalAgeVerificationParameters(data json.RawMessage) (*AgeVerificationParameters, error) {
+    var resp AgeVerificationParameters
 
     err := json.Unmarshal(data, &resp)
 
@@ -22105,6 +22801,22 @@ func UnmarshalStarRevenueStatus(data json.RawMessage) (*StarRevenueStatus, error
 
 func UnmarshalStarRevenueStatistics(data json.RawMessage) (*StarRevenueStatistics, error) {
     var resp StarRevenueStatistics
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTonRevenueStatus(data json.RawMessage) (*TonRevenueStatus, error) {
+    var resp TonRevenueStatus
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTonRevenueStatistics(data json.RawMessage) (*TonRevenueStatistics, error) {
+    var resp TonRevenueStatistics
 
     err := json.Unmarshal(data, &resp)
 
@@ -23111,8 +23823,8 @@ func UnmarshalUpdateDefaultBackground(data json.RawMessage) (*UpdateDefaultBackg
     return &resp, err
 }
 
-func UnmarshalUpdateChatThemes(data json.RawMessage) (*UpdateChatThemes, error) {
-    var resp UpdateChatThemes
+func UnmarshalUpdateEmojiChatThemes(data json.RawMessage) (*UpdateEmojiChatThemes, error) {
+    var resp UpdateEmojiChatThemes
 
     err := json.Unmarshal(data, &resp)
 
@@ -23153,6 +23865,14 @@ func UnmarshalUpdateConnectionState(data json.RawMessage) (*UpdateConnectionStat
 
 func UnmarshalUpdateFreezeState(data json.RawMessage) (*UpdateFreezeState, error) {
     var resp UpdateFreezeState
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateAgeVerificationParameters(data json.RawMessage) (*UpdateAgeVerificationParameters, error) {
+    var resp UpdateAgeVerificationParameters
 
     err := json.Unmarshal(data, &resp)
 
@@ -23265,6 +23985,14 @@ func UnmarshalUpdateChatRevenueAmount(data json.RawMessage) (*UpdateChatRevenueA
 
 func UnmarshalUpdateStarRevenueStatus(data json.RawMessage) (*UpdateStarRevenueStatus, error) {
     var resp UpdateStarRevenueStatus
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateTonRevenueStatus(data json.RawMessage) (*UpdateTonRevenueStatus, error) {
+    var resp UpdateTonRevenueStatus
 
     err := json.Unmarshal(data, &resp)
 
@@ -23873,6 +24601,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeAudio:
         return UnmarshalAudio(data)
 
+    case TypeAudios:
+        return UnmarshalAudios(data)
+
     case TypeDocument:
         return UnmarshalDocument(data)
 
@@ -23932,6 +24663,30 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeChatPhotoInfo:
         return UnmarshalChatPhotoInfo(data)
+
+    case TypeProfileTabPosts:
+        return UnmarshalProfileTabPosts(data)
+
+    case TypeProfileTabGifts:
+        return UnmarshalProfileTabGifts(data)
+
+    case TypeProfileTabMedia:
+        return UnmarshalProfileTabMedia(data)
+
+    case TypeProfileTabFiles:
+        return UnmarshalProfileTabFiles(data)
+
+    case TypeProfileTabLinks:
+        return UnmarshalProfileTabLinks(data)
+
+    case TypeProfileTabMusic:
+        return UnmarshalProfileTabMusic(data)
+
+    case TypeProfileTabVoice:
+        return UnmarshalProfileTabVoice(data)
+
+    case TypeProfileTabGifs:
+        return UnmarshalProfileTabGifs(data)
 
     case TypeUserTypeRegular:
         return UnmarshalUserTypeRegular(data)
@@ -24062,6 +24817,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeChatAdministratorRights:
         return UnmarshalChatAdministratorRights(data)
 
+    case TypeGiftResalePriceStar:
+        return UnmarshalGiftResalePriceStar(data)
+
+    case TypeGiftResalePriceTon:
+        return UnmarshalGiftResalePriceTon(data)
+
     case TypeSuggestedPostPriceStar:
         return UnmarshalSuggestedPostPriceStar(data)
 
@@ -24191,6 +24952,24 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeGiftSettings:
         return UnmarshalGiftSettings(data)
 
+    case TypeGiftPurchaseLimits:
+        return UnmarshalGiftPurchaseLimits(data)
+
+    case TypeGiftResaleParameters:
+        return UnmarshalGiftResaleParameters(data)
+
+    case TypeGiftCollection:
+        return UnmarshalGiftCollection(data)
+
+    case TypeGiftCollections:
+        return UnmarshalGiftCollections(data)
+
+    case TypeCanSendGiftResultOk:
+        return UnmarshalCanSendGiftResultOk(data)
+
+    case TypeCanSendGiftResultFail:
+        return UnmarshalCanSendGiftResultFail(data)
+
     case TypeUpgradedGiftOriginUpgrade:
         return UnmarshalUpgradedGiftOriginUpgrade(data)
 
@@ -24199,6 +24978,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpgradedGiftOriginResale:
         return UnmarshalUpgradedGiftOriginResale(data)
+
+    case TypeUpgradedGiftOriginPrepaidUpgrade:
+        return UnmarshalUpgradedGiftOriginPrepaidUpgrade(data)
 
     case TypeUpgradedGiftModel:
         return UnmarshalUpgradedGiftModel(data)
@@ -24220,6 +25002,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpgradedGift:
         return UnmarshalUpgradedGift(data)
+
+    case TypeUpgradedGiftValueInfo:
+        return UnmarshalUpgradedGiftValueInfo(data)
 
     case TypeUpgradeGiftResult:
         return UnmarshalUpgradeGiftResult(data)
@@ -24262,6 +25047,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeGiftsForResale:
         return UnmarshalGiftsForResale(data)
+
+    case TypeGiftResaleResultOk:
+        return UnmarshalGiftResaleResultOk(data)
+
+    case TypeGiftResaleResultPriceIncreased:
+        return UnmarshalGiftResaleResultPriceIncreased(data)
 
     case TypeSentGiftRegular:
         return UnmarshalSentGiftRegular(data)
@@ -24353,6 +25144,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarTransactionTypeGiftUpgrade:
         return UnmarshalStarTransactionTypeGiftUpgrade(data)
 
+    case TypeStarTransactionTypeGiftUpgradePurchase:
+        return UnmarshalStarTransactionTypeGiftUpgradePurchase(data)
+
     case TypeStarTransactionTypeUpgradedGiftPurchase:
         return UnmarshalStarTransactionTypeUpgradedGiftPurchase(data)
 
@@ -24389,6 +25183,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStarTransactionTypeBusinessBotTransferReceive:
         return UnmarshalStarTransactionTypeBusinessBotTransferReceive(data)
 
+    case TypeStarTransactionTypePublicPostSearch:
+        return UnmarshalStarTransactionTypePublicPostSearch(data)
+
     case TypeStarTransactionTypeUnsupported:
         return UnmarshalStarTransactionTypeUnsupported(data)
 
@@ -24403,6 +25200,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeTonTransactionTypeSuggestedPostPayment:
         return UnmarshalTonTransactionTypeSuggestedPostPayment(data)
+
+    case TypeTonTransactionTypeUpgradedGiftPurchase:
+        return UnmarshalTonTransactionTypeUpgradedGiftPurchase(data)
+
+    case TypeTonTransactionTypeUpgradedGiftSale:
+        return UnmarshalTonTransactionTypeUpgradedGiftSale(data)
 
     case TypeTonTransactionTypeUnsupported:
         return UnmarshalTonTransactionTypeUnsupported(data)
@@ -24448,6 +25251,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeProfileAccentColor:
         return UnmarshalProfileAccentColor(data)
+
+    case TypeUserRating:
+        return UnmarshalUserRating(data)
+
+    case TypeRestrictionInfo:
+        return UnmarshalRestrictionInfo(data)
 
     case TypeEmojiStatusTypeCustomEmoji:
         return UnmarshalEmojiStatusTypeCustomEmoji(data)
@@ -24623,6 +25432,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeSecretChat:
         return UnmarshalSecretChat(data)
 
+    case TypePublicPostSearchLimits:
+        return UnmarshalPublicPostSearchLimits(data)
+
     case TypeMessageSenderUser:
         return UnmarshalMessageSenderUser(data)
 
@@ -24775,6 +25587,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeFoundChatMessages:
         return UnmarshalFoundChatMessages(data)
+
+    case TypeFoundPublicPosts:
+        return UnmarshalFoundPublicPosts(data)
 
     case TypeMessagePosition:
         return UnmarshalMessagePosition(data)
@@ -25166,6 +25981,21 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeSharedChat:
         return UnmarshalSharedChat(data)
 
+    case TypeBuiltInThemeClassic:
+        return UnmarshalBuiltInThemeClassic(data)
+
+    case TypeBuiltInThemeDay:
+        return UnmarshalBuiltInThemeDay(data)
+
+    case TypeBuiltInThemeNight:
+        return UnmarshalBuiltInThemeNight(data)
+
+    case TypeBuiltInThemeTinted:
+        return UnmarshalBuiltInThemeTinted(data)
+
+    case TypeBuiltInThemeArctic:
+        return UnmarshalBuiltInThemeArctic(data)
+
     case TypeThemeSettings:
         return UnmarshalThemeSettings(data)
 
@@ -25370,6 +26200,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeLinkPreviewTypeChat:
         return UnmarshalLinkPreviewTypeChat(data)
 
+    case TypeLinkPreviewTypeDirectMessagesChat:
+        return UnmarshalLinkPreviewTypeDirectMessagesChat(data)
+
     case TypeLinkPreviewTypeDocument:
         return UnmarshalLinkPreviewTypeDocument(data)
 
@@ -25387,6 +26220,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeLinkPreviewTypeExternalVideo:
         return UnmarshalLinkPreviewTypeExternalVideo(data)
+
+    case TypeLinkPreviewTypeGiftCollection:
+        return UnmarshalLinkPreviewTypeGiftCollection(data)
 
     case TypeLinkPreviewTypeGroupCall:
         return UnmarshalLinkPreviewTypeGroupCall(data)
@@ -25414,6 +26250,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeLinkPreviewTypeStory:
         return UnmarshalLinkPreviewTypeStory(data)
+
+    case TypeLinkPreviewTypeStoryAlbum:
+        return UnmarshalLinkPreviewTypeStoryAlbum(data)
 
     case TypeLinkPreviewTypeSupergroupBoost:
         return UnmarshalLinkPreviewTypeSupergroupBoost(data)
@@ -26492,6 +27331,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeFoundStories:
         return UnmarshalFoundStories(data)
 
+    case TypeStoryAlbum:
+        return UnmarshalStoryAlbum(data)
+
+    case TypeStoryAlbums:
+        return UnmarshalStoryAlbums(data)
+
     case TypeStoryFullId:
         return UnmarshalStoryFullId(data)
 
@@ -27461,8 +28306,26 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeInputBackgroundPrevious:
         return UnmarshalInputBackgroundPrevious(data)
 
-    case TypeChatTheme:
-        return UnmarshalChatTheme(data)
+    case TypeEmojiChatTheme:
+        return UnmarshalEmojiChatTheme(data)
+
+    case TypeGiftChatTheme:
+        return UnmarshalGiftChatTheme(data)
+
+    case TypeGiftChatThemes:
+        return UnmarshalGiftChatThemes(data)
+
+    case TypeChatThemeEmoji:
+        return UnmarshalChatThemeEmoji(data)
+
+    case TypeChatThemeGift:
+        return UnmarshalChatThemeGift(data)
+
+    case TypeInputChatThemeEmoji:
+        return UnmarshalInputChatThemeEmoji(data)
+
+    case TypeInputChatThemeGift:
+        return UnmarshalInputChatThemeGift(data)
 
     case TypeTimeZone:
         return UnmarshalTimeZone(data)
@@ -28025,11 +28888,17 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeInternalLinkTypeDefaultMessageAutoDeleteTimerSettings:
         return UnmarshalInternalLinkTypeDefaultMessageAutoDeleteTimerSettings(data)
 
+    case TypeInternalLinkTypeDirectMessagesChat:
+        return UnmarshalInternalLinkTypeDirectMessagesChat(data)
+
     case TypeInternalLinkTypeEditProfileSettings:
         return UnmarshalInternalLinkTypeEditProfileSettings(data)
 
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(data)
+
+    case TypeInternalLinkTypeGiftCollection:
+        return UnmarshalInternalLinkTypeGiftCollection(data)
 
     case TypeInternalLinkTypeGroupCall:
         return UnmarshalInternalLinkTypeGroupCall(data)
@@ -28099,6 +28968,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInternalLinkTypeStory:
         return UnmarshalInternalLinkTypeStory(data)
+
+    case TypeInternalLinkTypeStoryAlbum:
+        return UnmarshalInternalLinkTypeStoryAlbum(data)
 
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(data)
@@ -28294,6 +29166,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeConnectionStateReady:
         return UnmarshalConnectionStateReady(data)
+
+    case TypeAgeVerificationParameters:
+        return UnmarshalAgeVerificationParameters(data)
 
     case TypeTopChatCategoryUsers:
         return UnmarshalTopChatCategoryUsers(data)
@@ -28519,6 +29394,12 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeStarRevenueStatistics:
         return UnmarshalStarRevenueStatistics(data)
+
+    case TypeTonRevenueStatus:
+        return UnmarshalTonRevenueStatus(data)
+
+    case TypeTonRevenueStatistics:
+        return UnmarshalTonRevenueStatistics(data)
 
     case TypePoint:
         return UnmarshalPoint(data)
@@ -28895,8 +29776,8 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateDefaultBackground:
         return UnmarshalUpdateDefaultBackground(data)
 
-    case TypeUpdateChatThemes:
-        return UnmarshalUpdateChatThemes(data)
+    case TypeUpdateEmojiChatThemes:
+        return UnmarshalUpdateEmojiChatThemes(data)
 
     case TypeUpdateAccentColors:
         return UnmarshalUpdateAccentColors(data)
@@ -28912,6 +29793,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateFreezeState:
         return UnmarshalUpdateFreezeState(data)
+
+    case TypeUpdateAgeVerificationParameters:
+        return UnmarshalUpdateAgeVerificationParameters(data)
 
     case TypeUpdateTermsOfService:
         return UnmarshalUpdateTermsOfService(data)
@@ -28954,6 +29838,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateStarRevenueStatus:
         return UnmarshalUpdateStarRevenueStatus(data)
+
+    case TypeUpdateTonRevenueStatus:
+        return UnmarshalUpdateTonRevenueStatus(data)
 
     case TypeUpdateSpeechRecognitionTrial:
         return UnmarshalUpdateSpeechRecognitionTrial(data)
