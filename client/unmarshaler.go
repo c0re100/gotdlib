@@ -1013,6 +1013,9 @@ func UnmarshalUpgradedGiftOrigin(data json.RawMessage) (UpgradedGiftOrigin, erro
     case TypeUpgradedGiftOriginResale:
         return UnmarshalUpgradedGiftOriginResale(data)
 
+    case TypeUpgradedGiftOriginBlockchain:
+        return UnmarshalUpgradedGiftOriginBlockchain(data)
+
     case TypeUpgradedGiftOriginPrepaidUpgrade:
         return UnmarshalUpgradedGiftOriginPrepaidUpgrade(data)
 
@@ -1282,6 +1285,9 @@ func UnmarshalStarTransactionType(data json.RawMessage) (StarTransactionType, er
 
     case TypeStarTransactionTypeGiftTransfer:
         return UnmarshalStarTransactionTypeGiftTransfer(data)
+
+    case TypeStarTransactionTypeGiftOriginalDetailsDrop:
+        return UnmarshalStarTransactionTypeGiftOriginalDetailsDrop(data)
 
     case TypeStarTransactionTypeGiftSale:
         return UnmarshalStarTransactionTypeGiftSale(data)
@@ -1962,6 +1968,9 @@ func UnmarshalMessageTopic(data json.RawMessage) (MessageTopic, error) {
     }
 
     switch meta.Type {
+    case TypeMessageTopicThread:
+        return UnmarshalMessageTopicThread(data)
+
     case TypeMessageTopicForum:
         return UnmarshalMessageTopicForum(data)
 
@@ -4002,6 +4011,9 @@ func UnmarshalMessageContent(data json.RawMessage) (MessageContent, error) {
 
     case TypeMessageSuggestProfilePhoto:
         return UnmarshalMessageSuggestProfilePhoto(data)
+
+    case TypeMessageSuggestBirthdate:
+        return UnmarshalMessageSuggestBirthdate(data)
 
     case TypeMessageCustomServiceAction:
         return UnmarshalMessageCustomServiceAction(data)
@@ -7164,6 +7176,9 @@ func UnmarshalPushMessageContent(data json.RawMessage) (PushMessageContent, erro
     case TypePushMessageContentSuggestProfilePhoto:
         return UnmarshalPushMessageContentSuggestProfilePhoto(data)
 
+    case TypePushMessageContentSuggestBirthdate:
+        return UnmarshalPushMessageContentSuggestBirthdate(data)
+
     case TypePushMessageContentProximityAlertTriggered:
         return UnmarshalPushMessageContentProximityAlertTriggered(data)
 
@@ -9021,6 +9036,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateChatAction:
         return UnmarshalUpdateChatAction(data)
 
+    case TypeUpdatePendingTextMessage:
+        return UnmarshalUpdatePendingTextMessage(data)
+
     case TypeUpdateUserStatus:
         return UnmarshalUpdateUserStatus(data)
 
@@ -9089,6 +9107,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
 
     case TypeUpdateGroupCallVerificationState:
         return UnmarshalUpdateGroupCallVerificationState(data)
+
+    case TypeUpdateGroupCallNewMessage:
+        return UnmarshalUpdateGroupCallNewMessage(data)
 
     case TypeUpdateNewCallSignalingData:
         return UnmarshalUpdateNewCallSignalingData(data)
@@ -11031,6 +11052,14 @@ func UnmarshalUpgradedGiftOriginResale(data json.RawMessage) (*UpgradedGiftOrigi
     return &resp, err
 }
 
+func UnmarshalUpgradedGiftOriginBlockchain(data json.RawMessage) (*UpgradedGiftOriginBlockchain, error) {
+    var resp UpgradedGiftOriginBlockchain
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpgradedGiftOriginPrepaidUpgrade(data json.RawMessage) (*UpgradedGiftOriginPrepaidUpgrade, error) {
     var resp UpgradedGiftOriginPrepaidUpgrade
 
@@ -11079,6 +11108,14 @@ func UnmarshalUpgradedGiftOriginalDetails(data json.RawMessage) (*UpgradedGiftOr
     return &resp, err
 }
 
+func UnmarshalUpgradedGiftColors(data json.RawMessage) (*UpgradedGiftColors, error) {
+    var resp UpgradedGiftColors
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalGift(data json.RawMessage) (*Gift, error) {
     var resp Gift
 
@@ -11121,6 +11158,14 @@ func UnmarshalAvailableGift(data json.RawMessage) (*AvailableGift, error) {
 
 func UnmarshalAvailableGifts(data json.RawMessage) (*AvailableGifts, error) {
     var resp AvailableGifts
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalGiftUpgradePrice(data json.RawMessage) (*GiftUpgradePrice, error) {
+    var resp GiftUpgradePrice
 
     err := json.Unmarshal(data, &resp)
 
@@ -11449,6 +11494,14 @@ func UnmarshalStarTransactionTypeGiftPurchase(data json.RawMessage) (*StarTransa
 
 func UnmarshalStarTransactionTypeGiftTransfer(data json.RawMessage) (*StarTransactionTypeGiftTransfer, error) {
     var resp StarTransactionTypeGiftTransfer
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalStarTransactionTypeGiftOriginalDetailsDrop(data json.RawMessage) (*StarTransactionTypeGiftOriginalDetailsDrop, error) {
+    var resp StarTransactionTypeGiftOriginalDetailsDrop
 
     err := json.Unmarshal(data, &resp)
 
@@ -12489,6 +12542,14 @@ func UnmarshalMessageInteractionInfo(data json.RawMessage) (*MessageInteractionI
 
 func UnmarshalUnreadReaction(data json.RawMessage) (*UnreadReaction, error) {
     var resp UnreadReaction
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalMessageTopicThread(data json.RawMessage) (*MessageTopicThread, error) {
+    var resp MessageTopicThread
 
     err := json.Unmarshal(data, &resp)
 
@@ -15839,6 +15900,14 @@ func UnmarshalMessageSuggestProfilePhoto(data json.RawMessage) (*MessageSuggestP
     return &resp, err
 }
 
+func UnmarshalMessageSuggestBirthdate(data json.RawMessage) (*MessageSuggestBirthdate, error) {
+    var resp MessageSuggestBirthdate
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalMessageCustomServiceAction(data json.RawMessage) (*MessageCustomServiceAction, error) {
     var resp MessageCustomServiceAction
 
@@ -18057,6 +18126,14 @@ func UnmarshalDiceStickersRegular(data json.RawMessage) (*DiceStickersRegular, e
 
 func UnmarshalDiceStickersSlotMachine(data json.RawMessage) (*DiceStickersSlotMachine, error) {
     var resp DiceStickersSlotMachine
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalImportedContact(data json.RawMessage) (*ImportedContact, error) {
+    var resp ImportedContact
 
     err := json.Unmarshal(data, &resp)
 
@@ -20489,6 +20566,14 @@ func UnmarshalPushMessageContentRecurringPayment(data json.RawMessage) (*PushMes
 
 func UnmarshalPushMessageContentSuggestProfilePhoto(data json.RawMessage) (*PushMessageContentSuggestProfilePhoto, error) {
     var resp PushMessageContentSuggestProfilePhoto
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPushMessageContentSuggestBirthdate(data json.RawMessage) (*PushMessageContentSuggestBirthdate, error) {
+    var resp PushMessageContentSuggestBirthdate
 
     err := json.Unmarshal(data, &resp)
 
@@ -23479,6 +23564,14 @@ func UnmarshalUpdateChatAction(data json.RawMessage) (*UpdateChatAction, error) 
     return &resp, err
 }
 
+func UnmarshalUpdatePendingTextMessage(data json.RawMessage) (*UpdatePendingTextMessage, error) {
+    var resp UpdatePendingTextMessage
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateUserStatus(data json.RawMessage) (*UpdateUserStatus, error) {
     var resp UpdateUserStatus
 
@@ -23657,6 +23750,14 @@ func UnmarshalUpdateGroupCallParticipants(data json.RawMessage) (*UpdateGroupCal
 
 func UnmarshalUpdateGroupCallVerificationState(data json.RawMessage) (*UpdateGroupCallVerificationState, error) {
     var resp UpdateGroupCallVerificationState
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateGroupCallNewMessage(data json.RawMessage) (*UpdateGroupCallNewMessage, error) {
+    var resp UpdateGroupCallNewMessage
 
     err := json.Unmarshal(data, &resp)
 
@@ -24979,6 +25080,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpgradedGiftOriginResale:
         return UnmarshalUpgradedGiftOriginResale(data)
 
+    case TypeUpgradedGiftOriginBlockchain:
+        return UnmarshalUpgradedGiftOriginBlockchain(data)
+
     case TypeUpgradedGiftOriginPrepaidUpgrade:
         return UnmarshalUpgradedGiftOriginPrepaidUpgrade(data)
 
@@ -24997,6 +25101,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpgradedGiftOriginalDetails:
         return UnmarshalUpgradedGiftOriginalDetails(data)
 
+    case TypeUpgradedGiftColors:
+        return UnmarshalUpgradedGiftColors(data)
+
     case TypeGift:
         return UnmarshalGift(data)
 
@@ -25014,6 +25121,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeAvailableGifts:
         return UnmarshalAvailableGifts(data)
+
+    case TypeGiftUpgradePrice:
+        return UnmarshalGiftUpgradePrice(data)
 
     case TypeUpgradedGiftAttributeIdModel:
         return UnmarshalUpgradedGiftAttributeIdModel(data)
@@ -25137,6 +25247,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeStarTransactionTypeGiftTransfer:
         return UnmarshalStarTransactionTypeGiftTransfer(data)
+
+    case TypeStarTransactionTypeGiftOriginalDetailsDrop:
+        return UnmarshalStarTransactionTypeGiftOriginalDetailsDrop(data)
 
     case TypeStarTransactionTypeGiftSale:
         return UnmarshalStarTransactionTypeGiftSale(data)
@@ -25527,6 +25640,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUnreadReaction:
         return UnmarshalUnreadReaction(data)
+
+    case TypeMessageTopicThread:
+        return UnmarshalMessageTopicThread(data)
 
     case TypeMessageTopicForum:
         return UnmarshalMessageTopicForum(data)
@@ -26782,6 +26898,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeMessageSuggestProfilePhoto:
         return UnmarshalMessageSuggestProfilePhoto(data)
 
+    case TypeMessageSuggestBirthdate:
+        return UnmarshalMessageSuggestBirthdate(data)
+
     case TypeMessageCustomServiceAction:
         return UnmarshalMessageCustomServiceAction(data)
 
@@ -27615,6 +27734,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeDiceStickersSlotMachine:
         return UnmarshalDiceStickersSlotMachine(data)
+
+    case TypeImportedContact:
+        return UnmarshalImportedContact(data)
 
     case TypeImportedContacts:
         return UnmarshalImportedContacts(data)
@@ -28527,6 +28649,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypePushMessageContentSuggestProfilePhoto:
         return UnmarshalPushMessageContentSuggestProfilePhoto(data)
+
+    case TypePushMessageContentSuggestBirthdate:
+        return UnmarshalPushMessageContentSuggestBirthdate(data)
 
     case TypePushMessageContentProximityAlertTriggered:
         return UnmarshalPushMessageContentProximityAlertTriggered(data)
@@ -29647,6 +29772,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeUpdateChatAction:
         return UnmarshalUpdateChatAction(data)
 
+    case TypeUpdatePendingTextMessage:
+        return UnmarshalUpdatePendingTextMessage(data)
+
     case TypeUpdateUserStatus:
         return UnmarshalUpdateUserStatus(data)
 
@@ -29715,6 +29843,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateGroupCallVerificationState:
         return UnmarshalUpdateGroupCallVerificationState(data)
+
+    case TypeUpdateGroupCallNewMessage:
+        return UnmarshalUpdateGroupCallNewMessage(data)
 
     case TypeUpdateNewCallSignalingData:
         return UnmarshalUpdateNewCallSignalingData(data)
