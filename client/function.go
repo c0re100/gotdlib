@@ -355,6 +355,63 @@ func (client *Client) RequestQrCodeAuthentication(req *RequestQrCodeAuthenticati
     return UnmarshalOk(result.Data)
 }
 
+// Returns parameters for authentication using a passkey as JSON-serialized string
+func (client *Client) GetAuthenticationPasskeyParameters() (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getAuthenticationPasskeyParameters",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
+type CheckAuthenticationPasskeyRequest struct { 
+    // Base64url-encoded identifier of the credential
+    CredentialId string `json:"credential_id"`
+    // JSON-encoded client data
+    ClientData string `json:"client_data"`
+    // Authenticator data of the application that created the credential
+    AuthenticatorData []byte `json:"authenticator_data"`
+    // Cryptographic signature of the credential
+    Signature []byte `json:"signature"`
+    // User handle of the passkey
+    UserHandle []byte `json:"user_handle"`
+}
+
+// Checks a passkey to log in to the corresponding account. Call getAuthenticationPasskeyParameters to get parameters for the passkey. Works only when the current authorization state is authorizationStateWaitPhoneNumber or authorizationStateWaitOtherDeviceConfirmation, or if there is no pending authentication query and the current authorization state is authorizationStateWaitPremiumPurchase, authorizationStateWaitEmailAddress, authorizationStateWaitEmailCode, authorizationStateWaitCode, authorizationStateWaitRegistration, or authorizationStateWaitPassword
+func (client *Client) CheckAuthenticationPasskey(req *CheckAuthenticationPasskeyRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "checkAuthenticationPasskey",
+        },
+        Data: map[string]interface{}{
+            "credential_id": req.CredentialId,
+            "client_data": req.ClientData,
+            "authenticator_data": req.AuthenticatorData,
+            "signature": req.Signature,
+            "user_handle": req.UserHandle,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type RegisterUserRequest struct { 
     // The first name of the user; 1-64 characters
     FirstName string `json:"first_name"`
@@ -772,12 +829,31 @@ func (client *Client) SetPassword(req *SetPasswordRequest) (*PasswordState, erro
     return UnmarshalPasswordState(result.Data)
 }
 
+// Checks whether the current user is required to set login email address
+func (client *Client) IsLoginEmailAddressRequired() (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "isLoginEmailAddressRequired",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type SetLoginEmailAddressRequest struct { 
     // New login email address
     NewLoginEmailAddress string `json:"new_login_email_address"`
 }
 
-// Changes the login email address of the user. The email address can be changed only if the current user already has login email and passwordState.login_email_address_pattern is non-empty. The change will not be applied until the new login email address is confirmed with checkLoginEmailAddressCode. To use Apple ID/Google ID instead of an email address, call checkLoginEmailAddressCode directly
+// Changes the login email address of the user. The email address can be changed only if the current user already has login email and passwordState.login_email_address_pattern is non-empty, or the user received suggestedActionSetLoginEmailAddress and isLoginEmailAddressRequired succeeds. The change will not be applied until the new login email address is confirmed with checkLoginEmailAddressCode. To use Apple ID/Google ID instead of an email address, call checkLoginEmailAddressCode directly
 func (client *Client) SetLoginEmailAddress(req *SetLoginEmailAddressRequest) (*EmailAddressAuthenticationCodeInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1429,7 +1505,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, the message with gift purchase offer for messageUpgradedGiftPurchaseOfferRejected, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4484,7 +4560,7 @@ type TranslateMessageTextRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Language code of the language to which the message is translated. Must be one of "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb", "zh-CN", "zh", "zh-Hans", "zh-TW", "zh-Hant", "co", "hr", "cs", "da", "nl", "en", "eo", "et", "fi", "fr", "fy", "gl", "ka", "de", "el", "gu", "ht", "ha", "haw", "he", "iw", "hi", "hmn", "hu", "is", "ig", "id", "in", "ga", "it", "ja", "jv", "kn", "kk", "km", "rw", "ko", "ku", "ky", "lo", "la", "lv", "lt", "lb", "mk", "mg", "ms", "ml", "mt", "mi", "mr", "mn", "my", "ne", "no", "ny", "or", "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr", "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw", "sv", "tl", "tg", "ta", "tt", "te", "th", "tr", "tk", "uk", "ur", "ug", "uz", "vi", "cy", "xh", "yi", "ji", "yo", "zu"
+    // Language code of the language to which the message is translated. See translateText.to_language_code for the list of supported values
     ToLanguageCode string `json:"to_language_code"`
 }
 
@@ -4498,6 +4574,38 @@ func (client *Client) TranslateMessageText(req *TranslateMessageTextRequest) (*F
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "to_language_code": req.ToLanguageCode,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalFormattedText(result.Data)
+}
+
+type SummarizeMessageRequest struct { 
+    // Identifier of the chat to which the message belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // Pass a language code to which the summary will be translated; may be empty if translation isn't needed. See translateText.to_language_code for the list of supported values
+    TranslateToLanguageCode string `json:"translate_to_language_code"`
+}
+
+// Summarizes content of the message with non-empty summary_language_code
+func (client *Client) SummarizeMessage(req *SummarizeMessageRequest) (*FormattedText, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "summarizeMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "translate_to_language_code": req.TranslateToLanguageCode,
         },
     })
     if err != nil {
@@ -6218,7 +6326,7 @@ type TransferBusinessAccountStarsRequest struct {
     StarCount int64 `json:"star_count"`
 }
 
-// Transfer Telegram Stars from the business account to the business bot; for bots only
+// Transfers Telegram Stars from the business account to the business bot; for bots only
 func (client *Client) TransferBusinessAccountStars(req *TransferBusinessAccountStarsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7075,6 +7183,99 @@ func (client *Client) UnpinAllForumTopicMessages(req *UnpinAllForumTopicMessages
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "forum_topic_id": req.ForumTopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+// Returns parameters for creating of a new passkey as JSON-serialized string
+func (client *Client) GetPasskeyParameters() (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPasskeyParameters",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
+type AddLoginPasskeyRequest struct { 
+    // JSON-encoded client data
+    ClientData string `json:"client_data"`
+    // Passkey attestation object
+    AttestationObject []byte `json:"attestation_object"`
+}
+
+// Adds a passkey allowed to be used for the login by the current user and returns the added passkey. Call getPasskeyParameters to get parameters for creating of the passkey
+func (client *Client) AddLoginPasskey(req *AddLoginPasskeyRequest) (*Passkey, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addLoginPasskey",
+        },
+        Data: map[string]interface{}{
+            "client_data": req.ClientData,
+            "attestation_object": req.AttestationObject,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalPasskey(result.Data)
+}
+
+// Returns the list of passkeys allowed to be used for the login by the current user
+func (client *Client) GetLoginPasskeys() (*Passkeys, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getLoginPasskeys",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalPasskeys(result.Data)
+}
+
+type RemoveLoginPasskeyRequest struct { 
+    // Unique identifier of the passkey to remove
+    PasskeyId string `json:"passkey_id"`
+}
+
+// Removes a passkey from the list of passkeys allowed to be used for the login by the current user
+func (client *Client) RemoveLoginPasskey(req *RemoveLoginPasskeyRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "removeLoginPasskey",
+        },
+        Data: map[string]interface{}{
+            "passkey_id": req.PasskeyId,
         },
     })
     if err != nil {
@@ -9548,6 +9749,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(result.Data)
 
+    case TypeInternalLinkTypeGiftAuction:
+        return UnmarshalInternalLinkTypeGiftAuction(result.Data)
+
     case TypeInternalLinkTypeGiftCollection:
         return UnmarshalInternalLinkTypeGiftCollection(result.Data)
 
@@ -9565,6 +9769,12 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeLanguageSettings:
         return UnmarshalInternalLinkTypeLanguageSettings(result.Data)
+
+    case TypeInternalLinkTypeLiveStory:
+        return UnmarshalInternalLinkTypeLiveStory(result.Data)
+
+    case TypeInternalLinkTypeLoginEmailSettings:
+        return UnmarshalInternalLinkTypeLoginEmailSettings(result.Data)
 
     case TypeInternalLinkTypeMainWebApp:
         return UnmarshalInternalLinkTypeMainWebApp(result.Data)
@@ -9584,8 +9794,14 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypePassportDataRequest:
         return UnmarshalInternalLinkTypePassportDataRequest(result.Data)
 
+    case TypeInternalLinkTypePasswordSettings:
+        return UnmarshalInternalLinkTypePasswordSettings(result.Data)
+
     case TypeInternalLinkTypePhoneNumberConfirmation:
         return UnmarshalInternalLinkTypePhoneNumberConfirmation(result.Data)
+
+    case TypeInternalLinkTypePhoneNumberPrivacySettings:
+        return UnmarshalInternalLinkTypePhoneNumberPrivacySettings(result.Data)
 
     case TypeInternalLinkTypePremiumFeatures:
         return UnmarshalInternalLinkTypePremiumFeatures(result.Data)
@@ -11835,6 +12051,25 @@ func (client *Client) ClearAllDraftMessages(req *ClearAllDraftMessagesRequest) (
     return UnmarshalOk(result.Data)
 }
 
+// Returns the current state of stake dice
+func (client *Client) GetStakeDiceState() (*StakeDiceState, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStakeDiceState",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalStakeDiceState(result.Data)
+}
+
 type GetSavedNotificationSoundRequest struct { 
     // Identifier of the notification sound
     NotificationSoundId JsonInt64 `json:"notification_sound_id"`
@@ -12127,7 +12362,7 @@ type ReadChatListRequest struct {
     ChatList ChatList `json:"chat_list"`
 }
 
-// Traverse all chats in a chat list and marks all messages in the chats as read
+// Traverses all chats in a chat list and marks all messages in the chats as read
 func (client *Client) ReadChatList(req *ReadChatListRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12267,6 +12502,9 @@ func (client *Client) CanPostStory(req *CanPostStoryRequest) (CanPostStoryResult
     case TypeCanPostStoryResultMonthlyLimitExceeded:
         return UnmarshalCanPostStoryResultMonthlyLimitExceeded(result.Data)
 
+    case TypeCanPostStoryResultLiveStoryIsActive:
+        return UnmarshalCanPostStoryResultLiveStoryIsActive(result.Data)
+
     default:
         return nil, errors.New("invalid type")
    }
@@ -12283,7 +12521,7 @@ type PostStoryRequest struct {
     Caption *FormattedText `json:"caption"`
     // The privacy settings for the story; ignored for stories posted on behalf of supergroup and channel chats
     PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
-    // Identifiers of story albums to which the story will be added upon posting. An album can have up to getOption("story_album_story_count_max")
+    // Identifiers of story albums to which the story will be added upon posting. An album can have up to getOption("story_album_size_max") stories
     AlbumIds []int32 `json:"album_ids"`
     // Period after which the story is moved to archive, in seconds; must be one of 6 * 3600, 12 * 3600, 86400, or 2 * 86400 for Telegram Premium users, and 86400 otherwise
     ActivePeriod int32 `json:"active_period"`
@@ -12323,6 +12561,56 @@ func (client *Client) PostStory(req *PostStoryRequest) (*Story, error) {
     }
 
     return UnmarshalStory(result.Data)
+}
+
+type StartLiveStoryRequest struct { 
+    // Identifier of the chat that will start the live story. Pass Saved Messages chat identifier when starting a live story on behalf of the current user, or a channel chat identifier
+    ChatId int64 `json:"chat_id"`
+    // The privacy settings for the story; ignored for stories posted on behalf of channel chats
+    PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
+    // Pass true if the content of the story must be protected from screenshotting
+    ProtectContent bool `json:"protect_content"`
+    // Pass true to create an RTMP stream instead of an ordinary group call
+    IsRtmpStream bool `json:"is_rtmp_stream"`
+    // Pass true to allow viewers of the story to send messages
+    EnableMessages bool `json:"enable_messages"`
+    // The minimum number of Telegram Stars that must be paid by viewers for each sent message to the call; 0-getOption("paid_group_call_message_star_count_max")
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
+}
+
+// Starts a new live story on behalf of a chat; requires can_post_stories administrator right for channel chats
+func (client *Client) StartLiveStory(req *StartLiveStoryRequest) (StartLiveStoryResult, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "startLiveStory",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "privacy_settings": req.PrivacySettings,
+            "protect_content": req.ProtectContent,
+            "is_rtmp_stream": req.IsRtmpStream,
+            "enable_messages": req.EnableMessages,
+            "paid_message_star_count": req.PaidMessageStarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    switch result.Type {
+    case TypeStartLiveStoryResultOk:
+        return UnmarshalStartLiveStoryResultOk(result.Data)
+
+    case TypeStartLiveStoryResultFail:
+        return UnmarshalStartLiveStoryResultFail(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
 }
 
 type EditStoryRequest struct { 
@@ -12402,7 +12690,7 @@ type SetStoryPrivacySettingsRequest struct {
     PrivacySettings StoryPrivacySettings `json:"privacy_settings"`
 }
 
-// Changes privacy settings of a story. The method can be called only for stories posted on behalf of the current user and if story.can_be_edited == true
+// Changes privacy settings of a story. The method can be called only for stories posted on behalf of the current user and if story.can_set_privacy_settings == true
 func (client *Client) SetStoryPrivacySettings(req *SetStoryPrivacySettingsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -12773,7 +13061,7 @@ type SetStoryReactionRequest struct {
     UpdateRecentReactions bool `json:"update_recent_reactions"`
 }
 
-// Changes chosen reaction on a story that has already been sent
+// Changes chosen reaction on a story that has already been sent; not supported for live stories
 func (client *Client) SetStoryReaction(req *SetStoryReactionRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -13049,7 +13337,7 @@ type CreateStoryAlbumRequest struct {
     StoryPosterChatId int64 `json:"story_poster_chat_id"`
     // Name of the album; 1-12 characters
     Name string `json:"name"`
-    // Identifiers of stories to add to the album; 0-getOption("story_album_story_count_max") identifiers
+    // Identifiers of stories to add to the album; 0-getOption("story_album_size_max") identifiers
     StoryIds []int32 `json:"story_ids"`
 }
 
@@ -13171,7 +13459,7 @@ type AddStoryAlbumStoriesRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the story album
     StoryAlbumId int32 `json:"story_album_id"`
-    // Identifier of the stories to add to the album; 1-getOption("story_album_story_count_max") identifiers. If after addition the album has more than getOption("story_album_story_count_max") stories, then the last one are removed from the album
+    // Identifier of the stories to add to the album; 1-getOption("story_album_size_max") identifiers. If after addition the album has more than getOption("story_album_size_max") stories, then the last one are removed from the album
     StoryIds []int32 `json:"story_ids"`
 }
 
@@ -13851,7 +14139,7 @@ type PreliminaryUploadFileRequest struct {
     Priority int32 `json:"priority"`
 }
 
-// Preliminary uploads a file to the cloud before sending it in a message, which can be useful for uploading of being recorded voice and video notes. In all other cases there is no need to preliminary upload a file. Updates updateFile will be used to notify about upload progress. The upload will not be completed until the file is sent in a message
+// Preliminarily uploads a file to the cloud before sending it in a message, which can be useful for uploading of being recorded voice and video notes. In all other cases there is no need to preliminary upload a file. Updates updateFile will be used to notify about upload progress. The upload will not be completed until the file is sent in a message
 func (client *Client) PreliminaryUploadFile(req *PreliminaryUploadFileRequest) (*File, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -14247,7 +14535,7 @@ type SetApplicationVerificationTokenRequest struct {
     Token string `json:"token"`
 }
 
-// Application or reCAPTCHA verification has been completed. Can be called before authorization
+// Informs TDLib that application or reCAPTCHA verification has been completed. Can be called before authorization
 func (client *Client) SetApplicationVerificationToken(req *SetApplicationVerificationTokenRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -14982,7 +15270,7 @@ type AddOfferRequest struct {
     Options *MessageSendOptions `json:"options"`
 }
 
-// Sent a suggested post based on a previously sent message in a channel direct messages chat. Can be also used to suggest price or time change for an existing suggested post. Returns the sent message
+// Sends a suggested post based on a previously sent message in a channel direct messages chat. Can be also used to suggest price or time change for an existing suggested post. Returns the sent message
 func (client *Client) AddOffer(req *AddOfferRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15258,7 +15546,7 @@ func (client *Client) GetVideoChatAvailableParticipants(req *GetVideoChatAvailab
 type SetVideoChatDefaultParticipantRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Default group call participant identifier to join the video chats
+    // Default group call participant identifier to join the video chats in the chat
     DefaultParticipantId MessageSender `json:"default_participant_id"`
 }
 
@@ -15397,6 +15685,58 @@ func (client *Client) ReplaceVideoChatRtmpUrl(req *ReplaceVideoChatRtmpUrlReques
     return UnmarshalRtmpUrl(result.Data)
 }
 
+type GetLiveStoryRtmpUrlRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+}
+
+// Returns RTMP URL for streaming to a live story; requires can_post_stories administrator right for channel chats
+func (client *Client) GetLiveStoryRtmpUrl(req *GetLiveStoryRtmpUrlRequest) (*RtmpUrl, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getLiveStoryRtmpUrl",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalRtmpUrl(result.Data)
+}
+
+type ReplaceLiveStoryRtmpUrlRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+}
+
+// Replaces the current RTMP URL for streaming to a live story; requires owner privileges for channel chats
+func (client *Client) ReplaceLiveStoryRtmpUrl(req *ReplaceLiveStoryRtmpUrlRequest) (*RtmpUrl, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "replaceLiveStoryRtmpUrl",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalRtmpUrl(result.Data)
+}
+
 type GetGroupCallRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
@@ -15485,7 +15825,7 @@ type JoinGroupCallRequest struct {
     JoinParameters *GroupCallJoinParameters `json:"join_parameters"`
 }
 
-// Joins a group call that is not bound to a chat
+// Joins a regular group call that is not bound to a chat
 func (client *Client) JoinGroupCall(req *JoinGroupCallRequest) (*GroupCallInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15510,7 +15850,7 @@ func (client *Client) JoinGroupCall(req *JoinGroupCallRequest) (*GroupCallInfo, 
 type JoinVideoChatRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
-    // Identifier of a group call participant, which will be used to join the call; pass null to join as self; video chats only
+    // Identifier of a group call participant, which will be used to join the call; pass null to join as self
     ParticipantId MessageSender `json:"participant_id"`
     // Parameters to join the call
     JoinParameters *GroupCallJoinParameters `json:"join_parameters"`
@@ -15542,6 +15882,35 @@ func (client *Client) JoinVideoChat(req *JoinVideoChatRequest) (*Text, error) {
     return UnmarshalText(result.Data)
 }
 
+type JoinLiveStoryRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+    // Parameters to join the call
+    JoinParameters *GroupCallJoinParameters `json:"join_parameters"`
+}
+
+// Joins a group call of an active live story. Returns join response payload for tgcalls
+func (client *Client) JoinLiveStory(req *JoinLiveStoryRequest) (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "joinLiveStory",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "join_parameters": req.JoinParameters,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
 type StartGroupCallScreenSharingRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
@@ -15551,7 +15920,7 @@ type StartGroupCallScreenSharingRequest struct {
     Payload string `json:"payload"`
 }
 
-// Starts screen sharing in a joined group call. Returns join response payload for tgcalls
+// Starts screen sharing in a joined group call; not supported in live stories. Returns join response payload for tgcalls
 func (client *Client) StartGroupCallScreenSharing(req *StartGroupCallScreenSharingRequest) (*Text, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15581,7 +15950,7 @@ type ToggleGroupCallScreenSharingIsPausedRequest struct {
     IsPaused bool `json:"is_paused"`
 }
 
-// Pauses or unpauses screen sharing in a joined group call
+// Pauses or unpauses screen sharing in a joined group call; not supported in live stories
 func (client *Client) ToggleGroupCallScreenSharingIsPaused(req *ToggleGroupCallScreenSharingIsPausedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15608,7 +15977,7 @@ type EndGroupCallScreenSharingRequest struct {
     GroupCallId int32 `json:"group_call_id"`
 }
 
-// Ends screen sharing in a joined group call
+// Ends screen sharing in a joined group call; not supported in live stories
 func (client *Client) EndGroupCallScreenSharing(req *EndGroupCallScreenSharingRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15687,22 +16056,103 @@ func (client *Client) ToggleVideoChatMuteNewParticipants(req *ToggleVideoChatMut
     return UnmarshalOk(result.Data)
 }
 
-type ToggleGroupCallCanSendMessagesRequest struct { 
+type ToggleGroupCallAreMessagesAllowedRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
-    // New value of the can_send_messages setting
-    CanSendMessages bool `json:"can_send_messages"`
+    // New value of the are_messages_allowed setting
+    AreMessagesAllowed bool `json:"are_messages_allowed"`
 }
 
-// Toggles whether participants of a group call can send messages there. Requires groupCall.can_toggle_can_send_messages right
-func (client *Client) ToggleGroupCallCanSendMessages(req *ToggleGroupCallCanSendMessagesRequest) (*Ok, error) {
+// Toggles whether participants of a group call can send messages there. Requires groupCall.can_toggle_are_messages_allowed right
+func (client *Client) ToggleGroupCallAreMessagesAllowed(req *ToggleGroupCallAreMessagesAllowedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "toggleGroupCallCanSendMessages",
+            Type: "toggleGroupCallAreMessagesAllowed",
         },
         Data: map[string]interface{}{
             "group_call_id": req.GroupCallId,
-            "can_send_messages": req.CanSendMessages,
+            "are_messages_allowed": req.AreMessagesAllowed,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type GetLiveStoryStreamerRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+}
+
+// Returns information about the user or the chat that streams to a live story; for live stories that aren't an RTMP stream only
+func (client *Client) GetLiveStoryStreamer(req *GetLiveStoryStreamerRequest) (*GroupCallParticipant, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getLiveStoryStreamer",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGroupCallParticipant(result.Data)
+}
+
+type GetLiveStoryAvailableMessageSendersRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+}
+
+// Returns the list of message sender identifiers, on whose behalf messages can be sent to a live story
+func (client *Client) GetLiveStoryAvailableMessageSenders(req *GetLiveStoryAvailableMessageSendersRequest) (*ChatMessageSenders, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getLiveStoryAvailableMessageSenders",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalChatMessageSenders(result.Data)
+}
+
+type SetLiveStoryMessageSenderRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+    // New message sender for the group call
+    MessageSenderId MessageSender `json:"message_sender_id"`
+}
+
+// Selects a message sender to send messages in a live story call
+func (client *Client) SetLiveStoryMessageSender(req *SetLiveStoryMessageSenderRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setLiveStoryMessageSender",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "message_sender_id": req.MessageSenderId,
         },
     })
     if err != nil {
@@ -15719,8 +16169,10 @@ func (client *Client) ToggleGroupCallCanSendMessages(req *ToggleGroupCallCanSend
 type SendGroupCallMessageRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
-    // Text of the message to send; 1-getOption("group_call_message_text_length_max") characters
+    // Text of the message to send; 1-getOption("group_call_message_text_length_max") characters for non-live-stories; see updateGroupCallMessageLevels for live story restrictions, which depends on paid_message_star_count. Can't contain line feeds for live stories
     Text *FormattedText `json:"text"`
+    // The number of Telegram Stars the user agreed to pay to send the message; for live stories only; 0-getOption("paid_group_call_message_star_count_max"). Must be 0 for messages sent to live stories posted by the current user
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
 }
 
 // Sends a message to other participants of a group call. Requires groupCall.can_send_messages right
@@ -15732,6 +16184,7 @@ func (client *Client) SendGroupCallMessage(req *SendGroupCallMessageRequest) (*O
         Data: map[string]interface{}{
             "group_call_id": req.GroupCallId,
             "text": req.Text,
+            "paid_message_star_count": req.PaidMessageStarCount,
         },
     })
     if err != nil {
@@ -15743,6 +16196,177 @@ func (client *Client) SendGroupCallMessage(req *SendGroupCallMessageRequest) (*O
     }
 
     return UnmarshalOk(result.Data)
+}
+
+type AddPendingLiveStoryReactionRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+    // Number of Telegram Stars to be used for the reaction. The total number of pending paid reactions must not exceed getOption("paid_group_call_message_star_count_max")
+    StarCount int64 `json:"star_count"`
+}
+
+// Adds pending paid reaction in a live story group call. Can't be used in live stories posted by the current user. Call commitPendingLiveStoryReactions or removePendingLiveStoryReactions to actually send all pending reactions when the undo timer is over or abort the sending
+func (client *Client) AddPendingLiveStoryReaction(req *AddPendingLiveStoryReactionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addPendingLiveStoryReaction",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "star_count": req.StarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type CommitPendingLiveStoryReactionsRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+}
+
+// Applies all pending paid reactions in a live story group call
+func (client *Client) CommitPendingLiveStoryReactions(req *CommitPendingLiveStoryReactionsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "commitPendingLiveStoryReactions",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type RemovePendingLiveStoryReactionsRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+}
+
+// Removes all pending paid reactions in a live story group call
+func (client *Client) RemovePendingLiveStoryReactions(req *RemovePendingLiveStoryReactionsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "removePendingLiveStoryReactions",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteGroupCallMessagesRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+    // Identifiers of the messages to be deleted
+    MessageIds []int32 `json:"message_ids"`
+    // Pass true to report the messages as spam
+    ReportSpam bool `json:"report_spam"`
+}
+
+// Deletes messages in a group call; for live story calls only. Requires groupCallMessage.can_be_deleted right
+func (client *Client) DeleteGroupCallMessages(req *DeleteGroupCallMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteGroupCallMessages",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "message_ids": req.MessageIds,
+            "report_spam": req.ReportSpam,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteGroupCallMessagesBySenderRequest struct { 
+    // Group call identifier
+    GroupCallId int32 `json:"group_call_id"`
+    // Identifier of the sender of messages to delete
+    SenderId MessageSender `json:"sender_id"`
+    // Pass true to report the messages as spam
+    ReportSpam bool `json:"report_spam"`
+}
+
+// Deletes all messages sent by the specified message sender in a group call; for live story calls only. Requires groupCall.can_delete_messages right
+func (client *Client) DeleteGroupCallMessagesBySender(req *DeleteGroupCallMessagesBySenderRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteGroupCallMessagesBySender",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "sender_id": req.SenderId,
+            "report_spam": req.ReportSpam,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type GetLiveStoryTopDonorsRequest struct { 
+    // Group call identifier of the live story
+    GroupCallId int32 `json:"group_call_id"`
+}
+
+// Returns the list of top live story donors
+func (client *Client) GetLiveStoryTopDonors(req *GetLiveStoryTopDonorsRequest) (*LiveStoryDonors, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getLiveStoryTopDonors",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalLiveStoryDonors(result.Data)
 }
 
 type InviteGroupCallParticipantRequest struct { 
@@ -16053,6 +16677,35 @@ func (client *Client) ToggleGroupCallIsMyVideoEnabled(req *ToggleGroupCallIsMyVi
     return UnmarshalOk(result.Data)
 }
 
+type SetGroupCallPaidMessageStarCountRequest struct { 
+    // Group call identifier; must be an identifier of a live story call
+    GroupCallId int32 `json:"group_call_id"`
+    // The new minimum number of Telegram Stars; 0-getOption("paid_group_call_message_star_count_max")
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
+}
+
+// Changes the minimum number of Telegram Stars that must be paid by general participant for each sent message to a live story call. Requires groupCall.can_be_managed right
+func (client *Client) SetGroupCallPaidMessageStarCount(req *SetGroupCallPaidMessageStarCountRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setGroupCallPaidMessageStarCount",
+        },
+        Data: map[string]interface{}{
+            "group_call_id": req.GroupCallId,
+            "paid_message_star_count": req.PaidMessageStarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type SetGroupCallParticipantIsSpeakingRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
@@ -16103,7 +16756,7 @@ type ToggleGroupCallParticipantIsMutedRequest struct {
     IsMuted bool `json:"is_muted"`
 }
 
-// Toggles whether a participant of an active group call is muted, unmuted, or allowed to unmute themselves
+// Toggles whether a participant of an active group call is muted, unmuted, or allowed to unmute themselves; not supported for live stories
 func (client *Client) ToggleGroupCallParticipantIsMuted(req *ToggleGroupCallParticipantIsMutedRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16135,7 +16788,7 @@ type SetGroupCallParticipantVolumeLevelRequest struct {
     VolumeLevel int32 `json:"volume_level"`
 }
 
-// Changes volume level of a participant of an active group call. If the current user can manage the group call or is the owner of the group call, then the participant's volume level will be changed for all users with the default volume level
+// Changes volume level of a participant of an active group call; not supported for live stories. If the current user can manage the group call or is the owner of the group call, then the participant's volume level will be changed for all users with the default volume level
 func (client *Client) SetGroupCallParticipantVolumeLevel(req *SetGroupCallParticipantVolumeLevelRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16226,7 +16879,7 @@ type LoadGroupCallParticipantsRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Loads more participants of a group call. The loaded participants will be received through updates. Use the field groupCall.loaded_all_participants to check whether all participants have already been loaded
+// Loads more participants of a group call; not supported in live stories. The loaded participants will be received through updates. Use the field groupCall.loaded_all_participants to check whether all participants have already been loaded
 func (client *Client) LoadGroupCallParticipants(req *LoadGroupCallParticipantsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16279,7 +16932,7 @@ type EndGroupCallRequest struct {
     GroupCallId int32 `json:"group_call_id"`
 }
 
-// Ends a group call. Requires groupCall.can_be_managed right for video chats or groupCall.is_owned otherwise
+// Ends a group call. Requires groupCall.can_be_managed right for video chats and live stories or groupCall.is_owned otherwise
 func (client *Client) EndGroupCall(req *EndGroupCallRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16300,16 +16953,16 @@ func (client *Client) EndGroupCall(req *EndGroupCallRequest) (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
-type GetVideoChatStreamsRequest struct { 
+type GetGroupCallStreamsRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
 }
 
-// Returns information about available video chat streams
-func (client *Client) GetVideoChatStreams(req *GetVideoChatStreamsRequest) (*VideoChatStreams, error) {
+// Returns information about available streams in a video chat or a live story
+func (client *Client) GetGroupCallStreams(req *GetGroupCallStreamsRequest) (*GroupCallStreams, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getVideoChatStreams",
+            Type: "getGroupCallStreams",
         },
         Data: map[string]interface{}{
             "group_call_id": req.GroupCallId,
@@ -16323,10 +16976,10 @@ func (client *Client) GetVideoChatStreams(req *GetVideoChatStreamsRequest) (*Vid
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalVideoChatStreams(result.Data)
+    return UnmarshalGroupCallStreams(result.Data)
 }
 
-type GetVideoChatStreamSegmentRequest struct { 
+type GetGroupCallStreamSegmentRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
     // Point in time when the stream segment begins; Unix timestamp in milliseconds
@@ -16339,11 +16992,11 @@ type GetVideoChatStreamSegmentRequest struct {
     VideoQuality GroupCallVideoQuality `json:"video_quality"`
 }
 
-// Returns a file with a segment of a video chat stream in a modified OGG format for audio or MPEG-4 format for video
-func (client *Client) GetVideoChatStreamSegment(req *GetVideoChatStreamSegmentRequest) (*Data, error) {
+// Returns a file with a segment of a video chat or live story in a modified OGG format for audio or MPEG-4 format for video
+func (client *Client) GetGroupCallStreamSegment(req *GetGroupCallStreamSegmentRequest) (*Data, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getVideoChatStreamSegment",
+            Type: "getGroupCallStreamSegment",
         },
         Data: map[string]interface{}{
             "group_call_id": req.GroupCallId,
@@ -17203,6 +17856,38 @@ func (client *Client) GetStickerOutline(req *GetStickerOutlineRequest) (*Outline
     return UnmarshalOutline(result.Data)
 }
 
+type GetStickerOutlineSvgPathRequest struct { 
+    // File identifier of the sticker
+    StickerFileId int32 `json:"sticker_file_id"`
+    // Pass true to get the outline scaled for animated emoji
+    ForAnimatedEmoji bool `json:"for_animated_emoji"`
+    // Pass true to get the outline scaled for clicked animated emoji message
+    ForClickedAnimatedEmojiMessage bool `json:"for_clicked_animated_emoji_message"`
+}
+
+// Returns outline of a sticker as an SVG path. This is an offline method. Returns an empty string if the outline isn't known
+func (client *Client) GetStickerOutlineSvgPath(req *GetStickerOutlineSvgPathRequest) (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getStickerOutlineSvgPath",
+        },
+        Data: map[string]interface{}{
+            "sticker_file_id": req.StickerFileId,
+            "for_animated_emoji": req.ForAnimatedEmoji,
+            "for_clicked_animated_emoji_message": req.ForClickedAnimatedEmojiMessage,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
 type GetStickersRequest struct { 
     // Type of the stickers to return
     StickerType StickerType `json:"sticker_type"`
@@ -17947,7 +18632,7 @@ type GetKeywordEmojisRequest struct {
     InputLanguageCodes []string `json:"input_language_codes"`
 }
 
-// Return emojis matching the keyword. Supported only if the file database is enabled. Order of results is unspecified
+// Returns emojis matching the keyword. Supported only if the file database is enabled. Order of results is unspecified
 func (client *Client) GetKeywordEmojis(req *GetKeywordEmojisRequest) (*Emojis, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19002,7 +19687,7 @@ type CheckPhoneNumberCodeRequest struct {
     Code string `json:"code"`
 }
 
-// Check the authentication code and completes the request for which the code was sent if appropriate
+// Checks the authentication code and completes the request for which the code was sent if appropriate
 func (client *Client) CheckPhoneNumberCode(req *CheckPhoneNumberCodeRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -19764,7 +20449,7 @@ type DeleteBotMediaPreviewsRequest struct {
     FileIds []int32 `json:"file_ids"`
 }
 
-// Delete media previews from the list of media previews of a bot
+// Deletes media previews from the list of media previews of a bot
 func (client *Client) DeleteBotMediaPreviews(req *DeleteBotMediaPreviewsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -21369,6 +22054,177 @@ func (client *Client) SendGift(req *SendGiftRequest) (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+type GetGiftAuctionStateRequest struct { 
+    // Unique identifier of the auction
+    AuctionId string `json:"auction_id"`
+}
+
+// Returns auction state for a gift
+func (client *Client) GetGiftAuctionState(req *GetGiftAuctionStateRequest) (*GiftAuctionState, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getGiftAuctionState",
+        },
+        Data: map[string]interface{}{
+            "auction_id": req.AuctionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGiftAuctionState(result.Data)
+}
+
+type GetGiftAuctionAcquiredGiftsRequest struct { 
+    // Identifier of the auctioned gift
+    GiftId JsonInt64 `json:"gift_id"`
+}
+
+// Returns the gifts that were acquired by the current user on a gift auction
+func (client *Client) GetGiftAuctionAcquiredGifts(req *GetGiftAuctionAcquiredGiftsRequest) (*GiftAuctionAcquiredGifts, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getGiftAuctionAcquiredGifts",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGiftAuctionAcquiredGifts(result.Data)
+}
+
+type OpenGiftAuctionRequest struct { 
+    // Identifier of the gift, which auction was opened
+    GiftId JsonInt64 `json:"gift_id"`
+}
+
+// Informs TDLib that a gift auction was opened by the user
+func (client *Client) OpenGiftAuction(req *OpenGiftAuctionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "openGiftAuction",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type CloseGiftAuctionRequest struct { 
+    // Identifier of the gift, which auction was closed
+    GiftId JsonInt64 `json:"gift_id"`
+}
+
+// Informs TDLib that a gift auction was closed by the user
+func (client *Client) CloseGiftAuction(req *CloseGiftAuctionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "closeGiftAuction",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type PlaceGiftAuctionBidRequest struct { 
+    // Identifier of the gift to place the bid on
+    GiftId JsonInt64 `json:"gift_id"`
+    // The number of Telegram Stars to place in the bid
+    StarCount int64 `json:"star_count"`
+    // Identifier of the user that will receive the gift
+    UserId int64 `json:"user_id"`
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed. Must be empty if the receiver enabled paid messages
+    Text *FormattedText `json:"text"`
+    // Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
+    IsPrivate bool `json:"is_private"`
+}
+
+// Places a bid on an auction gift
+func (client *Client) PlaceGiftAuctionBid(req *PlaceGiftAuctionBidRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "placeGiftAuctionBid",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+            "star_count": req.StarCount,
+            "user_id": req.UserId,
+            "text": req.Text,
+            "is_private": req.IsPrivate,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type IncreaseGiftAuctionBidRequest struct { 
+    // Identifier of the gift to put the bid on
+    GiftId JsonInt64 `json:"gift_id"`
+    // The number of Telegram Stars to put in the bid
+    StarCount int64 `json:"star_count"`
+}
+
+// Increases a bid for an auction gift without changing gift text and receiver
+func (client *Client) IncreaseGiftAuctionBid(req *IncreaseGiftAuctionBidRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "increaseGiftAuctionBid",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+            "star_count": req.StarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type SellGiftRequest struct { 
     // Unique identifier of business connection on behalf of which to send the request; for bots only
     BusinessConnectionId string `json:"business_connection_id"`
@@ -21509,6 +22365,32 @@ func (client *Client) GetGiftUpgradePreview(req *GetGiftUpgradePreviewRequest) (
     }
 
     return UnmarshalGiftUpgradePreview(result.Data)
+}
+
+type GetGiftUpgradeVariantsRequest struct { 
+    // Identifier of the gift
+    GiftId JsonInt64 `json:"gift_id"`
+}
+
+// Returns all possible variants of upgraded gifts for a regular gift
+func (client *Client) GetGiftUpgradeVariants(req *GetGiftUpgradeVariantsRequest) (*GiftUpgradeVariants, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getGiftUpgradeVariants",
+        },
+        Data: map[string]interface{}{
+            "gift_id": req.GiftId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGiftUpgradeVariants(result.Data)
 }
 
 type UpgradeGiftRequest struct { 
@@ -21683,6 +22565,73 @@ func (client *Client) SendResoldGift(req *SendResoldGiftRequest) (GiftResaleResu
    }
 }
 
+type SendGiftPurchaseOfferRequest struct { 
+    // Identifier of the user or the channel chat that currently owns the gift and will receive the offer
+    OwnerId MessageSender `json:"owner_id"`
+    // Name of the upgraded gift
+    GiftName string `json:"gift_name"`
+    // The price that the user agreed to pay for the gift
+    Price GiftResalePrice `json:"price"`
+    // Duration of the offer, in seconds; must be one of 21600, 43200, 86400, 129600, 172800, or 259200. Can also be 120 if Telegram test environment is used
+    Duration int32 `json:"duration"`
+    // The number of Telegram Stars the user agreed to pay additionally for sending of the offer message to the current gift owner; pass userFullInfo.outgoing_paid_message_star_count for users and 0 otherwise
+    PaidMessageStarCount int64 `json:"paid_message_star_count"`
+}
+
+// Sends an offer to purchase an upgraded gift
+func (client *Client) SendGiftPurchaseOffer(req *SendGiftPurchaseOfferRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "sendGiftPurchaseOffer",
+        },
+        Data: map[string]interface{}{
+            "owner_id": req.OwnerId,
+            "gift_name": req.GiftName,
+            "price": req.Price,
+            "duration": req.Duration,
+            "paid_message_star_count": req.PaidMessageStarCount,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ProcessGiftPurchaseOfferRequest struct { 
+    // Identifier of the message with the gift purchase offer
+    MessageId int64 `json:"message_id"`
+    // Pass true to accept the request; pass false to reject it
+    Accept bool `json:"accept"`
+}
+
+// Handles a pending gift purchase offer
+func (client *Client) ProcessGiftPurchaseOffer(req *ProcessGiftPurchaseOfferRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "processGiftPurchaseOffer",
+        },
+        Data: map[string]interface{}{
+            "message_id": req.MessageId,
+            "accept": req.Accept,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type GetReceivedGiftsRequest struct { 
     // Unique identifier of business connection on behalf of which to send the request; for bots only
     BusinessConnectionId string `json:"business_connection_id"`
@@ -21855,6 +22804,25 @@ func (client *Client) GetUpgradedGiftWithdrawalUrl(req *GetUpgradedGiftWithdrawa
     return UnmarshalHttpUrl(result.Data)
 }
 
+// Returns promotional anumation for upgraded gifts
+func (client *Client) GetUpgradedGiftsPromotionalAnimation() (*Animation, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getUpgradedGiftsPromotionalAnimation",
+        },
+        Data: map[string]interface{}{},
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalAnimation(result.Data)
+}
+
 type SetGiftResalePriceRequest struct { 
     // Identifier of the unique gift
     ReceivedGiftId string `json:"received_gift_id"`
@@ -21953,7 +22921,7 @@ type CreateGiftCollectionRequest struct {
     OwnerId MessageSender `json:"owner_id"`
     // Name of the collection; 1-12 characters
     Name string `json:"name"`
-    // Identifier of the gifts to add to the collection; 0-getOption("gift_collection_gift_count_max") identifiers
+    // Identifier of the gifts to add to the collection; 0-getOption("gift_collection_size_max") identifiers
     ReceivedGiftIds []string `json:"received_gift_ids"`
 }
 
@@ -22075,7 +23043,7 @@ type AddGiftCollectionGiftsRequest struct {
     OwnerId MessageSender `json:"owner_id"`
     // Identifier of the gift collection
     CollectionId int32 `json:"collection_id"`
-    // Identifier of the gifts to add to the collection; 1-getOption("gift_collection_gift_count_max") identifiers. If after addition the collection has more than getOption("gift_collection_gift_count_max") gifts, then the last one are removed from the collection
+    // Identifier of the gifts to add to the collection; 1-getOption("gift_collection_size_max") identifiers. If after addition the collection has more than getOption("gift_collection_size_max") gifts, then the last one are removed from the collection
     ReceivedGiftIds []string `json:"received_gift_ids"`
 }
 
@@ -23018,7 +23986,7 @@ type CanSendMessageToUserRequest struct {
     OnlyLocal bool `json:"only_local"`
 }
 
-// Check whether the current user can message another user or try to create a chat with them
+// Checks whether the current user can message another user or try to create a chat with them
 func (client *Client) CanSendMessageToUser(req *CanSendMessageToUserRequest) (CanSendMessageToUserResult, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -25377,7 +26345,7 @@ type CheckPremiumGiftCodeRequest struct {
     Code string `json:"code"`
 }
 
-// Return information about a Telegram Premium gift code
+// Returns information about a Telegram Premium gift code
 func (client *Client) CheckPremiumGiftCode(req *CheckPremiumGiftCodeRequest) (*PremiumGiftCodeInfo, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -27541,11 +28509,29 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateGroupCallVerificationState:
         return UnmarshalUpdateGroupCallVerificationState(result.Data)
 
-    case TypeUpdateGroupCallNewMessage:
-        return UnmarshalUpdateGroupCallNewMessage(result.Data)
+    case TypeUpdateNewGroupCallMessage:
+        return UnmarshalUpdateNewGroupCallMessage(result.Data)
+
+    case TypeUpdateNewGroupCallPaidReaction:
+        return UnmarshalUpdateNewGroupCallPaidReaction(result.Data)
+
+    case TypeUpdateGroupCallMessageSendFailed:
+        return UnmarshalUpdateGroupCallMessageSendFailed(result.Data)
+
+    case TypeUpdateGroupCallMessagesDeleted:
+        return UnmarshalUpdateGroupCallMessagesDeleted(result.Data)
+
+    case TypeUpdateLiveStoryTopDonors:
+        return UnmarshalUpdateLiveStoryTopDonors(result.Data)
 
     case TypeUpdateNewCallSignalingData:
         return UnmarshalUpdateNewCallSignalingData(result.Data)
+
+    case TypeUpdateGiftAuctionState:
+        return UnmarshalUpdateGiftAuctionState(result.Data)
+
+    case TypeUpdateActiveGiftAuctions:
+        return UnmarshalUpdateActiveGiftAuctions(result.Data)
 
     case TypeUpdateUserPrivacySettingRules:
         return UnmarshalUpdateUserPrivacySettingRules(result.Data)
@@ -27576,6 +28562,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateStoryStealthMode:
         return UnmarshalUpdateStoryStealthMode(result.Data)
+
+    case TypeUpdateTrustedMiniAppBots:
+        return UnmarshalUpdateTrustedMiniAppBots(result.Data)
 
     case TypeUpdateOption:
         return UnmarshalUpdateOption(result.Data)
@@ -27673,8 +28662,14 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateSpeechRecognitionTrial:
         return UnmarshalUpdateSpeechRecognitionTrial(result.Data)
 
+    case TypeUpdateGroupCallMessageLevels:
+        return UnmarshalUpdateGroupCallMessageLevels(result.Data)
+
     case TypeUpdateDiceEmojis:
         return UnmarshalUpdateDiceEmojis(result.Data)
+
+    case TypeUpdateStakeDiceState:
+        return UnmarshalUpdateStakeDiceState(result.Data)
 
     case TypeUpdateAnimatedEmojiMessageClicked:
         return UnmarshalUpdateAnimatedEmojiMessageClicked(result.Data)
