@@ -3512,7 +3512,7 @@ type SearchPublicPostsRequest struct {
     Offset string `json:"offset"`
     // The maximum number of messages to be returned; up to 100. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
-    // The amount of Telegram Stars the user agreed to pay for the search; pass 0 for free searches
+    // The Telegram Star amount the user agreed to pay for the search; pass 0 for free searches
     StarCount int64 `json:"star_count"`
 }
 
@@ -6298,7 +6298,7 @@ type GetBusinessAccountStarAmountRequest struct {
     BusinessConnectionId string `json:"business_connection_id"`
 }
 
-// Returns the amount of Telegram Stars owned by a business account; for bots only
+// Returns the Telegram Star amount owned by a business account; for bots only
 func (client *Client) GetBusinessAccountStarAmount(req *GetBusinessAccountStarAmountRequest) (*StarAmount, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8528,7 +8528,7 @@ type GetLoginUrlRequest struct {
     MessageId int64 `json:"message_id"`
     // Button identifier
     ButtonId int64 `json:"button_id"`
-    // Pass true to allow the bot to send messages to the current user
+    // Pass true to allow the bot to send messages to the current user. Phone number access can't be requested using the button
     AllowWriteAccess bool `json:"allow_write_access"`
 }
 
@@ -8673,7 +8673,7 @@ func (client *Client) GetInlineQueryResults(req *GetInlineQueryResultsRequest) (
 type AnswerInlineQueryRequest struct { 
     // Identifier of the inline query
     InlineQueryId JsonInt64 `json:"inline_query_id"`
-    // Pass true if results may be cached and returned only for the user that sent the query. By default, results may be returned to any user who sends the same query
+    // Pass true if results may be cached and returned only for the user who sent the query. By default, results may be returned to any user who sends the same query
     IsPersonal bool `json:"is_personal"`
     // Button to be shown above inline query results; pass null if none
     Button *InlineQueryResultsButton `json:"button"`
@@ -9427,7 +9427,7 @@ func (client *Client) DeleteChatReplyMarkup(req *DeleteChatReplyMarkupRequest) (
 type SendChatActionRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifier of the topic in which the action is performed
+    // Identifier of the topic in which the action is performed; pass null if none
     TopicId MessageTopic `json:"topic_id"`
     // Unique identifier of business connection on behalf of which to send the request; for bots only
     BusinessConnectionId string `json:"business_connection_id"`
@@ -9692,9 +9692,6 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     }
 
     switch result.Type {
-    case TypeInternalLinkTypeActiveSessions:
-        return UnmarshalInternalLinkTypeActiveSessions(result.Data)
-
     case TypeInternalLinkTypeAttachmentMenuBot:
         return UnmarshalInternalLinkTypeAttachmentMenuBot(result.Data)
 
@@ -9716,11 +9713,8 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeBusinessChat:
         return UnmarshalInternalLinkTypeBusinessChat(result.Data)
 
-    case TypeInternalLinkTypeBuyStars:
-        return UnmarshalInternalLinkTypeBuyStars(result.Data)
-
-    case TypeInternalLinkTypeChangePhoneNumber:
-        return UnmarshalInternalLinkTypeChangePhoneNumber(result.Data)
+    case TypeInternalLinkTypeCallsPage:
+        return UnmarshalInternalLinkTypeCallsPage(result.Data)
 
     case TypeInternalLinkTypeChatAffiliateProgram:
         return UnmarshalInternalLinkTypeChatAffiliateProgram(result.Data)
@@ -9731,20 +9725,17 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeChatFolderInvite:
         return UnmarshalInternalLinkTypeChatFolderInvite(result.Data)
 
-    case TypeInternalLinkTypeChatFolderSettings:
-        return UnmarshalInternalLinkTypeChatFolderSettings(result.Data)
-
     case TypeInternalLinkTypeChatInvite:
         return UnmarshalInternalLinkTypeChatInvite(result.Data)
 
-    case TypeInternalLinkTypeDefaultMessageAutoDeleteTimerSettings:
-        return UnmarshalInternalLinkTypeDefaultMessageAutoDeleteTimerSettings(result.Data)
+    case TypeInternalLinkTypeChatSelection:
+        return UnmarshalInternalLinkTypeChatSelection(result.Data)
+
+    case TypeInternalLinkTypeContactsPage:
+        return UnmarshalInternalLinkTypeContactsPage(result.Data)
 
     case TypeInternalLinkTypeDirectMessagesChat:
         return UnmarshalInternalLinkTypeDirectMessagesChat(result.Data)
-
-    case TypeInternalLinkTypeEditProfileSettings:
-        return UnmarshalInternalLinkTypeEditProfileSettings(result.Data)
 
     case TypeInternalLinkTypeGame:
         return UnmarshalInternalLinkTypeGame(result.Data)
@@ -9767,14 +9758,8 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeLanguagePack:
         return UnmarshalInternalLinkTypeLanguagePack(result.Data)
 
-    case TypeInternalLinkTypeLanguageSettings:
-        return UnmarshalInternalLinkTypeLanguageSettings(result.Data)
-
     case TypeInternalLinkTypeLiveStory:
         return UnmarshalInternalLinkTypeLiveStory(result.Data)
-
-    case TypeInternalLinkTypeLoginEmailSettings:
-        return UnmarshalInternalLinkTypeLoginEmailSettings(result.Data)
 
     case TypeInternalLinkTypeMainWebApp:
         return UnmarshalInternalLinkTypeMainWebApp(result.Data)
@@ -9785,35 +9770,35 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeMessageDraft:
         return UnmarshalInternalLinkTypeMessageDraft(result.Data)
 
-    case TypeInternalLinkTypeMyStars:
-        return UnmarshalInternalLinkTypeMyStars(result.Data)
+    case TypeInternalLinkTypeMyProfilePage:
+        return UnmarshalInternalLinkTypeMyProfilePage(result.Data)
 
-    case TypeInternalLinkTypeMyToncoins:
-        return UnmarshalInternalLinkTypeMyToncoins(result.Data)
+    case TypeInternalLinkTypeNewChannelChat:
+        return UnmarshalInternalLinkTypeNewChannelChat(result.Data)
+
+    case TypeInternalLinkTypeNewGroupChat:
+        return UnmarshalInternalLinkTypeNewGroupChat(result.Data)
+
+    case TypeInternalLinkTypeNewPrivateChat:
+        return UnmarshalInternalLinkTypeNewPrivateChat(result.Data)
+
+    case TypeInternalLinkTypeNewStory:
+        return UnmarshalInternalLinkTypeNewStory(result.Data)
 
     case TypeInternalLinkTypePassportDataRequest:
         return UnmarshalInternalLinkTypePassportDataRequest(result.Data)
 
-    case TypeInternalLinkTypePasswordSettings:
-        return UnmarshalInternalLinkTypePasswordSettings(result.Data)
-
     case TypeInternalLinkTypePhoneNumberConfirmation:
         return UnmarshalInternalLinkTypePhoneNumberConfirmation(result.Data)
 
-    case TypeInternalLinkTypePhoneNumberPrivacySettings:
-        return UnmarshalInternalLinkTypePhoneNumberPrivacySettings(result.Data)
-
-    case TypeInternalLinkTypePremiumFeatures:
-        return UnmarshalInternalLinkTypePremiumFeatures(result.Data)
-
-    case TypeInternalLinkTypePremiumGift:
-        return UnmarshalInternalLinkTypePremiumGift(result.Data)
+    case TypeInternalLinkTypePremiumFeaturesPage:
+        return UnmarshalInternalLinkTypePremiumFeaturesPage(result.Data)
 
     case TypeInternalLinkTypePremiumGiftCode:
         return UnmarshalInternalLinkTypePremiumGiftCode(result.Data)
 
-    case TypeInternalLinkTypePrivacyAndSecuritySettings:
-        return UnmarshalInternalLinkTypePrivacyAndSecuritySettings(result.Data)
+    case TypeInternalLinkTypePremiumGiftPurchase:
+        return UnmarshalInternalLinkTypePremiumGiftPurchase(result.Data)
 
     case TypeInternalLinkTypeProxy:
         return UnmarshalInternalLinkTypeProxy(result.Data)
@@ -9827,8 +9812,17 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeRestorePurchases:
         return UnmarshalInternalLinkTypeRestorePurchases(result.Data)
 
+    case TypeInternalLinkTypeSavedMessages:
+        return UnmarshalInternalLinkTypeSavedMessages(result.Data)
+
+    case TypeInternalLinkTypeSearch:
+        return UnmarshalInternalLinkTypeSearch(result.Data)
+
     case TypeInternalLinkTypeSettings:
         return UnmarshalInternalLinkTypeSettings(result.Data)
+
+    case TypeInternalLinkTypeStarPurchase:
+        return UnmarshalInternalLinkTypeStarPurchase(result.Data)
 
     case TypeInternalLinkTypeStickerSet:
         return UnmarshalInternalLinkTypeStickerSet(result.Data)
@@ -9842,14 +9836,8 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(result.Data)
 
-    case TypeInternalLinkTypeThemeSettings:
-        return UnmarshalInternalLinkTypeThemeSettings(result.Data)
-
     case TypeInternalLinkTypeUnknownDeepLink:
         return UnmarshalInternalLinkTypeUnknownDeepLink(result.Data)
-
-    case TypeInternalLinkTypeUnsupportedProxy:
-        return UnmarshalInternalLinkTypeUnsupportedProxy(result.Data)
 
     case TypeInternalLinkTypeUpgradedGift:
         return UnmarshalInternalLinkTypeUpgradedGift(result.Data)
@@ -9909,11 +9897,13 @@ func (client *Client) GetExternalLinkInfo(req *GetExternalLinkInfoRequest) (Logi
 type GetExternalLinkRequest struct { 
     // The HTTP link
     Link string `json:"link"`
-    // Pass true if the current user allowed the bot, returned in getExternalLinkInfo, to send them messages
+    // Pass true if the current user allowed the bot that was returned in getExternalLinkInfo, to send them messages
     AllowWriteAccess bool `json:"allow_write_access"`
+    // Pass true if the current user allowed the bot that was returned in getExternalLinkInfo, to access their phone number
+    AllowPhoneNumberAccess bool `json:"allow_phone_number_access"`
 }
 
-// Returns an HTTP URL which can be used to automatically authorize the current user on a website after clicking an HTTP link. Use the method getExternalLinkInfo to find whether a prior user confirmation is needed
+// Returns an HTTP URL which can be used to automatically authorize the current user on a website after clicking an HTTP link. Use the method getExternalLinkInfo to find whether a prior user confirmation is needed. May return an empty link if just a toast about successful login has to be shown
 func (client *Client) GetExternalLink(req *GetExternalLinkRequest) (*HttpUrl, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -9922,6 +9912,7 @@ func (client *Client) GetExternalLink(req *GetExternalLinkRequest) (*HttpUrl, er
         Data: map[string]interface{}{
             "link": req.Link,
             "allow_write_access": req.AllowWriteAccess,
+            "allow_phone_number_access": req.AllowPhoneNumberAccess,
         },
     })
     if err != nil {
@@ -11841,7 +11832,7 @@ type BanChatMemberRequest struct {
     MemberId MessageSender `json:"member_id"`
     // Point in time (Unix timestamp) when the user will be unbanned; 0 if never. If the user is banned for more than 366 days or for less than 30 seconds from the current time, the user is considered to be banned forever. Ignored in basic groups and if a chat is banned
     BannedUntilDate int32 `json:"banned_until_date"`
-    // Pass true to delete all messages in the chat for the user that is being removed. Always true for supergroups and channels
+    // Pass true to delete all messages in the chat for the user who is being removed. Always true for supergroups and channels
     RevokeMessages bool `json:"revoke_messages"`
 }
 
@@ -11933,6 +11924,32 @@ func (client *Client) TransferChatOwnership(req *TransferChatOwnershipRequest) (
     }
 
     return UnmarshalOk(result.Data)
+}
+
+type GetChatOwnerAfterLeavingRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+}
+
+// Returns the user who will become the owner of the chat after 7 days if the current user does not return to the chat during that period; requires owner privileges in the chat. Available only for supergroups and channel chats
+func (client *Client) GetChatOwnerAfterLeaving(req *GetChatOwnerAfterLeavingRequest) (*User, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getChatOwnerAfterLeaving",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalUser(result.Data)
 }
 
 type GetChatMemberRequest struct { 
@@ -15136,7 +15153,7 @@ func (client *Client) GetChatJoinRequests(req *GetChatJoinRequestsRequest) (*Cha
 type ProcessChatJoinRequestRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifier of the user that sent the request
+    // Identifier of the user who sent the request
     UserId int64 `json:"user_id"`
     // Pass true to approve the request; pass false to decline it
     Approve bool `json:"approve"`
@@ -22163,7 +22180,7 @@ type PlaceGiftAuctionBidRequest struct {
     GiftId JsonInt64 `json:"gift_id"`
     // The number of Telegram Stars to place in the bid
     StarCount int64 `json:"star_count"`
-    // Identifier of the user that will receive the gift
+    // Identifier of the user who will receive the gift
     UserId int64 `json:"user_id"`
     // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed. Must be empty if the receiver enabled paid messages
     Text *FormattedText `json:"text"`
@@ -22342,8 +22359,8 @@ func (client *Client) ToggleChatGiftNotifications(req *ToggleChatGiftNotificatio
 }
 
 type GetGiftUpgradePreviewRequest struct { 
-    // Identifier of the gift
-    GiftId JsonInt64 `json:"gift_id"`
+    // Identifier of the regular gift
+    RegularGiftId JsonInt64 `json:"regular_gift_id"`
 }
 
 // Returns examples of possible upgraded gifts for a regular gift
@@ -22353,7 +22370,7 @@ func (client *Client) GetGiftUpgradePreview(req *GetGiftUpgradePreviewRequest) (
             Type: "getGiftUpgradePreview",
         },
         Data: map[string]interface{}{
-            "gift_id": req.GiftId,
+            "regular_gift_id": req.RegularGiftId,
         },
     })
     if err != nil {
@@ -22367,19 +22384,25 @@ func (client *Client) GetGiftUpgradePreview(req *GetGiftUpgradePreviewRequest) (
     return UnmarshalGiftUpgradePreview(result.Data)
 }
 
-type GetGiftUpgradeVariantsRequest struct { 
-    // Identifier of the gift
-    GiftId JsonInt64 `json:"gift_id"`
+type GetUpgradedGiftVariantsRequest struct { 
+    // Identifier of the regular gift
+    RegularGiftId JsonInt64 `json:"regular_gift_id"`
+    // Pass true to get models that can be obtained by upgrading a regular gift
+    ReturnUpgradeModels bool `json:"return_upgrade_models"`
+    // Pass true to get models that can be obtained by crafting a gift from upgraded gifts
+    ReturnCraftModels bool `json:"return_craft_models"`
 }
 
 // Returns all possible variants of upgraded gifts for a regular gift
-func (client *Client) GetGiftUpgradeVariants(req *GetGiftUpgradeVariantsRequest) (*GiftUpgradeVariants, error) {
+func (client *Client) GetUpgradedGiftVariants(req *GetUpgradedGiftVariantsRequest) (*GiftUpgradeVariants, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getGiftUpgradeVariants",
+            Type: "getUpgradedGiftVariants",
         },
         Data: map[string]interface{}{
-            "gift_id": req.GiftId,
+            "regular_gift_id": req.RegularGiftId,
+            "return_upgrade_models": req.ReturnUpgradeModels,
+            "return_craft_models": req.ReturnCraftModels,
         },
     })
     if err != nil {
@@ -22400,7 +22423,7 @@ type UpgradeGiftRequest struct {
     ReceivedGiftId string `json:"received_gift_id"`
     // Pass true to keep the original gift text, sender and receiver in the upgraded gift
     KeepOriginalDetails bool `json:"keep_original_details"`
-    // The amount of Telegram Stars required to pay for the upgrade. It the gift has prepaid_upgrade_star_count > 0, then pass 0, otherwise, pass gift.upgrade_star_count
+    // The Telegram Star amount required to pay for the upgrade. It the gift has prepaid_upgrade_star_count > 0, then pass 0, otherwise, pass gift.upgrade_star_count
     StarCount int64 `json:"star_count"`
 }
 
@@ -22433,7 +22456,7 @@ type BuyGiftUpgradeRequest struct {
     OwnerId MessageSender `json:"owner_id"`
     // Prepaid upgrade hash as received along with the gift
     PrepaidUpgradeHash string `json:"prepaid_upgrade_hash"`
-    // The amount of Telegram Stars the user agreed to pay for the upgrade; must be equal to gift.upgrade_star_count
+    // The Telegram Star amount the user agreed to pay for the upgrade; must be equal to gift.upgrade_star_count
     StarCount int64 `json:"star_count"`
 }
 
@@ -22460,6 +22483,47 @@ func (client *Client) BuyGiftUpgrade(req *BuyGiftUpgradeRequest) (*Ok, error) {
     return UnmarshalOk(result.Data)
 }
 
+type CraftGiftRequest struct { 
+    // Identifier of the gifts to use for crafting
+    ReceivedGiftIds []string `json:"received_gift_ids"`
+}
+
+// Crafts a new gift from other gifts that will be permanently lost
+func (client *Client) CraftGift(req *CraftGiftRequest) (CraftGiftResult, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "craftGift",
+        },
+        Data: map[string]interface{}{
+            "received_gift_ids": req.ReceivedGiftIds,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    switch result.Type {
+    case TypeCraftGiftResultSuccess:
+        return UnmarshalCraftGiftResultSuccess(result.Data)
+
+    case TypeCraftGiftResultTooEarly:
+        return UnmarshalCraftGiftResultTooEarly(result.Data)
+
+    case TypeCraftGiftResultInvalidGift:
+        return UnmarshalCraftGiftResultInvalidGift(result.Data)
+
+    case TypeCraftGiftResultFail:
+        return UnmarshalCraftGiftResultFail(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
+}
+
 type TransferGiftRequest struct { 
     // Unique identifier of business connection on behalf of which to send the request; for bots only
     BusinessConnectionId string `json:"business_connection_id"`
@@ -22467,7 +22531,7 @@ type TransferGiftRequest struct {
     ReceivedGiftId string `json:"received_gift_id"`
     // Identifier of the user or the channel chat that will receive the gift
     NewOwnerId MessageSender `json:"new_owner_id"`
-    // The amount of Telegram Stars required to pay for the transfer
+    // The Telegram Star amount required to pay for the transfer
     StarCount int64 `json:"star_count"`
 }
 
@@ -22498,7 +22562,7 @@ func (client *Client) TransferGift(req *TransferGiftRequest) (*Ok, error) {
 type DropGiftOriginalDetailsRequest struct { 
     // Identifier of the gift
     ReceivedGiftId string `json:"received_gift_id"`
-    // The amount of Telegram Stars required to pay for the operation
+    // The Telegram Star amount required to pay for the operation
     StarCount int64 `json:"star_count"`
 }
 
@@ -22723,6 +22787,38 @@ func (client *Client) GetReceivedGift(req *GetReceivedGiftRequest) (*ReceivedGif
     return UnmarshalReceivedGift(result.Data)
 }
 
+type GetGiftsForCraftingRequest struct { 
+    // Identifier of the regular gift that will be used for crafting
+    RegularGiftId JsonInt64 `json:"regular_gift_id"`
+    // Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
+    Offset string `json:"offset"`
+    // The maximum number of gifts to be returned; must be positive and can't be greater than 100. For optimal performance, the number of returned objects is chosen by TDLib and can be smaller than the specified limit
+    Limit int32 `json:"limit"`
+}
+
+// Returns upgraded gifts of the current user who can be used to craft another gifts
+func (client *Client) GetGiftsForCrafting(req *GetGiftsForCraftingRequest) (*GiftsForCrafting, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getGiftsForCrafting",
+        },
+        Data: map[string]interface{}{
+            "regular_gift_id": req.RegularGiftId,
+            "offset": req.Offset,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalGiftsForCrafting(result.Data)
+}
+
 type GetUpgradedGiftRequest struct { 
     // Unique name of the upgraded gift
     Name string `json:"name"`
@@ -22857,6 +22953,8 @@ type SearchGiftsForResaleRequest struct {
     GiftId JsonInt64 `json:"gift_id"`
     // Order in which the results will be sorted
     Order GiftForResaleOrder `json:"order"`
+    // Pass true to get only gifts suitable for crafting
+    ForCrafting bool `json:"for_crafting"`
     // Attributes used to filter received gifts. If multiple attributes of the same type are specified, then all of them are allowed. If none attributes of specific type are specified, then all values for this attribute type are allowed
     Attributes []UpgradedGiftAttributeId `json:"attributes"`
     // Offset of the first entry to return as received from the previous request with the same order and attributes; use empty string to get the first chunk of results
@@ -22874,6 +22972,7 @@ func (client *Client) SearchGiftsForResale(req *SearchGiftsForResaleRequest) (*G
         Data: map[string]interface{}{
             "gift_id": req.GiftId,
             "order": req.Order,
+            "for_crafting": req.ForCrafting,
             "attributes": req.Attributes,
             "offset": req.Offset,
             "limit": req.Limit,
@@ -23164,7 +23263,7 @@ func (client *Client) CreateInvoiceLink(req *CreateInvoiceLinkRequest) (*HttpUrl
 }
 
 type RefundStarPaymentRequest struct { 
-    // Identifier of the user that did the payment
+    // Identifier of the user who did the payment
     UserId int64 `json:"user_id"`
     // Telegram payment identifier
     TelegramPaymentChargeId string `json:"telegram_payment_charge_id"`
@@ -23192,7 +23291,7 @@ func (client *Client) RefundStarPayment(req *RefundStarPaymentRequest) (*Ok, err
     return UnmarshalOk(result.Data)
 }
 
-// Returns a user that can be contacted to get support
+// Returns a user who can be contacted to get support
 func (client *Client) GetSupportUser() (*User, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -23957,7 +24056,7 @@ type SetChatPaidMessageStarCountRequest struct {
     PaidMessageStarCount int64 `json:"paid_message_star_count"`
 }
 
-// Changes the amount of Telegram Stars that must be paid to send a message to a supergroup chat; requires can_restrict_members administrator right and supergroupFullInfo.can_enable_paid_messages
+// Changes the Telegram Star amount that must be paid to send a message to a supergroup chat; requires can_restrict_members administrator right and supergroupFullInfo.can_enable_paid_messages
 func (client *Client) SetChatPaidMessageStarCount(req *SetChatPaidMessageStarCountRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -25355,7 +25454,7 @@ type SetPassportElementErrorsRequest struct {
     Errors []*InputPassportElementError `json:"errors"`
 }
 
-// Informs the user that some of the elements in their Telegram Passport contain errors; for bots only. The user will not be able to resend the elements, until the errors are fixed
+// Informs the user who some of the elements in their Telegram Passport contain errors; for bots only. The user will not be able to resend the elements, until the errors are fixed
 func (client *Client) SetPassportElementErrors(req *SetPassportElementErrorsRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -26520,7 +26619,7 @@ func (client *Client) GetStarPaymentOptions() (*StarPaymentOptions, error) {
 }
 
 type GetStarGiftPaymentOptionsRequest struct { 
-    // Identifier of the user that will receive Telegram Stars; pass 0 to get options for an unspecified user
+    // Identifier of the user who will receive Telegram Stars; pass 0 to get options for an unspecified user
     UserId int64 `json:"user_id"`
 }
 
@@ -26931,7 +27030,7 @@ type GetConnectedAffiliateProgramRequest struct {
     BotUserId int64 `json:"bot_user_id"`
 }
 
-// Returns an affiliate program that were connected to the given affiliate by identifier of the bot that created the program
+// Returns an affiliate program that was connected to the given affiliate by identifier of the bot that created the program
 func (client *Client) GetConnectedAffiliateProgram(req *GetConnectedAffiliateProgramRequest) (*ConnectedAffiliateProgram, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -27403,27 +27502,21 @@ func (client *Client) GetApplicationDownloadLink() (*HttpUrl, error) {
 }
 
 type AddProxyRequest struct { 
-    // Proxy server domain or IP address
-    Server string `json:"server"`
-    // Proxy server port
-    Port int32 `json:"port"`
+    // The proxy to add
+    Proxy *Proxy `json:"proxy"`
     // Pass true to immediately enable the proxy
     Enable bool `json:"enable"`
-    // Proxy type
-    Type ProxyType `json:"type"`
 }
 
 // Adds a proxy server for network requests. Can be called before authorization
-func (client *Client) AddProxy(req *AddProxyRequest) (*Proxy, error) {
+func (client *Client) AddProxy(req *AddProxyRequest) (*AddedProxy, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "addProxy",
         },
         Data: map[string]interface{}{
-            "server": req.Server,
-            "port": req.Port,
+            "proxy": req.Proxy,
             "enable": req.Enable,
-            "type": req.Type,
         },
     })
     if err != nil {
@@ -27434,34 +27527,28 @@ func (client *Client) AddProxy(req *AddProxyRequest) (*Proxy, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalProxy(result.Data)
+    return UnmarshalAddedProxy(result.Data)
 }
 
 type EditProxyRequest struct { 
     // Proxy identifier
     ProxyId int32 `json:"proxy_id"`
-    // Proxy server domain or IP address
-    Server string `json:"server"`
-    // Proxy server port
-    Port int32 `json:"port"`
+    // The new information about the proxy
+    Proxy *Proxy `json:"proxy"`
     // Pass true to immediately enable the proxy
     Enable bool `json:"enable"`
-    // Proxy type
-    Type ProxyType `json:"type"`
 }
 
 // Edits an existing proxy server for network requests. Can be called before authorization
-func (client *Client) EditProxy(req *EditProxyRequest) (*Proxy, error) {
+func (client *Client) EditProxy(req *EditProxyRequest) (*AddedProxy, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "editProxy",
         },
         Data: map[string]interface{}{
             "proxy_id": req.ProxyId,
-            "server": req.Server,
-            "port": req.Port,
+            "proxy": req.Proxy,
             "enable": req.Enable,
-            "type": req.Type,
         },
     })
     if err != nil {
@@ -27472,7 +27559,7 @@ func (client *Client) EditProxy(req *EditProxyRequest) (*Proxy, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalProxy(result.Data)
+    return UnmarshalAddedProxy(result.Data)
 }
 
 type EnableProxyRequest struct { 
@@ -27547,7 +27634,7 @@ func (client *Client) RemoveProxy(req *RemoveProxyRequest) (*Ok, error) {
 }
 
 // Returns the list of proxies that are currently set up. Can be called before authorization
-func (client *Client) GetProxies() (*Proxies, error) {
+func (client *Client) GetProxies() (*AddedProxies, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "getProxies",
@@ -27562,38 +27649,12 @@ func (client *Client) GetProxies() (*Proxies, error) {
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalProxies(result.Data)
-}
-
-type GetProxyLinkRequest struct { 
-    // Proxy identifier
-    ProxyId int32 `json:"proxy_id"`
-}
-
-// Returns an HTTPS link, which can be used to add a proxy. Available only for SOCKS5 and MTProto proxies. Can be called before authorization
-func (client *Client) GetProxyLink(req *GetProxyLinkRequest) (*HttpUrl, error) {
-    result, err := client.Send(Request{
-        meta: meta{
-            Type: "getProxyLink",
-        },
-        Data: map[string]interface{}{
-            "proxy_id": req.ProxyId,
-        },
-    })
-    if err != nil {
-        return nil, err
-    }
-
-    if result.Type == "error" {
-        return nil, buildResponseError(result.Data)
-    }
-
-    return UnmarshalHttpUrl(result.Data)
+    return UnmarshalAddedProxies(result.Data)
 }
 
 type PingProxyRequest struct { 
-    // Proxy identifier. Use 0 to ping a Telegram server without a proxy
-    ProxyId int32 `json:"proxy_id"`
+    // The proxy to test; pass null to ping a Telegram server without a proxy
+    Proxy *Proxy `json:"proxy"`
 }
 
 // Computes time needed to receive a response from a Telegram server through a proxy. Can be called before authorization
@@ -27603,7 +27664,7 @@ func (client *Client) PingProxy(req *PingProxyRequest) (*Seconds, error) {
             Type: "pingProxy",
         },
         Data: map[string]interface{}{
-            "proxy_id": req.ProxyId,
+            "proxy": req.Proxy,
         },
     })
     if err != nil {
@@ -28157,12 +28218,8 @@ func (client *Client) TestNetwork() (*Ok, error) {
 }
 
 type TestProxyRequest struct { 
-    // Proxy server domain or IP address
-    Server string `json:"server"`
-    // Proxy server port
-    Port int32 `json:"port"`
-    // Proxy type
-    Type ProxyType `json:"type"`
+    // The proxy to test
+    Proxy *Proxy `json:"proxy"`
     // Identifier of a datacenter with which to test connection
     DcId int32 `json:"dc_id"`
     // The maximum overall timeout for the request
@@ -28176,9 +28233,7 @@ func (client *Client) TestProxy(req *TestProxyRequest) (*Ok, error) {
             Type: "testProxy",
         },
         Data: map[string]interface{}{
-            "server": req.Server,
-            "port": req.Port,
-            "type": req.Type,
+            "proxy": req.Proxy,
             "dc_id": req.DcId,
             "timeout": req.Timeout,
         },
