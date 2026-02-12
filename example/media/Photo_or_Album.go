@@ -101,7 +101,7 @@ func main() {
 					},
 					InputMessageContent: &tdlib.InputMessagePhoto{
 						Photo: &tdlib.InputFileLocal{
-							Path: "./myht9-1486821485193084928.jpg",
+							Path: "./Meru_01.png",
 						},
 						Caption: text,
 					},
@@ -123,13 +123,13 @@ func main() {
 					InputMessageContents: []tdlib.InputMessageContent{
 						&tdlib.InputMessagePhoto{
 							Photo: &tdlib.InputFileLocal{
-								Path: "./myht9-1486821485193084928.jpg",
+								Path: "./Meru_01.png",
 							},
 							Caption: text,
 						},
 						&tdlib.InputMessagePhoto{
 							Photo: &tdlib.InputFileLocal{
-								Path: "./hisagi_02-1486983199280738309.jpg",
+								Path: "./Meru_02.png",
 							},
 						},
 					},
