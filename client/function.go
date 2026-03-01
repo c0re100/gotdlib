@@ -1505,7 +1505,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, the message with gift purchase offer for messageUpgradedGiftPurchaseOfferRejected, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, the message with gift purchase offer for messageUpgradedGiftPurchaseOfferRejected, the message with the request to disable content protection for messageChatHasProtectedContentToggled, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8286,7 +8286,7 @@ type GetPollVotersRequest struct {
 }
 
 // Returns message senders voted for the specified option in a non-anonymous polls. For optimal performance, the number of returned users is chosen by TDLib
-func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*MessageSenders, error) {
+func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*PollVoters, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "getPollVoters",
@@ -8307,7 +8307,7 @@ func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*MessageSenders,
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalMessageSenders(result.Data)
+    return UnmarshalPollVoters(result.Data)
 }
 
 type StopPollRequest struct { 
@@ -9785,6 +9785,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
     case TypeInternalLinkTypeNewStory:
         return UnmarshalInternalLinkTypeNewStory(result.Data)
 
+    case TypeInternalLinkTypeOauth:
+        return UnmarshalInternalLinkTypeOauth(result.Data)
+
     case TypeInternalLinkTypePassportDataRequest:
         return UnmarshalInternalLinkTypePassportDataRequest(result.Data)
 
@@ -9899,8 +9902,6 @@ type GetExternalLinkRequest struct {
     Link string `json:"link"`
     // Pass true if the current user allowed the bot that was returned in getExternalLinkInfo, to send them messages
     AllowWriteAccess bool `json:"allow_write_access"`
-    // Pass true if the current user allowed the bot that was returned in getExternalLinkInfo, to access their phone number
-    AllowPhoneNumberAccess bool `json:"allow_phone_number_access"`
 }
 
 // Returns an HTTP URL which can be used to automatically authorize the current user on a website after clicking an HTTP link. Use the method getExternalLinkInfo to find whether a prior user confirmation is needed. May return an empty link if just a toast about successful login has to be shown
@@ -9911,6 +9912,98 @@ func (client *Client) GetExternalLink(req *GetExternalLinkRequest) (*HttpUrl, er
         },
         Data: map[string]interface{}{
             "link": req.Link,
+            "allow_write_access": req.AllowWriteAccess,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalHttpUrl(result.Data)
+}
+
+type GetOauthLinkInfoRequest struct { 
+    // URL of the link
+    Url string `json:"url"`
+    // Origin of the OAuth request if the request was received from the in-app browser; pass an empty string otherwise
+    InAppOrigin string `json:"in_app_origin"`
+}
+
+// Returns information about an OAuth deep link. Use checkOauthRequestMatchCode, acceptOauthRequest or declineOauthRequest to process the link
+func (client *Client) GetOauthLinkInfo(req *GetOauthLinkInfoRequest) (*OauthLinkInfo, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getOauthLinkInfo",
+        },
+        Data: map[string]interface{}{
+            "url": req.Url,
+            "in_app_origin": req.InAppOrigin,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOauthLinkInfo(result.Data)
+}
+
+type CheckOauthRequestMatchCodeRequest struct { 
+    // URL of the OAuth deep link
+    Url string `json:"url"`
+    // The matching code chosen by the user
+    MatchCode string `json:"match_code"`
+}
+
+// Checks a match-code for an OAuth authorization request. If fails, then the authorization request has failed. Otherwise, authorization confirmation dialog must be shown and the link must be processed using acceptOauthRequest or declineOauthRequest
+func (client *Client) CheckOauthRequestMatchCode(req *CheckOauthRequestMatchCodeRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "checkOauthRequestMatchCode",
+        },
+        Data: map[string]interface{}{
+            "url": req.Url,
+            "match_code": req.MatchCode,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type AcceptOauthRequestRequest struct { 
+    // URL of the OAuth deep link
+    Url string `json:"url"`
+    // The matching code chosen by the user
+    MatchCode string `json:"match_code"`
+    // Pass true if the current user allowed the bot that was returned in getOauthLinkInfo, to send them messages
+    AllowWriteAccess bool `json:"allow_write_access"`
+    // Pass true if the current user allowed the bot that was returned in getOauthLinkInfo, to access their phone number
+    AllowPhoneNumberAccess bool `json:"allow_phone_number_access"`
+}
+
+// Accepts an OAuth authorization request. Returns an HTTP URL to open after successful authorization. May return an empty link if just a toast about successful login has to be shown
+func (client *Client) AcceptOauthRequest(req *AcceptOauthRequestRequest) (*HttpUrl, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "acceptOauthRequest",
+        },
+        Data: map[string]interface{}{
+            "url": req.Url,
+            "match_code": req.MatchCode,
             "allow_write_access": req.AllowWriteAccess,
             "allow_phone_number_access": req.AllowPhoneNumberAccess,
         },
@@ -9924,6 +10017,32 @@ func (client *Client) GetExternalLink(req *GetExternalLinkRequest) (*HttpUrl, er
     }
 
     return UnmarshalHttpUrl(result.Data)
+}
+
+type DeclineOauthRequestRequest struct { 
+    // URL of the OAuth deep link
+    Url string `json:"url"`
+}
+
+// Declines an OAuth authorization request
+func (client *Client) DeclineOauthRequest(req *DeclineOauthRequestRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "declineOauthRequest",
+        },
+        Data: map[string]interface{}{
+            "url": req.Url,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
 }
 
 type ReadAllChatMentionsRequest struct { 
@@ -11246,7 +11365,7 @@ type ToggleChatHasProtectedContentRequest struct {
     HasProtectedContent bool `json:"has_protected_content"`
 }
 
-// Changes the ability of users to save, forward, or copy chat content. Supported only for basic groups, supergroups and channels. Requires owner privileges
+// Changes the ability of users to save, forward, or copy chat content. Requires owner privileges in basic groups, supergroups and channels. Requires Telegram Premium to enable protected content in private chats. Not available in Saved Messages and private chats with bots or support accounts
 func (client *Client) ToggleChatHasProtectedContent(req *ToggleChatHasProtectedContentRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -11255,6 +11374,38 @@ func (client *Client) ToggleChatHasProtectedContent(req *ToggleChatHasProtectedC
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
             "has_protected_content": req.HasProtectedContent,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ProcessChatHasProtectedContentDisableRequestRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message with the request. The message must be incoming and has content of the type messageChatHasProtectedContentDisableRequested
+    RequestMessageId int64 `json:"request_message_id"`
+    // Pass true to approve the request; pass false to reject the request
+    Approve bool `json:"approve"`
+}
+
+// Processes request to disable has_protected_content in a chat
+func (client *Client) ProcessChatHasProtectedContentDisableRequest(req *ProcessChatHasProtectedContentDisableRequestRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "processChatHasProtectedContentDisableRequest",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "request_message_id": req.RequestMessageId,
+            "approve": req.Approve,
         },
     })
     if err != nil {
@@ -11825,6 +11976,38 @@ func (client *Client) SetChatMemberStatus(req *SetChatMemberStatusRequest) (*Ok,
     return UnmarshalOk(result.Data)
 }
 
+type SetChatMemberTagRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the user, which tag is changed. Chats can't have member tags
+    UserId int64 `json:"user_id"`
+    // The new tag of the member in the chat; 0-16 characters without emoji
+    Tag string `json:"tag"`
+}
+
+// Changes the tag or custom title of a chat member; requires can_manage_tags administrator right to change tag of other users; for basic groups and supergroups only
+func (client *Client) SetChatMemberTag(req *SetChatMemberTagRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setChatMemberTag",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "user_id": req.UserId,
+            "tag": req.Tag,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type BanChatMemberRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
@@ -11903,7 +12086,7 @@ type TransferChatOwnershipRequest struct {
     Password string `json:"password"`
 }
 
-// Changes the owner of a chat; requires owner privileges in the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session. Available only for supergroups and channel chats
+// Changes the owner of a chat; for basic groups, supergroups and channel chats only; requires owner privileges in the chat. Use the method canTransferOwnership to check whether the ownership can be transferred from the current session
 func (client *Client) TransferChatOwnership(req *TransferChatOwnershipRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -11931,7 +12114,7 @@ type GetChatOwnerAfterLeavingRequest struct {
     ChatId int64 `json:"chat_id"`
 }
 
-// Returns the user who will become the owner of the chat after 7 days if the current user does not return to the chat during that period; requires owner privileges in the chat. Available only for supergroups and channel chats
+// Returns the user who will become the owner of the chat after 7 days if the current user does not return to the supergroup or channel during that period or immediately for basic groups; requires owner privileges in the chat. Available only for supergroups and channel chats
 func (client *Client) GetChatOwnerAfterLeaving(req *GetChatOwnerAfterLeavingRequest) (*User, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -15443,7 +15626,7 @@ func (client *Client) DiscardCall(req *DiscardCallRequest) (*Ok, error) {
 
 type SendCallRatingRequest struct { 
     // Call identifier
-    CallId int32 `json:"call_id"`
+    CallId InputCall `json:"call_id"`
     // Call rating; 1-5
     Rating int32 `json:"rating"`
     // An optional user comment if the rating is less than 5
@@ -15478,7 +15661,7 @@ func (client *Client) SendCallRating(req *SendCallRatingRequest) (*Ok, error) {
 
 type SendCallDebugInformationRequest struct { 
     // Call identifier
-    CallId int32 `json:"call_id"`
+    CallId InputCall `json:"call_id"`
     // Debug information in application-specific format
     DebugInformation string `json:"debug_information"`
 }
@@ -15507,7 +15690,7 @@ func (client *Client) SendCallDebugInformation(req *SendCallDebugInformationRequ
 
 type SendCallLogRequest struct { 
     // Call identifier
-    CallId int32 `json:"call_id"`
+    CallId InputCall `json:"call_id"`
     // Call log file. Only inputFileLocal and inputFileGenerated are supported
     LogFile InputFile `json:"log_file"`
 }
@@ -15600,7 +15783,7 @@ type CreateVideoChatRequest struct {
     IsRtmpStream bool `json:"is_rtmp_stream"`
 }
 
-// Creates a video chat (a group call bound to a chat). Available only for basic groups, supergroups and channels; requires can_manage_video_chats administrator right
+// Creates a video chat (a group call bound to a chat); for basic groups, supergroups and channels only; requires can_manage_video_chats administrator right
 func (client *Client) CreateVideoChat(req *CreateVideoChatRequest) (*GroupCallId, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -22484,7 +22667,7 @@ func (client *Client) BuyGiftUpgrade(req *BuyGiftUpgradeRequest) (*Ok, error) {
 }
 
 type CraftGiftRequest struct { 
-    // Identifier of the gifts to use for crafting
+    // Identifier of the gifts to use for crafting. In the case of a successful craft, the resulting gift will have the number of the first gift. Consequently, the first gift must not have been withdrawn to the TON blockchain as an NFT and must have an empty gift_address
     ReceivedGiftIds []string `json:"received_gift_ids"`
 }
 
@@ -28521,6 +28704,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateServiceNotification:
         return UnmarshalUpdateServiceNotification(result.Data)
+
+    case TypeUpdateNewOauthRequest:
+        return UnmarshalUpdateNewOauthRequest(result.Data)
 
     case TypeUpdateFile:
         return UnmarshalUpdateFile(result.Data)
