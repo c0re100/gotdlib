@@ -1505,7 +1505,7 @@ type GetRepliedMessageRequest struct {
     MessageId int64 `json:"message_id"`
 }
 
-// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, the message with gift purchase offer for messageUpgradedGiftPurchaseOfferRejected, the message with the request to disable content protection for messageChatHasProtectedContentToggled, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
+// Returns information about a non-bundled message that is replied by a given message. Also, returns the pinned message for messagePinMessage, the game message for messageGameScore, the invoice message for messagePaymentSuccessful, the message with a previously set same background for messageChatSetBackground, the giveaway message for messageGiveawayCompleted, the checklist message for messageChecklistTasksDone, messageChecklistTasksAdded, the message with suggested post information for messageSuggestedPostApprovalFailed, messageSuggestedPostApproved, messageSuggestedPostDeclined, messageSuggestedPostPaid, messageSuggestedPostRefunded, the message with the regular gift that was upgraded for messageUpgradedGift with origin of the type upgradedGiftOriginUpgrade, the message with gift purchase offer for messageUpgradedGiftPurchaseOfferRejected, the message with the request to disable content protection for messageChatHasProtectedContentToggled, the message with the poll for messagePollOptionAdded and messagePollOptionDeleted, and the topic creation message for topic messages without non-bundled replied message. Returns a 404 error if the message doesn't exist
 func (client *Client) GetRepliedMessage(req *GetRepliedMessageRequest) (*Message, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -1641,6 +1641,38 @@ func (client *Client) GetMessageProperties(req *GetMessagePropertiesRequest) (*M
     }
 
     return UnmarshalMessageProperties(result.Data)
+}
+
+type GetPollOptionPropertiesRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+    // Unique identifier of the answer option, which properties will be returned
+    PollOptionId string `json:"poll_option_id"`
+}
+
+// Returns properties of a poll option. This is an offline method
+func (client *Client) GetPollOptionProperties(req *GetPollOptionPropertiesRequest) (*PollOptionProperties, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPollOptionProperties",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "poll_option_id": req.PollOptionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalPollOptionProperties(result.Data)
 }
 
 type GetMessageThreadRequest struct { 
@@ -3301,7 +3333,7 @@ type SearchMessagesRequest struct {
     Offset string `json:"offset"`
     // The maximum number of messages to be returned; up to 100. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
     Limit int32 `json:"limit"`
-    // Additional filter for messages to search; pass null to search for all messages. Filters searchMessagesFilterMention, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, searchMessagesFilterFailedToSend, and searchMessagesFilterPinned are unsupported in this function
+    // Additional filter for messages to search; pass null to search for all messages. Filters searchMessagesFilterMention, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, searchMessagesFilterUnreadPollVote, searchMessagesFilterFailedToSend, and searchMessagesFilterPinned are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
     // Additional filter for type of the chat of the searched messages; pass null to search for messages in all chats
     ChatTypeFilter SearchMessagesChatTypeFilter `json:"chat_type_filter"`
@@ -3842,7 +3874,7 @@ func (client *Client) GetChatMessageByDate(req *GetChatMessageByDateRequest) (*M
 type GetChatSparseMessagePositionsRequest struct { 
     // Identifier of the chat in which to return information about message positions
     ChatId int64 `json:"chat_id"`
-    // Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, and searchMessagesFilterUnreadReaction are unsupported in this function
+    // Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, and searchMessagesFilterUnreadPollVote are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
     // The message identifier from which to return information about message positions
     FromMessageId int64 `json:"from_message_id"`
@@ -3882,7 +3914,7 @@ type GetChatMessageCalendarRequest struct {
     ChatId int64 `json:"chat_id"`
     // Pass topic identifier to get the result only in specific topic; pass null to get the result in all topics; forum topics and message threads aren't supported
     TopicId MessageTopic `json:"topic_id"`
-    // Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, and searchMessagesFilterUnreadReaction are unsupported in this function
+    // Filter for message content. Filters searchMessagesFilterEmpty, searchMessagesFilterMention, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, and searchMessagesFilterUnreadPollVote are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
     // The message identifier from which to return information about messages; use 0 to get results from the last message
     FromMessageId int64 `json:"from_message_id"`
@@ -3952,7 +3984,7 @@ type GetChatMessagePositionRequest struct {
     ChatId int64 `json:"chat_id"`
     // Pass topic identifier to get position among messages only in specific topic; pass null to get position among all chat messages; message threads aren't supported
     TopicId MessageTopic `json:"topic_id"`
-    // Filter for message content; searchMessagesFilterEmpty, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, and searchMessagesFilterFailedToSend are unsupported in this function
+    // Filter for message content; searchMessagesFilterEmpty, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, searchMessagesFilterUnreadPollVote, and searchMessagesFilterFailedToSend are unsupported in this function
     Filter SearchMessagesFilter `json:"filter"`
     // Message identifier
     MessageId int64 `json:"message_id"`
@@ -4437,6 +4469,10 @@ type GetMessageLinkRequest struct {
     MessageId int64 `json:"message_id"`
     // If not 0, timestamp from which the video/audio/video note/voice note/story playing must start, in seconds. The media can be in the message content or in its link preview
     MediaTimestamp int32 `json:"media_timestamp"`
+    // If not 0, identifier of the checklist task in the message to be linked
+    ChecklistTaskId int32 `json:"checklist_task_id"`
+    // If not empty, identifier of the poll option in the message to be linked
+    PollOptionId string `json:"poll_option_id"`
     // Pass true to create a link for the whole media album
     ForAlbum bool `json:"for_album"`
     // Pass true to create a link to the message as a channel post comment, in a message thread, or a forum topic
@@ -4453,6 +4489,8 @@ func (client *Client) GetMessageLink(req *GetMessageLinkRequest) (*MessageLink, 
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "media_timestamp": req.MediaTimestamp,
+            "checklist_task_id": req.ChecklistTaskId,
+            "poll_option_id": req.PollOptionId,
             "for_album": req.ForAlbum,
             "in_message_thread": req.InMessageThread,
         },
@@ -4531,9 +4569,11 @@ type TranslateTextRequest struct {
     Text *FormattedText `json:"text"`
     // Language code of the language to which the message is translated. Must be one of "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb", "zh-CN", "zh", "zh-Hans", "zh-TW", "zh-Hant", "co", "hr", "cs", "da", "nl", "en", "eo", "et", "fi", "fr", "fy", "gl", "ka", "de", "el", "gu", "ht", "ha", "haw", "he", "iw", "hi", "hmn", "hu", "is", "ig", "id", "in", "ga", "it", "ja", "jv", "kn", "kk", "km", "rw", "ko", "ku", "ky", "lo", "la", "lv", "lt", "lb", "mk", "mg", "ms", "ml", "mt", "mi", "mr", "mn", "my", "ne", "no", "ny", "or", "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr", "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw", "sv", "tl", "tg", "ta", "tt", "te", "th", "tr", "tk", "uk", "ur", "ug", "uz", "vi", "cy", "xh", "yi", "ji", "yo", "zu"
     ToLanguageCode string `json:"to_language_code"`
+    // Tone of the translation; must be one of "", "formal", "neutral", "casual"; defaults to "neutral"
+    Tone string `json:"tone"`
 }
 
-// Translates a text to the given language. If the current user is a Telegram Premium user, then text formatting is preserved
+// Translates a text to the given language; must not be used in secret chats. If the current user is a Telegram Premium user, then text formatting is preserved
 func (client *Client) TranslateText(req *TranslateTextRequest) (*FormattedText, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4542,6 +4582,7 @@ func (client *Client) TranslateText(req *TranslateTextRequest) (*FormattedText, 
         Data: map[string]interface{}{
             "text": req.Text,
             "to_language_code": req.ToLanguageCode,
+            "tone": req.Tone,
         },
     })
     if err != nil {
@@ -4562,9 +4603,11 @@ type TranslateMessageTextRequest struct {
     MessageId int64 `json:"message_id"`
     // Language code of the language to which the message is translated. See translateText.to_language_code for the list of supported values
     ToLanguageCode string `json:"to_language_code"`
+    // Tone of the translation; see translateText.tone for the list of supported values
+    Tone string `json:"tone"`
 }
 
-// Extracts text or caption of the given message and translates it to the given language. If the current user is a Telegram Premium user, then text formatting is preserved
+// Extracts text or caption of the given message and translates it to the given language; must not be used in secret chats. If the current user is a Telegram Premium user, then text formatting is preserved
 func (client *Client) TranslateMessageText(req *TranslateMessageTextRequest) (*FormattedText, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -4574,6 +4617,7 @@ func (client *Client) TranslateMessageText(req *TranslateMessageTextRequest) (*F
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "to_language_code": req.ToLanguageCode,
+            "tone": req.Tone,
         },
     })
     if err != nil {
@@ -4592,8 +4636,10 @@ type SummarizeMessageRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the message
     MessageId int64 `json:"message_id"`
-    // Pass a language code to which the summary will be translated; may be empty if translation isn't needed. See translateText.to_language_code for the list of supported values
+    // Pass a language code to which the summary will be translated; pass an empty string if translation isn't needed. See translateText.to_language_code for the list of supported values
     TranslateToLanguageCode string `json:"translate_to_language_code"`
+    // Tone of the summarization; see translateText.tone for the list of supported values
+    Tone string `json:"tone"`
 }
 
 // Summarizes content of the message with non-empty summary_language_code
@@ -4606,6 +4652,7 @@ func (client *Client) SummarizeMessage(req *SummarizeMessageRequest) (*Formatted
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "translate_to_language_code": req.TranslateToLanguageCode,
+            "tone": req.Tone,
         },
     })
     if err != nil {
@@ -4617,6 +4664,67 @@ func (client *Client) SummarizeMessage(req *SummarizeMessageRequest) (*Formatted
     }
 
     return UnmarshalFormattedText(result.Data)
+}
+
+type ComposeTextWithAiRequest struct { 
+    // The original text
+    Text *FormattedText `json:"text"`
+    // Pass a language code to which the text will be translated; pass an empty string if translation isn't needed. See translateText.to_language_code for the list of supported values
+    TranslateToLanguageCode string `json:"translate_to_language_code"`
+    // Name of the style of the resulted text; handle updateTextCompositionStyles to get the list of supported styles; pass an empty string to keep the current style of the text
+    StyleName string `json:"style_name"`
+    // Pass true to add emoji to the text
+    AddEmojis bool `json:"add_emojis"`
+}
+
+// Changes text using an AI model; must not be used in secret chats. May return an error with a message "AICOMPOSE_FLOOD_PREMIUM" if Telegram Premium is required to send further requests
+func (client *Client) ComposeTextWithAi(req *ComposeTextWithAiRequest) (*FormattedText, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "composeTextWithAi",
+        },
+        Data: map[string]interface{}{
+            "text": req.Text,
+            "translate_to_language_code": req.TranslateToLanguageCode,
+            "style_name": req.StyleName,
+            "add_emojis": req.AddEmojis,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalFormattedText(result.Data)
+}
+
+type FixTextWithAiRequest struct { 
+    // The original text
+    Text *FormattedText `json:"text"`
+}
+
+// Fixes text using an AI model; must not be used in secret chats. May return an error with a message "AICOMPOSE_FLOOD_PREMIUM" if Telegram Premium is required to send further requests
+func (client *Client) FixTextWithAi(req *FixTextWithAiRequest) (*FixedText, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "fixTextWithAi",
+        },
+        Data: map[string]interface{}{
+            "text": req.Text,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalFixedText(result.Data)
 }
 
 type RecognizeSpeechRequest struct { 
@@ -7167,6 +7275,35 @@ func (client *Client) ReadAllForumTopicReactions(req *ReadAllForumTopicReactions
     return UnmarshalOk(result.Data)
 }
 
+type ReadAllForumTopicPollVotesRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Forum topic identifier in which poll votes are marked as read
+    ForumTopicId int32 `json:"forum_topic_id"`
+}
+
+// Marks all poll votes in a topic in a forum supergroup chat as read
+func (client *Client) ReadAllForumTopicPollVotes(req *ReadAllForumTopicPollVotesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "readAllForumTopicPollVotes",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "forum_topic_id": req.ForumTopicId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type UnpinAllForumTopicMessagesRequest struct { 
     // Identifier of the chat
     ChatId int64 `json:"chat_id"`
@@ -7861,7 +7998,7 @@ type ParseTextEntitiesRequest struct {
     ParseMode TextParseMode `json:"parse_mode"`
 }
 
-// Parses Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, BlockQuote, ExpandableBlockQuote, Code, Pre, PreCode, TextUrl and MentionName entities from a marked-up text. Can be called synchronously
+// Parses Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, BlockQuote, ExpandableBlockQuote, Code, Pre, PreCode, TextUrl, MentionName, and DateTime entities from a marked-up text. Can be called synchronously
 func ParseTextEntities(req *ParseTextEntitiesRequest) (*FormattedText, error) {
     result, err := Execute(Request{
         meta: meta{
@@ -7884,7 +8021,7 @@ func ParseTextEntities(req *ParseTextEntitiesRequest) (*FormattedText, error) {
 }
 
 // deprecated
-// Parses Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, BlockQuote, ExpandableBlockQuote, Code, Pre, PreCode, TextUrl and MentionName entities from a marked-up text. Can be called synchronously
+// Parses Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, BlockQuote, ExpandableBlockQuote, Code, Pre, PreCode, TextUrl, MentionName, and DateTime entities from a marked-up text. Can be called synchronously
 func (client *Client) ParseTextEntities(req *ParseTextEntitiesRequest) (*FormattedText, error) {
     return ParseTextEntities(req)}
 
@@ -8240,6 +8377,70 @@ func GetThemeParametersJsonString(req *GetThemeParametersJsonStringRequest) (*Te
 func (client *Client) GetThemeParametersJsonString(req *GetThemeParametersJsonStringRequest) (*Text, error) {
     return GetThemeParametersJsonString(req)}
 
+type AddPollOptionRequest struct { 
+    // Identifier of the chat to which the poll belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the poll. Use messagePoll.can_add_option to check whether an option can be added
+    MessageId int64 `json:"message_id"`
+    // The new option
+    Option *InputPollOption `json:"option"`
+}
+
+// Adds an option to a poll
+func (client *Client) AddPollOption(req *AddPollOptionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addPollOption",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "option": req.Option,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeletePollOptionRequest struct { 
+    // Identifier of the chat to which the poll belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the poll
+    MessageId int64 `json:"message_id"`
+    // Unique identifier of the option. Use pollOptionProperties.can_be_deleted to check whether the option can be deleted by the user
+    OptionId string `json:"option_id"`
+}
+
+// Adds an option to a poll
+func (client *Client) DeletePollOption(req *DeletePollOptionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deletePollOption",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "option_id": req.OptionId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type SetPollAnswerRequest struct { 
     // Identifier of the chat to which the poll belongs
     ChatId int64 `json:"chat_id"`
@@ -8249,7 +8450,7 @@ type SetPollAnswerRequest struct {
     OptionIds []int32 `json:"option_ids"`
 }
 
-// Changes the user answer to a poll. A poll in quiz mode can be answered only once
+// Changes the user answer to a poll
 func (client *Client) SetPollAnswer(req *SetPollAnswerRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8285,7 +8486,7 @@ type GetPollVotersRequest struct {
     Limit int32 `json:"limit"`
 }
 
-// Returns message senders voted for the specified option in a non-anonymous polls. For optimal performance, the number of returned users is chosen by TDLib
+// Returns message senders voted for the specified option in a poll; use poll.can_get_voters to check whether the method can be used. For optimal performance, the number of returned users is chosen by TDLib
 func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*PollVoters, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8557,10 +8758,8 @@ func (client *Client) GetLoginUrl(req *GetLoginUrlRequest) (*HttpUrl, error) {
 }
 
 type ShareUsersWithBotRequest struct { 
-    // Identifier of the chat with the bot
-    ChatId int64 `json:"chat_id"`
-    // Identifier of the message with the button
-    MessageId int64 `json:"message_id"`
+    // Source of the button
+    Source KeyboardButtonSource `json:"source"`
     // Identifier of the button
     ButtonId int32 `json:"button_id"`
     // Identifiers of the shared users
@@ -8576,8 +8775,7 @@ func (client *Client) ShareUsersWithBot(req *ShareUsersWithBotRequest) (*Ok, err
             Type: "shareUsersWithBot",
         },
         Data: map[string]interface{}{
-            "chat_id": req.ChatId,
-            "message_id": req.MessageId,
+            "source": req.Source,
             "button_id": req.ButtonId,
             "shared_user_ids": req.SharedUserIds,
             "only_check": req.OnlyCheck,
@@ -8595,10 +8793,8 @@ func (client *Client) ShareUsersWithBot(req *ShareUsersWithBotRequest) (*Ok, err
 }
 
 type ShareChatWithBotRequest struct { 
-    // Identifier of the chat with the bot
-    ChatId int64 `json:"chat_id"`
-    // Identifier of the message with the button
-    MessageId int64 `json:"message_id"`
+    // Source of the button
+    Source KeyboardButtonSource `json:"source"`
     // Identifier of the button
     ButtonId int32 `json:"button_id"`
     // Identifier of the shared chat
@@ -8614,8 +8810,7 @@ func (client *Client) ShareChatWithBot(req *ShareChatWithBotRequest) (*Ok, error
             Type: "shareChatWithBot",
         },
         Data: map[string]interface{}{
-            "chat_id": req.ChatId,
-            "message_id": req.MessageId,
+            "source": req.Source,
             "button_id": req.ButtonId,
             "shared_chat_id": req.SharedChatId,
             "only_check": req.OnlyCheck,
@@ -8770,6 +8965,64 @@ func (client *Client) GetPreparedInlineMessage(req *GetPreparedInlineMessageRequ
     }
 
     return UnmarshalPreparedInlineMessage(result.Data)
+}
+
+type SavePreparedKeyboardButtonRequest struct { 
+    // Identifier of the user
+    UserId int64 `json:"user_id"`
+    // The button; must be of the type keyboardButtonTypeRequestUsers, keyboardButtonTypeRequestChat, or keyboardButtonTypeRequestManagedBot
+    Button *KeyboardButton `json:"button"`
+}
+
+// Saves a keyboard button to be shown to the given user; for bots only
+func (client *Client) SavePreparedKeyboardButton(req *SavePreparedKeyboardButtonRequest) (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "savePreparedKeyboardButton",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+            "button": req.Button,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
+type GetPreparedKeyboardButtonRequest struct { 
+    // Identifier of the bot that created the button
+    BotUserId int64 `json:"bot_user_id"`
+    // Identifier of the prepared button
+    PreparedButtonId string `json:"prepared_button_id"`
+}
+
+// Returns a keyboard button prepared by the bot for the user. The button will be of the type keyboardButtonTypeRequestUsers, keyboardButtonTypeRequestChat, or keyboardButtonTypeRequestManagedBot
+func (client *Client) GetPreparedKeyboardButton(req *GetPreparedKeyboardButtonRequest) (*KeyboardButton, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPreparedKeyboardButton",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "prepared_button_id": req.PreparedButtonId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalKeyboardButton(result.Data)
 }
 
 type GetGrossingWebAppBotsRequest struct { 
@@ -9639,6 +9892,76 @@ func (client *Client) ClickAnimatedEmojiMessage(req *ClickAnimatedEmojiMessageRe
     return UnmarshalSticker(result.Data)
 }
 
+type ListenToAudioRequest struct { 
+    // Identifier of the file with an audio
+    AudioFileId int32 `json:"audio_file_id"`
+    // Duration of the listening to the audio, in seconds
+    Duration int32 `json:"duration"`
+}
+
+// Informs TDLib that an audio was listened by the user
+func (client *Client) ListenToAudio(req *ListenToAudioRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "listenToAudio",
+        },
+        Data: map[string]interface{}{
+            "audio_file_id": req.AudioFileId,
+            "duration": req.Duration,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SendMessageViewMetricsRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // The identifier of the message being viewed
+    MessageId int64 `json:"message_id"`
+    // The amount of time the message was seen by at least 1 pixel; in milliseconds
+    TimeInViewMs int32 `json:"time_in_view_ms"`
+    // The amount of time the message was seen by at least 1 pixel within 15 seconds after any action from the user; in milliseconds
+    ActiveTimeInViewMs int32 `json:"active_time_in_view_ms"`
+    // The ratio of the post height to the viewport height in 1/1000 fractions
+    HeightToViewportRatioPerMille int32 `json:"height_to_viewport_ratio_per_mille"`
+    // The ratio of the viewed post height to the full post height in 1/1000 fractions; 0-1000
+    SeenRangeRatioPerMille int32 `json:"seen_range_ratio_per_mille"`
+}
+
+// Informs TDLib about details of a message view by the user from a chat, a message thread or a forum topic history. The method must be called if the message wasn't seen for more than 300 milliseconds, the viewport was destroyed, or the total view duration exceeded 5 minutes
+func (client *Client) SendMessageViewMetrics(req *SendMessageViewMetricsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "sendMessageViewMetrics",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "time_in_view_ms": req.TimeInViewMs,
+            "active_time_in_view_ms": req.ActiveTimeInViewMs,
+            "height_to_viewport_ratio_per_mille": req.HeightToViewportRatioPerMille,
+            "seen_range_ratio_per_mille": req.SeenRangeRatioPerMille,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type GetInternalLinkRequest struct { 
     // Expected type of the link
     Type InternalLinkType `json:"type"`
@@ -9811,6 +10134,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeQrCodeAuthentication:
         return UnmarshalInternalLinkTypeQrCodeAuthentication(result.Data)
+
+    case TypeInternalLinkTypeRequestManagedBot:
+        return UnmarshalInternalLinkTypeRequestManagedBot(result.Data)
 
     case TypeInternalLinkTypeRestorePurchases:
         return UnmarshalInternalLinkTypeRestorePurchases(result.Data)
@@ -10081,6 +10407,32 @@ func (client *Client) ReadAllChatReactions(req *ReadAllChatReactionsRequest) (*O
     result, err := client.Send(Request{
         meta: meta{
             Type: "readAllChatReactions",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type ReadAllChatPollVotesRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+}
+
+// Marks all poll votes in a chat as read
+func (client *Client) ReadAllChatPollVotes(req *ReadAllChatPollVotesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "readAllChatPollVotes",
         },
         Data: map[string]interface{}{
             "chat_id": req.ChatId,
@@ -14830,7 +15182,7 @@ type ImportMessagesRequest struct {
     AttachedFiles []InputFile `json:"attached_files"`
 }
 
-// Imports messages exported from another app
+// Imports messages exported from another application
 func (client *Client) ImportMessages(req *ImportMessagesRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16369,7 +16721,7 @@ func (client *Client) SetLiveStoryMessageSender(req *SetLiveStoryMessageSenderRe
 type SendGroupCallMessageRequest struct { 
     // Group call identifier
     GroupCallId int32 `json:"group_call_id"`
-    // Text of the message to send; 1-getOption("group_call_message_text_length_max") characters for non-live-stories; see updateGroupCallMessageLevels for live story restrictions, which depends on paid_message_star_count. Can't contain line feeds for live stories
+    // Text of the message to send; 1-getOption("group_call_message_text_length_max") characters for non-live-stories; see updateGroupCallMessageLevels for live story restrictions, which depends on paid_message_star_count. Can't contain line feeds for live stories. Can contain only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities for live stories
     Text *FormattedText `json:"text"`
     // The number of Telegram Stars the user agreed to pay to send the message; for live stories only; 0-getOption("paid_group_call_message_star_count_max"). Must be 0 for messages sent to live stories posted by the current user
     PaidMessageStarCount int64 `json:"paid_message_star_count"`
@@ -17656,7 +18008,7 @@ func (client *Client) SetUserPersonalProfilePhoto(req *SetUserPersonalProfilePho
 type SetUserNoteRequest struct { 
     // User identifier
     UserId int64 `json:"user_id"`
-    // Note to set for the user; 0-getOption("user_note_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
+    // Note to set for the user; 0-getOption("user_note_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities are allowed
     Note *FormattedText `json:"note"`
 }
 
@@ -20672,6 +21024,117 @@ func (client *Client) DeleteBotMediaPreviews(req *DeleteBotMediaPreviewsRequest)
     return UnmarshalOk(result.Data)
 }
 
+type CheckBotUsernameRequest struct { 
+    // Username to be checked
+    Username string `json:"username"`
+}
+
+// Checks whether a username can be set for a new bot. Use checkChatUsername to check username for other chat types
+func (client *Client) CheckBotUsername(req *CheckBotUsernameRequest) (CheckChatUsernameResult, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "checkBotUsername",
+        },
+        Data: map[string]interface{}{
+            "username": req.Username,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    switch result.Type {
+    case TypeCheckChatUsernameResultOk:
+        return UnmarshalCheckChatUsernameResultOk(result.Data)
+
+    case TypeCheckChatUsernameResultUsernameInvalid:
+        return UnmarshalCheckChatUsernameResultUsernameInvalid(result.Data)
+
+    case TypeCheckChatUsernameResultUsernameOccupied:
+        return UnmarshalCheckChatUsernameResultUsernameOccupied(result.Data)
+
+    case TypeCheckChatUsernameResultUsernamePurchasable:
+        return UnmarshalCheckChatUsernameResultUsernamePurchasable(result.Data)
+
+    case TypeCheckChatUsernameResultPublicChatsTooMany:
+        return UnmarshalCheckChatUsernameResultPublicChatsTooMany(result.Data)
+
+    case TypeCheckChatUsernameResultPublicGroupsUnavailable:
+        return UnmarshalCheckChatUsernameResultPublicGroupsUnavailable(result.Data)
+
+    default:
+        return nil, errors.New("invalid type")
+   }
+}
+
+type CreateBotRequest struct { 
+    // Identifier of the bot that will manage the created bot
+    ManagerBotUserId int64 `json:"manager_bot_user_id"`
+    // Name of the bot; 1-64 characters
+    Name string `json:"name"`
+    // Username of the bot. The username must end with "bot". Use checkBotUsername to find whether the name is suitable
+    Username string `json:"username"`
+    // Pass true if the bot is created from an internalLinkTypeRequestManagedBot link
+    ViaLink bool `json:"via_link"`
+}
+
+// Creates a bot which will be managed by another bot. Returns the created bot. May return an error with a message "BOT_CREATE_LIMIT_EXCEEDED" if the user already owns the maximum allowed number of bots as per premiumLimitTypeOwnedBotCount. An internal link "https://t.me/BotFather?start=deletebot" can be processed to handle the error
+func (client *Client) CreateBot(req *CreateBotRequest) (*User, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "createBot",
+        },
+        Data: map[string]interface{}{
+            "manager_bot_user_id": req.ManagerBotUserId,
+            "name": req.Name,
+            "username": req.Username,
+            "via_link": req.ViaLink,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalUser(result.Data)
+}
+
+type GetBotTokenRequest struct { 
+    // Identifier of the created bot
+    BotUserId int64 `json:"bot_user_id"`
+    // Pass true to revoke the current token and create a new one
+    Revoke bool `json:"revoke"`
+}
+
+// Returns token of a created bot; for bots only
+func (client *Client) GetBotToken(req *GetBotTokenRequest) (*Text, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getBotToken",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "revoke": req.Revoke,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalText(result.Data)
+}
+
 type SetBotNameRequest struct { 
     // Identifier of the target bot
     BotUserId int64 `json:"bot_user_id"`
@@ -22221,7 +22684,7 @@ type SendGiftRequest struct {
     GiftId JsonInt64 `json:"gift_id"`
     // Identifier of the user or the channel chat that will receive the gift; limited gifts can't be sent to channel chats
     OwnerId MessageSender `json:"owner_id"`
-    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed. Must be empty if the receiver enabled paid messages
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities are allowed. Must be empty if the receiver enabled paid messages
     Text *FormattedText `json:"text"`
     // Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
     IsPrivate bool `json:"is_private"`
@@ -22365,7 +22828,7 @@ type PlaceGiftAuctionBidRequest struct {
     StarCount int64 `json:"star_count"`
     // Identifier of the user who will receive the gift
     UserId int64 `json:"user_id"`
-    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed. Must be empty if the receiver enabled paid messages
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities are allowed. Must be empty if the receiver enabled paid messages
     Text *FormattedText `json:"text"`
     // Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
     IsPrivate bool `json:"is_private"`
@@ -23138,6 +23601,8 @@ type SearchGiftsForResaleRequest struct {
     Order GiftForResaleOrder `json:"order"`
     // Pass true to get only gifts suitable for crafting
     ForCrafting bool `json:"for_crafting"`
+    // Pass true to get only gifts that can be bought using Telegram Stars
+    ForStars bool `json:"for_stars"`
     // Attributes used to filter received gifts. If multiple attributes of the same type are specified, then all of them are allowed. If none attributes of specific type are specified, then all values for this attribute type are allowed
     Attributes []UpgradedGiftAttributeId `json:"attributes"`
     // Offset of the first entry to return as received from the previous request with the same order and attributes; use empty string to get the first chunk of results
@@ -23156,6 +23621,7 @@ func (client *Client) SearchGiftsForResale(req *SearchGiftsForResaleRequest) (*G
             "gift_id": req.GiftId,
             "order": req.Order,
             "for_crafting": req.ForCrafting,
+            "for_stars": req.ForStars,
             "attributes": req.Attributes,
             "offset": req.Offset,
             "limit": req.Limit,
@@ -26681,7 +27147,7 @@ type GiftPremiumWithStarsRequest struct {
     StarCount int64 `json:"star_count"`
     // Number of months the Telegram Premium subscription will be active for the user
     MonthCount int32 `json:"month_count"`
-    // Text to show to the user receiving Telegram Premium; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
+    // Text to show to the user receiving Telegram Premium; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities are allowed
     Text *FormattedText `json:"text"`
 }
 
@@ -28591,6 +29057,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateChatUnreadReactionCount:
         return UnmarshalUpdateChatUnreadReactionCount(result.Data)
 
+    case TypeUpdateChatUnreadPollVoteCount:
+        return UnmarshalUpdateChatUnreadPollVoteCount(result.Data)
+
     case TypeUpdateChatVideoChat:
         return UnmarshalUpdateChatVideoChat(result.Data)
 
@@ -28918,6 +29387,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateAnimationSearchParameters:
         return UnmarshalUpdateAnimationSearchParameters(result.Data)
 
+    case TypeUpdateTextCompositionStyles:
+        return UnmarshalUpdateTextCompositionStyles(result.Data)
+
     case TypeUpdateSuggestedActions:
         return UnmarshalUpdateSuggestedActions(result.Data)
 
@@ -28974,6 +29446,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdatePollAnswer:
         return UnmarshalUpdatePollAnswer(result.Data)
+
+    case TypeUpdateManagedBot:
+        return UnmarshalUpdateManagedBot(result.Data)
 
     case TypeUpdateChatMember:
         return UnmarshalUpdateChatMember(result.Data)
