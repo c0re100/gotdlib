@@ -162,6 +162,8 @@ func (client *Client) SetAuthenticationPhoneNumber(req *SetAuthenticationPhoneNu
 }
 
 type CheckAuthenticationPremiumPurchaseRequest struct { 
+    // The number of days for which the Telegram Premium subscription will be granted
+    PremiumDayCount int32 `json:"premium_day_count"`
     // ISO 4217 currency code of the payment currency
     Currency string `json:"currency"`
     // Paid amount, in the smallest units of the currency
@@ -175,6 +177,7 @@ func (client *Client) CheckAuthenticationPremiumPurchase(req *CheckAuthenticatio
             Type: "checkAuthenticationPremiumPurchase",
         },
         Data: map[string]interface{}{
+            "premium_day_count": req.PremiumDayCount,
             "currency": req.Currency,
             "amount": req.Amount,
         },
@@ -195,6 +198,8 @@ type SetAuthenticationPremiumPurchaseTransactionRequest struct {
     Transaction StoreTransaction `json:"transaction"`
     // Pass true if this is a restore of a Telegram Premium purchase; only for App Store
     IsRestore bool `json:"is_restore"`
+    // The number of days for which the Telegram Premium subscription will be granted
+    PremiumDayCount int32 `json:"premium_day_count"`
     // ISO 4217 currency code of the payment currency
     Currency string `json:"currency"`
     // Paid amount, in the smallest units of the currency
@@ -210,6 +215,7 @@ func (client *Client) SetAuthenticationPremiumPurchaseTransaction(req *SetAuthen
         Data: map[string]interface{}{
             "transaction": req.Transaction,
             "is_restore": req.IsRestore,
+            "premium_day_count": req.PremiumDayCount,
             "currency": req.Currency,
             "amount": req.Amount,
         },
@@ -4564,6 +4570,212 @@ func (client *Client) GetMessageLinkInfo(req *GetMessageLinkInfoRequest) (*Messa
     return UnmarshalMessageLinkInfo(result.Data)
 }
 
+type CreateTextCompositionStyleRequest struct { 
+    // Title of the style; 1-getOption("text_composition_style_title_length_max") characters
+    Title string `json:"title"`
+    // Identifier of the custom emoji corresponding to the style
+    CustomEmojiId JsonInt64 `json:"custom_emoji_id"`
+    // Prompt that will be used for text composition; 1-getOption("text_composition_style_prompt_length_max") characters
+    Prompt string `json:"prompt"`
+    // Pass true if the current user must be shown as the creator of the style
+    ShowCreator bool `json:"show_creator"`
+}
+
+// Creates a custom text composition style. May return an error with a message "TONES_SAVED_TOO_MANY" if the maximum number of added custom styles has been reached
+func (client *Client) CreateTextCompositionStyle(req *CreateTextCompositionStyleRequest) (*TextCompositionStyle, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "createTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "title": req.Title,
+            "custom_emoji_id": req.CustomEmojiId,
+            "prompt": req.Prompt,
+            "show_creator": req.ShowCreator,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalTextCompositionStyle(result.Data)
+}
+
+type EditTextCompositionStyleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+    // Title of the style; 1-getOption("text_composition_style_title_length_max") characters
+    Title string `json:"title"`
+    // Identifier of the custom emoji corresponding to the style
+    CustomEmojiId JsonInt64 `json:"custom_emoji_id"`
+    // Prompt that will be used for text composition; 1-getOption("text_composition_style_prompt_length_max") characters
+    Prompt string `json:"prompt"`
+    // Pass true if the current user must be shown as the creator of the style
+    ShowCreator bool `json:"show_creator"`
+}
+
+// Edits a custom text composition style that was created by the current user
+func (client *Client) EditTextCompositionStyle(req *EditTextCompositionStyleRequest) (*TextCompositionStyle, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+            "title": req.Title,
+            "custom_emoji_id": req.CustomEmojiId,
+            "prompt": req.Prompt,
+            "show_creator": req.ShowCreator,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalTextCompositionStyle(result.Data)
+}
+
+type DeleteTextCompositionStyleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+}
+
+// Deletes a custom text composition style that was created by the current user
+func (client *Client) DeleteTextCompositionStyle(req *DeleteTextCompositionStyleRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type SearchTextCompositionStyleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+}
+
+// Searches a custom text composition style by its name
+func (client *Client) SearchTextCompositionStyle(req *SearchTextCompositionStyleRequest) (*TextCompositionStyle, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "searchTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalTextCompositionStyle(result.Data)
+}
+
+type GetTextCompositionStyleExampleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+    // 0-based unique number of the requested example; must be non-negative and less than getOption("text_composition_style_example_count")
+    ExampleNumber int32 `json:"example_number"`
+}
+
+// Returns an example of usage of a custom text composition style
+func (client *Client) GetTextCompositionStyleExample(req *GetTextCompositionStyleExampleRequest) (*TextCompositionStyleExample, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getTextCompositionStyleExample",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+            "example_number": req.ExampleNumber,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalTextCompositionStyleExample(result.Data)
+}
+
+type AddTextCompositionStyleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+}
+
+// Adds a custom text composition style to the list of used by the user styles. May return an error with a message "TONES_SAVED_TOO_MANY" if the maximum number of added custom styles has been reached
+func (client *Client) AddTextCompositionStyle(req *AddTextCompositionStyleRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type RemoveTextCompositionStyleRequest struct { 
+    // Name of the style
+    Name string `json:"name"`
+}
+
+// Removes a custom text composition style from the list of used by the user styles. If the style was created by the current user, then it can only be deleted
+func (client *Client) RemoveTextCompositionStyle(req *RemoveTextCompositionStyleRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "removeTextCompositionStyle",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type TranslateTextRequest struct { 
     // Text to translate
     Text *FormattedText `json:"text"`
@@ -7592,6 +7804,67 @@ func (client *Client) RemoveMessageReaction(req *RemoveMessageReactionRequest) (
     return UnmarshalOk(result.Data)
 }
 
+type DeleteAllRecentMessageReactionsFromSenderRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the sender of reactions to delete
+    SenderId MessageSender `json:"sender_id"`
+}
+
+// Deletes all recent reactions added by the specified sender in a chat. Supported only for basic groups and supergroups; requires can_delete_messages administrator right
+func (client *Client) DeleteAllRecentMessageReactionsFromSender(req *DeleteAllRecentMessageReactionsFromSenderRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteAllRecentMessageReactionsFromSender",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "sender_id": req.SenderId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteMessageReactionsFromSenderRequest struct { 
+    // Chat identifier
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the reactions. Use messageProperties.can_delete_reactions to check whether the method can be used for a message
+    MessageId int64 `json:"message_id"`
+    // Identifier of the sender of reactions to delete
+    SenderId MessageSender `json:"sender_id"`
+}
+
+// Deletes all reactions added by the specified sender on a message
+func (client *Client) DeleteMessageReactionsFromSender(req *DeleteMessageReactionsFromSenderRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteMessageReactionsFromSender",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "sender_id": req.SenderId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type GetChatAvailablePaidMessageReactionSendersRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
@@ -8418,7 +8691,7 @@ type DeletePollOptionRequest struct {
     OptionId string `json:"option_id"`
 }
 
-// Adds an option to a poll
+// Deletes an option from a poll
 func (client *Client) DeletePollOption(req *DeletePollOptionRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -8509,6 +8782,38 @@ func (client *Client) GetPollVoters(req *GetPollVotersRequest) (*PollVoters, err
     }
 
     return UnmarshalPollVoters(result.Data)
+}
+
+type GetPollVoteStatisticsRequest struct { 
+    // Identifier of the chat to which the poll belongs
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message containing the poll. Use messageProperties.can_get_poll_vote_statistics to check whether the method can be used for a message
+    MessageId int64 `json:"message_id"`
+    // Pass true if a dark theme is used by the application
+    IsDark bool `json:"is_dark"`
+}
+
+// Returns statistics of poll votes in a poll
+func (client *Client) GetPollVoteStatistics(req *GetPollVoteStatisticsRequest) (*PollVoteStatistics, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPollVoteStatistics",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
+            "is_dark": req.IsDark,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalPollVoteStatistics(result.Data)
 }
 
 type StopPollRequest struct { 
@@ -8904,6 +9209,35 @@ func (client *Client) AnswerInlineQuery(req *AnswerInlineQueryRequest) (*Ok, err
     }
 
     return UnmarshalOk(result.Data)
+}
+
+type AnswerGuestQueryRequest struct { 
+    // Identifier of the guest query
+    GuestQueryId JsonInt64 `json:"guest_query_id"`
+    // The result of the query
+    Result InputInlineQueryResult `json:"result"`
+}
+
+// Sets the result of a guest query; for bots only
+func (client *Client) AnswerGuestQuery(req *AnswerGuestQueryRequest) (*InlineMessageId, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "answerGuestQuery",
+        },
+        Data: map[string]interface{}{
+            "guest_query_id": req.GuestQueryId,
+            "result": req.Result,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalInlineMessageId(result.Data)
 }
 
 type SavePreparedInlineMessageRequest struct { 
@@ -9324,7 +9658,7 @@ type AnswerWebAppQueryRequest struct {
 }
 
 // Sets the result of interaction with a Web App and sends corresponding message on behalf of the user to the chat from which the query originated; for bots only
-func (client *Client) AnswerWebAppQuery(req *AnswerWebAppQueryRequest) (*SentWebAppMessage, error) {
+func (client *Client) AnswerWebAppQuery(req *AnswerWebAppQueryRequest) (*InlineMessageId, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "answerWebAppQuery",
@@ -9342,7 +9676,7 @@ func (client *Client) AnswerWebAppQuery(req *AnswerWebAppQueryRequest) (*SentWeb
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalSentWebAppMessage(result.Data)
+    return UnmarshalInlineMessageId(result.Data)
 }
 
 type CheckWebAppFileDownloadRequest struct { 
@@ -9719,7 +10053,7 @@ type SendTextMessageDraftRequest struct {
     ForumTopicId int32 `json:"forum_topic_id"`
     // Unique identifier of the draft
     DraftId JsonInt64 `json:"draft_id"`
-    // Draft text of the message
+    // Draft text of the message; pass null to show a "Thinking..." placeholder
     Text *FormattedText `json:"text"`
 }
 
@@ -10161,6 +10495,9 @@ func (client *Client) GetInternalLinkType(req *GetInternalLinkTypeRequest) (Inte
 
     case TypeInternalLinkTypeStoryAlbum:
         return UnmarshalInternalLinkTypeStoryAlbum(result.Data)
+
+    case TypeInternalLinkTypeTextCompositionStyle:
+        return UnmarshalInternalLinkTypeTextCompositionStyle(result.Data)
 
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(result.Data)
@@ -12628,7 +12965,7 @@ type GetSavedNotificationSoundRequest struct {
 }
 
 // Returns saved notification sound by its identifier. Returns a 404 error if there is no saved notification sound with the specified identifier
-func (client *Client) GetSavedNotificationSound(req *GetSavedNotificationSoundRequest) (*NotificationSounds, error) {
+func (client *Client) GetSavedNotificationSound(req *GetSavedNotificationSoundRequest) (*NotificationSound, error) {
     result, err := client.Send(Request{
         meta: meta{
             Type: "getSavedNotificationSound",
@@ -12645,7 +12982,7 @@ func (client *Client) GetSavedNotificationSound(req *GetSavedNotificationSoundRe
         return nil, buildResponseError(result.Data)
     }
 
-    return UnmarshalNotificationSounds(result.Data)
+    return UnmarshalNotificationSound(result.Data)
 }
 
 // Returns the list of saved notification sounds. If a sound isn't in the list, then default sound needs to be used
@@ -18150,6 +18487,35 @@ func (client *Client) SetUserEmojiStatus(req *SetUserEmojiStatusRequest) (*Ok, e
     return UnmarshalOk(result.Data)
 }
 
+type GetPersonalChatHistoryRequest struct { 
+    // User identifier
+    UserId int64 `json:"user_id"`
+    // The maximum number of messages to be returned; 1-20
+    Limit int32 `json:"limit"`
+}
+
+// Returns messages in the personal chat of a given user; for bots only
+func (client *Client) GetPersonalChatHistory(req *GetPersonalChatHistoryRequest) (*Messages, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getPersonalChatHistory",
+        },
+        Data: map[string]interface{}{
+            "user_id": req.UserId,
+            "limit": req.Limit,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalMessages(result.Data)
+}
+
 type SearchUserByPhoneNumberRequest struct { 
     // Phone number to search for
     PhoneNumber string `json:"phone_number"`
@@ -18296,8 +18662,14 @@ func (client *Client) IsProfileAudio(req *IsProfileAudioRequest) (*Ok, error) {
 }
 
 type AddProfileAudioRequest struct { 
-    // Identifier of the audio file to be added. The file must have been uploaded to the server
-    FileId int32 `json:"file_id"`
+    // The audio file to be added
+    Audio InputFile `json:"audio"`
+    // Duration of the audio, in seconds; may be replaced by the server; ignored for already uploaded files
+    Duration int32 `json:"duration"`
+    // Title of the audio; 0-64 characters; may be replaced by the server; ignored for already uploaded files
+    Title string `json:"title"`
+    // Performer of the audio; 0-64 characters, may be replaced by the server; ignored for already uploaded files
+    Performer string `json:"performer"`
 }
 
 // Adds an audio file to the beginning of the profile audio files of the current user
@@ -18307,7 +18679,10 @@ func (client *Client) AddProfileAudio(req *AddProfileAudioRequest) (*Ok, error) 
             Type: "addProfileAudio",
         },
         Data: map[string]interface{}{
-            "file_id": req.FileId,
+            "audio": req.Audio,
+            "duration": req.Duration,
+            "title": req.Title,
+            "performer": req.Performer,
         },
     })
     if err != nil {
@@ -21106,18 +21481,18 @@ func (client *Client) CreateBot(req *CreateBotRequest) (*User, error) {
     return UnmarshalUser(result.Data)
 }
 
-type GetBotTokenRequest struct { 
-    // Identifier of the created bot
+type GetManagedBotTokenRequest struct { 
+    // Identifier of the managed bot
     BotUserId int64 `json:"bot_user_id"`
     // Pass true to revoke the current token and create a new one
     Revoke bool `json:"revoke"`
 }
 
-// Returns token of a created bot; for bots only
-func (client *Client) GetBotToken(req *GetBotTokenRequest) (*Text, error) {
+// Returns token of a managed bot; for bots only
+func (client *Client) GetManagedBotToken(req *GetManagedBotTokenRequest) (*Text, error) {
     result, err := client.Send(Request{
         meta: meta{
-            Type: "getBotToken",
+            Type: "getManagedBotToken",
         },
         Data: map[string]interface{}{
             "bot_user_id": req.BotUserId,
@@ -21133,6 +21508,61 @@ func (client *Client) GetBotToken(req *GetBotTokenRequest) (*Text, error) {
     }
 
     return UnmarshalText(result.Data)
+}
+
+type GetManagedBotAccessSettingsRequest struct { 
+    // Identifier of the managed bot
+    BotUserId int64 `json:"bot_user_id"`
+}
+
+// Returns access settings of a managed bot; for bots only
+func (client *Client) GetManagedBotAccessSettings(req *GetManagedBotAccessSettingsRequest) (*BotAccessSettings, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "getManagedBotAccessSettings",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalBotAccessSettings(result.Data)
+}
+
+type SetManagedBotAccessSettingsRequest struct { 
+    // Identifier of the managed bot
+    BotUserId int64 `json:"bot_user_id"`
+    // New access settings
+    Settings *BotAccessSettings `json:"settings"`
+}
+
+// Sets access settings of a managed bot; for bots only
+func (client *Client) SetManagedBotAccessSettings(req *SetManagedBotAccessSettingsRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setManagedBotAccessSettings",
+        },
+        Data: map[string]interface{}{
+            "bot_user_id": req.BotUserId,
+            "settings": req.Settings,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
 }
 
 type SetBotNameRequest struct { 
@@ -23546,7 +23976,7 @@ func (client *Client) GetUpgradedGiftWithdrawalUrl(req *GetUpgradedGiftWithdrawa
     return UnmarshalHttpUrl(result.Data)
 }
 
-// Returns promotional anumation for upgraded gifts
+// Returns promotional animation for upgraded gifts
 func (client *Client) GetUpgradedGiftsPromotionalAnimation() (*Animation, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -28155,6 +28585,8 @@ type AddProxyRequest struct {
     Proxy *Proxy `json:"proxy"`
     // Pass true to immediately enable the proxy
     Enable bool `json:"enable"`
+    // Comment to set for the proxy
+    Comment string `json:"comment"`
 }
 
 // Adds a proxy server for network requests. Can be called before authorization
@@ -28166,6 +28598,7 @@ func (client *Client) AddProxy(req *AddProxyRequest) (*AddedProxy, error) {
         Data: map[string]interface{}{
             "proxy": req.Proxy,
             "enable": req.Enable,
+            "comment": req.Comment,
         },
     })
     if err != nil {
@@ -28186,6 +28619,8 @@ type EditProxyRequest struct {
     Proxy *Proxy `json:"proxy"`
     // Pass true to immediately enable the proxy
     Enable bool `json:"enable"`
+    // New comment for the proxy
+    Comment string `json:"comment"`
 }
 
 // Edits an existing proxy server for network requests. Can be called before authorization
@@ -28198,6 +28633,7 @@ func (client *Client) EditProxy(req *EditProxyRequest) (*AddedProxy, error) {
             "proxy_id": req.ProxyId,
             "proxy": req.Proxy,
             "enable": req.Enable,
+            "comment": req.Comment,
         },
     })
     if err != nil {
@@ -28970,6 +29406,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateMessageUnreadReactions:
         return UnmarshalUpdateMessageUnreadReactions(result.Data)
 
+    case TypeUpdateMessageContainsUnreadPollVotes:
+        return UnmarshalUpdateMessageContainsUnreadPollVotes(result.Data)
+
     case TypeUpdateMessageFactCheck:
         return UnmarshalUpdateMessageFactCheck(result.Data)
 
@@ -29419,6 +29858,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateNewChosenInlineResult:
         return UnmarshalUpdateNewChosenInlineResult(result.Data)
+
+    case TypeUpdateNewGuestQuery:
+        return UnmarshalUpdateNewGuestQuery(result.Data)
 
     case TypeUpdateNewCallbackQuery:
         return UnmarshalUpdateNewCallbackQuery(result.Data)

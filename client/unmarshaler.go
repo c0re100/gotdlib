@@ -545,6 +545,52 @@ func UnmarshalListOfInputPollType(dataList []json.RawMessage) ([]InputPollType, 
     return list, nil
 }
 
+func UnmarshalPollVoteRestrictionReason(data json.RawMessage) (PollVoteRestrictionReason, error) {
+    var meta meta
+
+    err := json.Unmarshal(data, &meta)
+    if err != nil {
+        return nil, err
+    }
+
+    switch meta.Type {
+    case TypePollVoteRestrictionReasonClosed:
+        return UnmarshalPollVoteRestrictionReasonClosed(data)
+
+    case TypePollVoteRestrictionReasonYetUnsent:
+        return UnmarshalPollVoteRestrictionReasonYetUnsent(data)
+
+    case TypePollVoteRestrictionReasonScheduled:
+        return UnmarshalPollVoteRestrictionReasonScheduled(data)
+
+    case TypePollVoteRestrictionReasonCountryRestricted:
+        return UnmarshalPollVoteRestrictionReasonCountryRestricted(data)
+
+    case TypePollVoteRestrictionReasonMembershipRequired:
+        return UnmarshalPollVoteRestrictionReasonMembershipRequired(data)
+
+    case TypePollVoteRestrictionReasonOther:
+        return UnmarshalPollVoteRestrictionReasonOther(data)
+
+    default:
+        return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
+    }
+}
+
+func UnmarshalListOfPollVoteRestrictionReason(dataList []json.RawMessage) ([]PollVoteRestrictionReason, error) {
+    list := []PollVoteRestrictionReason{}
+
+    for _, data := range dataList {
+        entity, err := UnmarshalPollVoteRestrictionReason(data)
+        if err != nil {
+            return nil, err
+        }
+        list = append(list, entity)
+    }
+
+    return list, nil
+}
+
 func UnmarshalProfileTab(data json.RawMessage) (ProfileTab, error) {
     var meta meta
 
@@ -3578,6 +3624,9 @@ func UnmarshalLinkPreviewType(data json.RawMessage) (LinkPreviewType, error) {
     case TypeLinkPreviewTypeSupergroupBoost:
         return UnmarshalLinkPreviewTypeSupergroupBoost(data)
 
+    case TypeLinkPreviewTypeTextCompositionStyle:
+        return UnmarshalLinkPreviewTypeTextCompositionStyle(data)
+
     case TypeLinkPreviewTypeTheme:
         return UnmarshalLinkPreviewTypeTheme(data)
 
@@ -6072,6 +6121,9 @@ func UnmarshalReactionUnavailabilityReason(data json.RawMessage) (ReactionUnavai
     case TypeReactionUnavailabilityReasonGuest:
         return UnmarshalReactionUnavailabilityReasonGuest(data)
 
+    case TypeReactionUnavailabilityReasonRestricted:
+        return UnmarshalReactionUnavailabilityReasonRestricted(data)
+
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
     }
@@ -6730,6 +6782,9 @@ func UnmarshalPremiumLimitType(data json.RawMessage) (PremiumLimitType, error) {
 
     case TypePremiumLimitTypeOwnedBotCount:
         return UnmarshalPremiumLimitTypeOwnedBotCount(data)
+
+    case TypePremiumLimitTypeCustomTextCompositionStyleCount:
+        return UnmarshalPremiumLimitTypeCustomTextCompositionStyleCount(data)
 
     default:
         return nil, fmt.Errorf("Error unmarshaling. Unknown type: " +  meta.Type)
@@ -8680,6 +8735,9 @@ func UnmarshalInternalLinkType(data json.RawMessage) (InternalLinkType, error) {
     case TypeInternalLinkTypeStoryAlbum:
         return UnmarshalInternalLinkTypeStoryAlbum(data)
 
+    case TypeInternalLinkTypeTextCompositionStyle:
+        return UnmarshalInternalLinkTypeTextCompositionStyle(data)
+
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(data)
 
@@ -9040,6 +9098,9 @@ func UnmarshalTopChatCategory(data json.RawMessage) (TopChatCategory, error) {
 
     case TypeTopChatCategoryInlineBots:
         return UnmarshalTopChatCategoryInlineBots(data)
+
+    case TypeTopChatCategoryGuestBots:
+        return UnmarshalTopChatCategoryGuestBots(data)
 
     case TypeTopChatCategoryWebAppBots:
         return UnmarshalTopChatCategoryWebAppBots(data)
@@ -9609,6 +9670,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateMessageUnreadReactions:
         return UnmarshalUpdateMessageUnreadReactions(data)
 
+    case TypeUpdateMessageContainsUnreadPollVotes:
+        return UnmarshalUpdateMessageContainsUnreadPollVotes(data)
+
     case TypeUpdateMessageFactCheck:
         return UnmarshalUpdateMessageFactCheck(data)
 
@@ -10059,6 +10123,9 @@ func UnmarshalUpdate(data json.RawMessage) (Update, error) {
     case TypeUpdateNewChosenInlineResult:
         return UnmarshalUpdateNewChosenInlineResult(data)
 
+    case TypeUpdateNewGuestQuery:
+        return UnmarshalUpdateNewGuestQuery(data)
+
     case TypeUpdateNewCallbackQuery:
         return UnmarshalUpdateNewCallbackQuery(data)
 
@@ -10357,6 +10424,14 @@ func UnmarshalDiffText(data json.RawMessage) (*DiffText, error) {
 
 func UnmarshalFixedText(data json.RawMessage) (*FixedText, error) {
     var resp FixedText
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalTextCompositionStyleExample(data json.RawMessage) (*TextCompositionStyleExample, error) {
+    var resp TextCompositionStyleExample
 
     err := json.Unmarshal(data, &resp)
 
@@ -10851,6 +10926,54 @@ func UnmarshalInputPollTypeQuiz(data json.RawMessage) (*InputPollTypeQuiz, error
     return &resp, err
 }
 
+func UnmarshalPollVoteRestrictionReasonClosed(data json.RawMessage) (*PollVoteRestrictionReasonClosed, error) {
+    var resp PollVoteRestrictionReasonClosed
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPollVoteRestrictionReasonYetUnsent(data json.RawMessage) (*PollVoteRestrictionReasonYetUnsent, error) {
+    var resp PollVoteRestrictionReasonYetUnsent
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPollVoteRestrictionReasonScheduled(data json.RawMessage) (*PollVoteRestrictionReasonScheduled, error) {
+    var resp PollVoteRestrictionReasonScheduled
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPollVoteRestrictionReasonCountryRestricted(data json.RawMessage) (*PollVoteRestrictionReasonCountryRestricted, error) {
+    var resp PollVoteRestrictionReasonCountryRestricted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPollVoteRestrictionReasonMembershipRequired(data json.RawMessage) (*PollVoteRestrictionReasonMembershipRequired, error) {
+    var resp PollVoteRestrictionReasonMembershipRequired
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPollVoteRestrictionReasonOther(data json.RawMessage) (*PollVoteRestrictionReasonOther, error) {
+    var resp PollVoteRestrictionReasonOther
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalChecklistTask(data json.RawMessage) (*ChecklistTask, error) {
     var resp ChecklistTask
 
@@ -11189,6 +11312,14 @@ func UnmarshalBotCommands(data json.RawMessage) (*BotCommands, error) {
 
 func UnmarshalBotMenuButton(data json.RawMessage) (*BotMenuButton, error) {
     var resp BotMenuButton
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalBotAccessSettings(data json.RawMessage) (*BotAccessSettings, error) {
+    var resp BotAccessSettings
 
     err := json.Unmarshal(data, &resp)
 
@@ -15795,6 +15926,14 @@ func UnmarshalLinkPreviewTypeSupergroupBoost(data json.RawMessage) (*LinkPreview
     return &resp, err
 }
 
+func UnmarshalLinkPreviewTypeTextCompositionStyle(data json.RawMessage) (*LinkPreviewTypeTextCompositionStyle, error) {
+    var resp LinkPreviewTypeTextCompositionStyle
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalLinkPreviewTypeTheme(data json.RawMessage) (*LinkPreviewTypeTheme, error) {
     var resp LinkPreviewTypeTheme
 
@@ -19659,6 +19798,14 @@ func UnmarshalReactionUnavailabilityReasonGuest(data json.RawMessage) (*Reaction
     return &resp, err
 }
 
+func UnmarshalReactionUnavailabilityReasonRestricted(data json.RawMessage) (*ReactionUnavailabilityReasonRestricted, error) {
+    var resp ReactionUnavailabilityReasonRestricted
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalAnimations(data json.RawMessage) (*Animations, error) {
     var resp Animations
 
@@ -19741,14 +19888,6 @@ func UnmarshalAttachmentMenuBotColor(data json.RawMessage) (*AttachmentMenuBotCo
 
 func UnmarshalAttachmentMenuBot(data json.RawMessage) (*AttachmentMenuBot, error) {
     var resp AttachmentMenuBot
-
-    err := json.Unmarshal(data, &resp)
-
-    return &resp, err
-}
-
-func UnmarshalSentWebAppMessage(data json.RawMessage) (*SentWebAppMessage, error) {
-    var resp SentWebAppMessage
 
     err := json.Unmarshal(data, &resp)
 
@@ -20053,6 +20192,14 @@ func UnmarshalInlineQueryResultsButton(data json.RawMessage) (*InlineQueryResult
 
 func UnmarshalInlineQueryResults(data json.RawMessage) (*InlineQueryResults, error) {
     var resp InlineQueryResults
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalInlineMessageId(data json.RawMessage) (*InlineMessageId, error) {
+    var resp InlineMessageId
 
     err := json.Unmarshal(data, &resp)
 
@@ -20789,6 +20936,14 @@ func UnmarshalPremiumLimitTypeSimilarChatCount(data json.RawMessage) (*PremiumLi
 
 func UnmarshalPremiumLimitTypeOwnedBotCount(data json.RawMessage) (*PremiumLimitTypeOwnedBotCount, error) {
     var resp PremiumLimitTypeOwnedBotCount
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalPremiumLimitTypeCustomTextCompositionStyleCount(data json.RawMessage) (*PremiumLimitTypeCustomTextCompositionStyleCount, error) {
+    var resp PremiumLimitTypeCustomTextCompositionStyleCount
 
     err := json.Unmarshal(data, &resp)
 
@@ -23611,6 +23766,14 @@ func UnmarshalInternalLinkTypeStoryAlbum(data json.RawMessage) (*InternalLinkTyp
     return &resp, err
 }
 
+func UnmarshalInternalLinkTypeTextCompositionStyle(data json.RawMessage) (*InternalLinkTypeTextCompositionStyle, error) {
+    var resp InternalLinkTypeTextCompositionStyle
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalInternalLinkTypeTheme(data json.RawMessage) (*InternalLinkTypeTheme, error) {
     var resp InternalLinkTypeTheme
 
@@ -24179,6 +24342,14 @@ func UnmarshalTopChatCategoryInlineBots(data json.RawMessage) (*TopChatCategoryI
     return &resp, err
 }
 
+func UnmarshalTopChatCategoryGuestBots(data json.RawMessage) (*TopChatCategoryGuestBots, error) {
+    var resp TopChatCategoryGuestBots
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalTopChatCategoryWebAppBots(data json.RawMessage) (*TopChatCategoryWebAppBots, error) {
     var resp TopChatCategoryWebAppBots
 
@@ -24659,6 +24830,14 @@ func UnmarshalStoryStatistics(data json.RawMessage) (*StoryStatistics, error) {
     return &resp, err
 }
 
+func UnmarshalPollVoteStatistics(data json.RawMessage) (*PollVoteStatistics, error) {
+    var resp PollVoteStatistics
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalRevenueWithdrawalStatePending(data json.RawMessage) (*RevenueWithdrawalStatePending, error) {
     var resp RevenueWithdrawalStatePending
 
@@ -24965,6 +25144,14 @@ func UnmarshalUpdateMessageMentionRead(data json.RawMessage) (*UpdateMessageMent
 
 func UnmarshalUpdateMessageUnreadReactions(data json.RawMessage) (*UpdateMessageUnreadReactions, error) {
     var resp UpdateMessageUnreadReactions
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
+func UnmarshalUpdateMessageContainsUnreadPollVotes(data json.RawMessage) (*UpdateMessageContainsUnreadPollVotes, error) {
+    var resp UpdateMessageContainsUnreadPollVotes
 
     err := json.Unmarshal(data, &resp)
 
@@ -26171,6 +26358,14 @@ func UnmarshalUpdateNewChosenInlineResult(data json.RawMessage) (*UpdateNewChose
     return &resp, err
 }
 
+func UnmarshalUpdateNewGuestQuery(data json.RawMessage) (*UpdateNewGuestQuery, error) {
+    var resp UpdateNewGuestQuery
+
+    err := json.Unmarshal(data, &resp)
+
+    return &resp, err
+}
+
 func UnmarshalUpdateNewCallbackQuery(data json.RawMessage) (*UpdateNewCallbackQuery, error) {
     var resp UpdateNewCallbackQuery
 
@@ -26495,6 +26690,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeFixedText:
         return UnmarshalFixedText(data)
 
+    case TypeTextCompositionStyleExample:
+        return UnmarshalTextCompositionStyleExample(data)
+
     case TypeTextCompositionStyle:
         return UnmarshalTextCompositionStyle(data)
 
@@ -26678,6 +26876,24 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeInputPollTypeQuiz:
         return UnmarshalInputPollTypeQuiz(data)
 
+    case TypePollVoteRestrictionReasonClosed:
+        return UnmarshalPollVoteRestrictionReasonClosed(data)
+
+    case TypePollVoteRestrictionReasonYetUnsent:
+        return UnmarshalPollVoteRestrictionReasonYetUnsent(data)
+
+    case TypePollVoteRestrictionReasonScheduled:
+        return UnmarshalPollVoteRestrictionReasonScheduled(data)
+
+    case TypePollVoteRestrictionReasonCountryRestricted:
+        return UnmarshalPollVoteRestrictionReasonCountryRestricted(data)
+
+    case TypePollVoteRestrictionReasonMembershipRequired:
+        return UnmarshalPollVoteRestrictionReasonMembershipRequired(data)
+
+    case TypePollVoteRestrictionReasonOther:
+        return UnmarshalPollVoteRestrictionReasonOther(data)
+
     case TypeChecklistTask:
         return UnmarshalChecklistTask(data)
 
@@ -26806,6 +27022,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeBotMenuButton:
         return UnmarshalBotMenuButton(data)
+
+    case TypeBotAccessSettings:
+        return UnmarshalBotAccessSettings(data)
 
     case TypeBotVerificationParameters:
         return UnmarshalBotVerificationParameters(data)
@@ -28532,6 +28751,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeLinkPreviewTypeSupergroupBoost:
         return UnmarshalLinkPreviewTypeSupergroupBoost(data)
 
+    case TypeLinkPreviewTypeTextCompositionStyle:
+        return UnmarshalLinkPreviewTypeTextCompositionStyle(data)
+
     case TypeLinkPreviewTypeTheme:
         return UnmarshalLinkPreviewTypeTheme(data)
 
@@ -29981,6 +30203,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeReactionUnavailabilityReasonGuest:
         return UnmarshalReactionUnavailabilityReasonGuest(data)
 
+    case TypeReactionUnavailabilityReasonRestricted:
+        return UnmarshalReactionUnavailabilityReasonRestricted(data)
+
     case TypeAnimations:
         return UnmarshalAnimations(data)
 
@@ -30013,9 +30238,6 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeAttachmentMenuBot:
         return UnmarshalAttachmentMenuBot(data)
-
-    case TypeSentWebAppMessage:
-        return UnmarshalSentWebAppMessage(data)
 
     case TypeBotWriteAccessAllowReasonConnectedWebsite:
         return UnmarshalBotWriteAccessAllowReasonConnectedWebsite(data)
@@ -30130,6 +30352,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeInlineQueryResults:
         return UnmarshalInlineQueryResults(data)
+
+    case TypeInlineMessageId:
+        return UnmarshalInlineMessageId(data)
 
     case TypePreparedInlineMessageId:
         return UnmarshalPreparedInlineMessageId(data)
@@ -30406,6 +30631,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypePremiumLimitTypeOwnedBotCount:
         return UnmarshalPremiumLimitTypeOwnedBotCount(data)
+
+    case TypePremiumLimitTypeCustomTextCompositionStyleCount:
+        return UnmarshalPremiumLimitTypeCustomTextCompositionStyleCount(data)
 
     case TypePremiumFeatureIncreasedLimits:
         return UnmarshalPremiumFeatureIncreasedLimits(data)
@@ -31463,6 +31691,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeInternalLinkTypeStoryAlbum:
         return UnmarshalInternalLinkTypeStoryAlbum(data)
 
+    case TypeInternalLinkTypeTextCompositionStyle:
+        return UnmarshalInternalLinkTypeTextCompositionStyle(data)
+
     case TypeInternalLinkTypeTheme:
         return UnmarshalInternalLinkTypeTheme(data)
 
@@ -31676,6 +31907,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeTopChatCategoryInlineBots:
         return UnmarshalTopChatCategoryInlineBots(data)
 
+    case TypeTopChatCategoryGuestBots:
+        return UnmarshalTopChatCategoryGuestBots(data)
+
     case TypeTopChatCategoryWebAppBots:
         return UnmarshalTopChatCategoryWebAppBots(data)
 
@@ -31856,6 +32090,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
     case TypeStoryStatistics:
         return UnmarshalStoryStatistics(data)
 
+    case TypePollVoteStatistics:
+        return UnmarshalPollVoteStatistics(data)
+
     case TypeRevenueWithdrawalStatePending:
         return UnmarshalRevenueWithdrawalStatePending(data)
 
@@ -31972,6 +32209,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateMessageUnreadReactions:
         return UnmarshalUpdateMessageUnreadReactions(data)
+
+    case TypeUpdateMessageContainsUnreadPollVotes:
+        return UnmarshalUpdateMessageContainsUnreadPollVotes(data)
 
     case TypeUpdateMessageFactCheck:
         return UnmarshalUpdateMessageFactCheck(data)
@@ -32422,6 +32662,9 @@ func UnmarshalType(data json.RawMessage) (Type, error) {
 
     case TypeUpdateNewChosenInlineResult:
         return UnmarshalUpdateNewChosenInlineResult(data)
+
+    case TypeUpdateNewGuestQuery:
+        return UnmarshalUpdateNewGuestQuery(data)
 
     case TypeUpdateNewCallbackQuery:
         return UnmarshalUpdateNewCallbackQuery(data)
