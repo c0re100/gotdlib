@@ -100,8 +100,10 @@ func main() {
 						MessageId: msgId,
 					},
 					InputMessageContent: &tdlib.InputMessagePhoto{
-						Photo: &tdlib.InputFileLocal{
-							Path: "./Meru_01.png",
+						Photo: &tdlib.InputPhoto{
+							Photo: &tdlib.InputFileLocal{
+								Path: "./Meru_01.png",
+							},
 						},
 						Caption: text,
 					},
@@ -122,14 +124,18 @@ func main() {
 					},
 					InputMessageContents: []tdlib.InputMessageContent{
 						&tdlib.InputMessagePhoto{
-							Photo: &tdlib.InputFileLocal{
-								Path: "./Meru_01.png",
+							Photo: &tdlib.InputPhoto{
+								Photo: &tdlib.InputFileLocal{
+									Path: "./Meru_01.png",
+								},
 							},
 							Caption: text,
 						},
 						&tdlib.InputMessagePhoto{
-							Photo: &tdlib.InputFileLocal{
-								Path: "./Meru_02.png",
+							Photo: &tdlib.InputPhoto{
+								Photo: &tdlib.InputFileLocal{
+									Path: "./Meru_02.png",
+								},
 							},
 						},
 					},
