@@ -3187,6 +3187,93 @@ func (client *Client) SetPinnedSavedMessagesTopics(req *SetPinnedSavedMessagesTo
     return UnmarshalOk(result.Data)
 }
 
+type LoadCommunityFullInfoRequest struct { 
+    // Community identifier
+    CommunityId int64 `json:"community_id"`
+}
+
+// Returns full information about a community. The data will be sent through update.
+func (client *Client) LoadCommunityFullInfo(req *LoadCommunityFullInfoRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "loadCommunityFullInfo",
+        },
+        Data: map[string]interface{}{
+            "community_id": req.CommunityId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type CreateCommunityRequest struct { 
+    // Name of the new community
+    Name string `json:"name"`
+    // Identifier of the chat in the community; only chats with owned bots and owned basic group, supergroup and channel chats are allowed; basic group chats will be automatically upgraded to supergroup chats
+    ChatId int64 `json:"chat_id"`
+    // Pass true if the chat will be visible only to administrators of the community
+    IsChatHidden bool `json:"is_chat_hidden"`
+}
+
+// Creates a new community for the given chat. Returns identifier of the created community
+func (client *Client) CreateCommunity(req *CreateCommunityRequest) (*CommunityId, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "createCommunity",
+        },
+        Data: map[string]interface{}{
+            "name": req.Name,
+            "chat_id": req.ChatId,
+            "is_chat_hidden": req.IsChatHidden,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalCommunityId(result.Data)
+}
+
+type SetCommunityNameRequest struct { 
+    // Identifier of the community
+    CommunityId int64 `json:"community_id"`
+    // New name of the community
+    Name string `json:"name"`
+}
+
+// Changes name of the given community; requires can_change_info administrator right in the community
+func (client *Client) SetCommunityName(req *SetCommunityNameRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "setCommunityName",
+        },
+        Data: map[string]interface{}{
+            "community_id": req.CommunityId,
+            "name": req.Name,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
 type GetGroupsInCommonRequest struct { 
     // User identifier
     UserId int64 `json:"user_id"`
@@ -5589,15 +5676,19 @@ type SendEphemeralMessageRequest struct {
     ReceiverUserId int64 `json:"receiver_user_id"`
     // Identifier of the callback query which triggered the message; for bots only
     CallbackQueryId JsonInt64 `json:"callback_query_id"`
+    // Pass true if the ephemeral message must replace the message from which the callback query originated; for bots only
+    ReplaceCallbackQueryMessage bool `json:"replace_callback_query_message"`
     // Information about the message to be replied; pass null if none. The message can be an incoming ephemeral message
     ReplyTo InputMessageReplyTo `json:"reply_to"`
+    // Pass true if the content of the message must be protected from forwarding and saving; for bots only
+    ProtectContent bool `json:"protect_content"`
     // Non-persistent identifier, which will be returned back in messageSendingStatePending object and can be used to match sent messages and corresponding updateNewMessage updates
     SendingId int32 `json:"sending_id"`
     // Pass true to get a fake message instead of actually sending them
     OnlyPreview bool `json:"only_preview"`
     // Markup for replying to the message; pass null if none; for bots only
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
-    // The content of the message to be sent. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote, inputMessageLocation, inputMessageVenue, inputMessageContact
+    // The content of the message to be sent. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageRichMessage, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote, inputMessageLocation, inputMessageVenue, inputMessageContact
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
@@ -5612,7 +5703,9 @@ func (client *Client) SendEphemeralMessage(req *SendEphemeralMessageRequest) (*M
             "topic_id": req.TopicId,
             "receiver_user_id": req.ReceiverUserId,
             "callback_query_id": req.CallbackQueryId,
+            "replace_callback_query_message": req.ReplaceCallbackQueryMessage,
             "reply_to": req.ReplyTo,
+            "protect_content": req.ProtectContent,
             "sending_id": req.SendingId,
             "only_preview": req.OnlyPreview,
             "reply_markup": req.ReplyMarkup,
@@ -5705,7 +5798,7 @@ type DeleteEphemeralMessageRequest struct {
     ChatId int64 `json:"chat_id"`
     // Identifier of the user who received the message
     ReceiverUserId int64 `json:"receiver_user_id"`
-    // Identifiers of the message to be deleted
+    // Identifier of the message to be deleted
     EphemeralMessageId int32 `json:"ephemeral_message_id"`
 }
 
@@ -6175,11 +6268,11 @@ type EditEphemeralMessageRequest struct {
     EphemeralMessageId int32 `json:"ephemeral_message_id"`
     // The new message reply markup; pass null if none
     ReplyMarkup ReplyMarkup `json:"reply_markup"`
-    // New content of the message; pass null to edit only reply markup. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote
+    // New content of the message; pass null to edit only reply markup. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageRichMessage, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote
     InputMessageContent InputMessageContent `json:"input_message_content"`
 }
 
-// Edits the text, caption or reply markup of an ephemeral message sent by the bot; for bots only
+// Edits the text, media, or reply markup of an ephemeral message sent by the bot; for bots only
 func (client *Client) EditEphemeralMessage(req *EditEphemeralMessageRequest) (*Ok, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -6189,6 +6282,82 @@ func (client *Client) EditEphemeralMessage(req *EditEphemeralMessageRequest) (*O
             "chat_id": req.ChatId,
             "receiver_user_id": req.ReceiverUserId,
             "ephemeral_message_id": req.EphemeralMessageId,
+            "reply_markup": req.ReplyMarkup,
+            "input_message_content": req.InputMessageContent,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditEphemeralMessageCaptionRequest struct { 
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the user who received the message
+    ReceiverUserId int64 `json:"receiver_user_id"`
+    // Identifier of the ephemeral message
+    EphemeralMessageId int32 `json:"ephemeral_message_id"`
+    // The new message reply markup; pass null if none
+    ReplyMarkup ReplyMarkup `json:"reply_markup"`
+    // New message content caption; pass null to remove caption; 0-getOption("message_caption_length_max") characters
+    Caption *FormattedText `json:"caption"`
+    // Pass true to show the caption above the media; otherwise, the caption will be shown below the media. May be true only for animation, photo, and video messages
+    ShowCaptionAboveMedia bool `json:"show_caption_above_media"`
+}
+
+// Edits the caption and reply markup of an ephemeral message sent by the bot; for bots only
+func (client *Client) EditEphemeralMessageCaption(req *EditEphemeralMessageCaptionRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editEphemeralMessageCaption",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "receiver_user_id": req.ReceiverUserId,
+            "ephemeral_message_id": req.EphemeralMessageId,
+            "reply_markup": req.ReplyMarkup,
+            "caption": req.Caption,
+            "show_caption_above_media": req.ShowCaptionAboveMedia,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditCallbackQueryMessageRequest struct { 
+    // Identifier of the callback query
+    CallbackQueryId JsonInt64 `json:"callback_query_id"`
+    // Pass true if the content of the message must be protected from forwarding and saving
+    ProtectContent bool `json:"protect_content"`
+    // The new message reply markup; pass null if none
+    ReplyMarkup ReplyMarkup `json:"reply_markup"`
+    // New content of the message. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageRichMessage, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote
+    InputMessageContent InputMessageContent `json:"input_message_content"`
+}
+
+// Edits the message from which a callback query has originated with an ephemeral message; for bots only
+func (client *Client) EditCallbackQueryMessage(req *EditCallbackQueryMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editCallbackQueryMessage",
+        },
+        Data: map[string]interface{}{
+            "callback_query_id": req.CallbackQueryId,
+            "protect_content": req.ProtectContent,
             "reply_markup": req.ReplyMarkup,
             "input_message_content": req.InputMessageContent,
         },
@@ -6223,6 +6392,35 @@ func (client *Client) EditMessageSchedulingState(req *EditMessageSchedulingState
             "chat_id": req.ChatId,
             "message_id": req.MessageId,
             "scheduling_state": req.SchedulingState,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteMessageEphemeralContentRequest struct { 
+    // The chat the message belongs to
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the message
+    MessageId int64 `json:"message_id"`
+}
+
+// Removes message ephemeral content and reverts message state to the original
+func (client *Client) DeleteMessageEphemeralContent(req *DeleteMessageEphemeralContentRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteMessageEphemeralContent",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "message_id": req.MessageId,
         },
     })
     if err != nil {
@@ -7289,7 +7487,7 @@ type ReaddQuickReplyShortcutMessagesRequest struct {
     MessageIds []int64 `json:"message_ids"`
 }
 
-// Re-adds quick reply messages which failed to add. Can be called only for messages for which messageSendingStateFailed.can_retry is true and after specified in messageSendingStateFailed.retry_after time passed. If a message is re-added, the corresponding failed to send message is deleted. Returns the sent messages in the same order as the message identifiers passed in message_ids. If a message can't be readded, null will be returned instead of the message
+// Re-adds quick reply messages which failed to add. Can be called only for messages for which messageSendingStateFailed.can_retry is true and after specified in messageSendingStateFailed.retry_after time passed. If a message is re-added, the corresponding failed to send message is deleted. Returns the sent messages in the same order as the message identifiers passed in message_ids. If a message can't be re-added, null will be returned instead of the message
 func (client *Client) ReaddQuickReplyShortcutMessages(req *ReaddQuickReplyShortcutMessagesRequest) (*QuickReplyMessages, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -7330,6 +7528,148 @@ func (client *Client) EditQuickReplyMessage(req *EditQuickReplyMessageRequest) (
             "shortcut_id": req.ShortcutId,
             "message_id": req.MessageId,
             "input_message_content": req.InputMessageContent,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type LoadChatWelcomeMessagesRequest struct { 
+    // The identifier of the chat
+    ChatId int64 `json:"chat_id"`
+}
+
+// Loads welcome messages of a chat; requires can_send_welcome_messages administrator right in the chat. The loaded messages will be sent through updateChatWelcomeMessages
+func (client *Client) LoadChatWelcomeMessages(req *LoadChatWelcomeMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "loadChatWelcomeMessages",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type AddChatWelcomeMessageRequest struct { 
+    // The identifier of the chat
+    ChatId int64 `json:"chat_id"`
+    // The content of the message to be sent. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageRichMessage, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote, inputMessageLocation, inputMessageVenue, inputMessageContact
+    InputMessageContent InputMessageContent `json:"input_message_content"`
+}
+
+// Adds a message to the list of welcome messages of a chat; requires can_send_welcome_messages administrator right in the chat. There can be up to getOption("welcome_message_count_max") welcome messages in a chat
+func (client *Client) AddChatWelcomeMessage(req *AddChatWelcomeMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "addChatWelcomeMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "input_message_content": req.InputMessageContent,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type EditChatWelcomeMessageRequest struct { 
+    // The identifier of the chat
+    ChatId int64 `json:"chat_id"`
+    // The identifier of the welcome message
+    WelcomeMessageId int32 `json:"welcome_message_id"`
+    // New content of the message. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto, inputMessageRichMessage, inputMessageSticker, inputMessageVideo, inputMessageVideoNote, inputMessageVoiceNote
+    InputMessageContent InputMessageContent `json:"input_message_content"`
+}
+
+// Edits a welcome message of a chat; requires can_send_welcome_messages administrator right in the chat
+func (client *Client) EditChatWelcomeMessage(req *EditChatWelcomeMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "editChatWelcomeMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "welcome_message_id": req.WelcomeMessageId,
+            "input_message_content": req.InputMessageContent,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteChatWelcomeMessageRequest struct { 
+    // The identifier of the chat
+    ChatId int64 `json:"chat_id"`
+    // The identifier of the welcome message
+    WelcomeMessageId int32 `json:"welcome_message_id"`
+}
+
+// Deletes a welcome message of a chat; requires can_send_welcome_messages administrator right in the chat
+func (client *Client) DeleteChatWelcomeMessage(req *DeleteChatWelcomeMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteChatWelcomeMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "welcome_message_id": req.WelcomeMessageId,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type DeleteAllChatWelcomeMessagesRequest struct { 
+    // The identifier of the chat
+    ChatId int64 `json:"chat_id"`
+}
+
+// Deletes all welcome messages of a chat; requires can_send_welcome_messages administrator right in the chat
+func (client *Client) DeleteAllChatWelcomeMessages(req *DeleteAllChatWelcomeMessagesRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "deleteAllChatWelcomeMessages",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
         },
     })
     if err != nil {
@@ -10440,6 +10780,10 @@ type SendTextMessageDraftRequest struct {
     ForumTopicId int32 `json:"forum_topic_id"`
     // Unique identifier of the draft
     DraftId JsonInt64 `json:"draft_id"`
+    // Pass true to show the user a button to stop further drafts
+    CanStop bool `json:"can_stop"`
+    // Pass true to keep the current draft when the user stops further generation
+    KeepOnStop bool `json:"keep_on_stop"`
     // Draft text of the message; pass null to show a "Thinking..." placeholder
     Text *FormattedText `json:"text"`
 }
@@ -10454,6 +10798,8 @@ func (client *Client) SendTextMessageDraft(req *SendTextMessageDraftRequest) (*O
             "chat_id": req.ChatId,
             "forum_topic_id": req.ForumTopicId,
             "draft_id": req.DraftId,
+            "can_stop": req.CanStop,
+            "keep_on_stop": req.KeepOnStop,
             "text": req.Text,
         },
     })
@@ -10475,6 +10821,10 @@ type SendRichMessageDraftRequest struct {
     ForumTopicId int32 `json:"forum_topic_id"`
     // Unique identifier of the draft
     DraftId JsonInt64 `json:"draft_id"`
+    // Pass true to show the user a button to stop further drafts
+    CanStop bool `json:"can_stop"`
+    // Pass true to keep the current draft when the user stops further generation
+    KeepOnStop bool `json:"keep_on_stop"`
     // Draft of the message; file upload isn't supported
     Message *InputRichMessage `json:"message"`
 }
@@ -10489,7 +10839,41 @@ func (client *Client) SendRichMessageDraft(req *SendRichMessageDraftRequest) (*O
             "chat_id": req.ChatId,
             "forum_topic_id": req.ForumTopicId,
             "draft_id": req.DraftId,
+            "can_stop": req.CanStop,
+            "keep_on_stop": req.KeepOnStop,
             "message": req.Message,
+        },
+    })
+    if err != nil {
+        return nil, err
+    }
+
+    if result.Type == "error" {
+        return nil, buildResponseError(result.Data)
+    }
+
+    return UnmarshalOk(result.Data)
+}
+
+type StopPendingMessageRequest struct { 
+    // Identifier of the chat with the bot
+    ChatId int64 `json:"chat_id"`
+    // Identifier of the topic in which the action is performed; pass null if none
+    TopicId MessageTopic `json:"topic_id"`
+    // Unique identifier of the message draft within the message thread
+    DraftId JsonInt64 `json:"draft_id"`
+}
+
+// Stops a pending message generation by a bot
+func (client *Client) StopPendingMessage(req *StopPendingMessageRequest) (*Ok, error) {
+    result, err := client.Send(Request{
+        meta: meta{
+            Type: "stopPendingMessage",
+        },
+        Data: map[string]interface{}{
+            "chat_id": req.ChatId,
+            "topic_id": req.TopicId,
+            "draft_id": req.DraftId,
         },
     })
     if err != nil {
@@ -12448,7 +12832,7 @@ type SetChatDraftMessageRequest struct {
     ChatId int64 `json:"chat_id"`
     // Topic in which the draft will be changed; pass null to change the draft for the chat itself
     TopicId MessageTopic `json:"topic_id"`
-    // New draft message; pass null to remove the draft. All files in draft message content must be of the type inputFileLocal. Media thumbnails and captions are ignored
+    // New draft message; pass null to remove the draft
     DraftMessage *DraftMessage `json:"draft_message"`
 }
 
@@ -13083,7 +13467,7 @@ type AddChatMembersRequest struct {
     UserIds []int64 `json:"user_ids"`
 }
 
-// Adds multiple new members to a chat; requires can_invite_users member right. Currently, this method is only available for supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Returns information about members that weren't added
+// Adds multiple new members to a chat; requires can_invite_users member right. Currently, this method is available only in supergroups and channels. This method can't be used to join a chat. Members can't be added to a channel if it has more than 200 members. Returns information about members that weren't added
 func (client *Client) AddChatMembers(req *AddChatMembersRequest) (*FailedToAddMembers, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -13140,7 +13524,7 @@ func (client *Client) SetChatMemberStatus(req *SetChatMemberStatusRequest) (*Ok,
 type SetChatMemberTagRequest struct { 
     // Chat identifier
     ChatId int64 `json:"chat_id"`
-    // Identifier of the user, which tag is changed. Chats can't have member tags
+    // Identifier of the user whose tag is changed. Chats can't have member tags
     UserId int64 `json:"user_id"`
     // The new tag of the member in the chat; 0-16 characters without emoji
     Tag string `json:"tag"`
@@ -16125,7 +16509,7 @@ type EditChatInviteLinkRequest struct {
     CreatesJoinRequest bool `json:"creates_join_request"`
 }
 
-// Edits a non-primary invite link for a chat. Available for basic groups, supergroups, and channels. If the link creates a subscription, then expiration_date, member_limit and creates_join_request must not be used. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
+// Edits a non-primary invite link for a chat. Available in basic groups, supergroups, and channels. If the link creates a subscription, then expiration_date, member_limit and creates_join_request must not be used. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links
 func (client *Client) EditChatInviteLink(req *EditChatInviteLinkRequest) (*ChatInviteLink, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -16324,7 +16708,7 @@ type RevokeChatInviteLinkRequest struct {
     InviteLink string `json:"invite_link"`
 }
 
-// Revokes invite link for a chat. Available for basic groups, supergroups, and channels. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links. If a primary link is revoked, then additionally to the revoked link returns new primary link
+// Revokes invite link for a chat. Available in basic groups, supergroups, and channels. Requires administrator privileges and can_invite_users right in the chat for own links and owner privileges for other links. If a primary link is revoked, then additionally to the revoked link returns new primary link
 func (client *Client) RevokeChatInviteLink(req *RevokeChatInviteLinkRequest) (*ChatInviteLinks, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -23306,7 +23690,7 @@ type GetChatEventLogRequest struct {
     UserIds []int64 `json:"user_ids"`
 }
 
-// Returns a list of service actions taken by chat members and administrators in the last 48 hours. Available only for supergroups and channels. Requires administrator rights. Returns results in reverse chronological order (i.e., in order of decreasing event_id)
+// Returns a list of service actions taken by chat members and administrators in the last 48 hours. Available only in supergroups and channels. Requires administrator rights. Returns results in reverse chronological order (i.e., in order of decreasing event_id)
 func (client *Client) GetChatEventLog(req *GetChatEventLogRequest) (*ChatEvents, error) {
     result, err := client.Send(Request{
         meta: meta{
@@ -24181,6 +24565,10 @@ type SendResoldGiftRequest struct {
     OwnerId MessageSender `json:"owner_id"`
     // The price that the user agreed to pay for the gift
     Price GiftResalePrice `json:"price"`
+    // Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, CustomEmoji, and DateTime entities are allowed. Must be empty if the receiver enabled paid messages and the price of the gift is less than the price of a paid message to the user
+    Text *FormattedText `json:"text"`
+    // Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
+    IsPrivate bool `json:"is_private"`
 }
 
 // Sends an upgraded gift that is available for resale to another user or channel chat; gifts already owned by the current user must be transferred using transferGift and can't be passed to the method
@@ -24193,6 +24581,8 @@ func (client *Client) SendResoldGift(req *SendResoldGiftRequest) (GiftResaleResu
             "gift_name": req.GiftName,
             "owner_id": req.OwnerId,
             "price": req.Price,
+            "text": req.Text,
+            "is_private": req.IsPrivate,
         },
     })
     if err != nil {
@@ -24508,7 +24898,7 @@ func (client *Client) GetUpgradedGiftsPromotionalAnimation() (*Animation, error)
 type SetGiftResalePriceRequest struct { 
     // Identifier of the unique gift
     ReceivedGiftId string `json:"received_gift_id"`
-    // The new price for the unique gift; pass null to disallow gift resale. The current user will receive getOption("gift_resale_star_earnings_per_mille") Telegram Stars for each 1000 Telegram Stars paid for the gift if the gift price is in Telegram Stars or getOption("gift_resale_ton_earnings_per_mille") TON Grams for each 1000 Grams paid for the gift if the gift price is in Grams
+    // The new price for the unique gift; pass null to disallow gift resale. The current user will receive getOption("gift_resale_star_earnings_per_mille") Telegram Stars for each 1000 Telegram Stars paid for the gift if the gift price is in Telegram Stars or getOption("gift_resale_gram_earnings_per_mille") TON Grams for each 1000 Grams paid for the gift if the gift price is in Grams
     Price GiftResalePrice `json:"price"`
 }
 
@@ -28184,7 +28574,7 @@ func (client *Client) ApplyPremiumGiftCode(req *ApplyPremiumGiftCodeRequest) (*O
 }
 
 type GiftPremiumWithStarsRequest struct { 
-    // Identifier of the user which will receive Telegram Premium
+    // Identifier of the user who will receive Telegram Premium
     UserId int64 `json:"user_id"`
     // The number of Telegram Stars to pay for subscription
     StarCount int64 `json:"star_count"`
@@ -30027,6 +30417,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateMessageContent:
         return UnmarshalUpdateMessageContent(result.Data)
 
+    case TypeUpdateMessageEphemeralContent:
+        return UnmarshalUpdateMessageEphemeralContent(result.Data)
+
     case TypeUpdateMessageEdited:
         return UnmarshalUpdateMessageEdited(result.Data)
 
@@ -30162,6 +30555,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdateChatHasScheduledMessages:
         return UnmarshalUpdateChatHasScheduledMessages(result.Data)
 
+    case TypeUpdateChatHasWelcomeMessages:
+        return UnmarshalUpdateChatHasWelcomeMessages(result.Data)
+
     case TypeUpdateChatFolders:
         return UnmarshalUpdateChatFolders(result.Data)
 
@@ -30191,6 +30587,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateQuickReplyShortcutMessages:
         return UnmarshalUpdateQuickReplyShortcutMessages(result.Data)
+
+    case TypeUpdateChatWelcomeMessages:
+        return UnmarshalUpdateChatWelcomeMessages(result.Data)
 
     case TypeUpdateForumTopicInfo:
         return UnmarshalUpdateForumTopicInfo(result.Data)
@@ -30225,6 +30624,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
     case TypeUpdatePendingMessage:
         return UnmarshalUpdatePendingMessage(result.Data)
 
+    case TypeUpdateStopMessageDraft:
+        return UnmarshalUpdateStopMessageDraft(result.Data)
+
     case TypeUpdateCommunity:
         return UnmarshalUpdateCommunity(result.Data)
 
@@ -30251,6 +30653,9 @@ func (client *Client) TestUseUpdate() (Update, error) {
 
     case TypeUpdateSupergroupFullInfo:
         return UnmarshalUpdateSupergroupFullInfo(result.Data)
+
+    case TypeUpdateCommunityFullInfo:
+        return UnmarshalUpdateCommunityFullInfo(result.Data)
 
     case TypeUpdateServiceNotification:
         return UnmarshalUpdateServiceNotification(result.Data)
